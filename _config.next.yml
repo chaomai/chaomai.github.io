@@ -83,7 +83,7 @@ menu:
   home: / || fa fa-home
   about: /about/ || fa fa-user
   #tags: /tags/ || fa fa-tags
-  Photography: /photography/ || fa fa-camera
+  #Photography: /photography/ || fa fa-camera
   categories: /categories/ || fa fa-th
   archives: /archives/ || fa fa-archive
   Rss: /atom.xml || fa fa-rss
@@ -143,6 +143,7 @@ site_state: true
 social:
   GitHub: https://github.com/chaomai || fab fa-github
   E-Mail: mailto:loneymai@gmail.com || fa fa-envelope
+  Steam: https://steamcommunity.com/id/chaomai || fab fa-steam
   #Weibo: https://weibo.com/yourname || fab fa-weibo
   #Google: https://plus.google.com/yourname || fab fa-google
   #Twitter: https://twitter.com/yourname || fab fa-twitter
@@ -167,6 +168,7 @@ links_settings:
 
 links:
   laike9m's blog: https://laike9m.com
+  yihong0618/gitblog: https://github.com/yihong0618/gitblog
 
 # Table of Contents in the Sidebar
 # Front-matter variable (unsupport wrap expand_all).
