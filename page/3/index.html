@@ -132,7 +132,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">85</span>
+          <span class="site-state-item-count">86</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -143,7 +143,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-count">74</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -200,6 +200,179 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://chaomai.github.io/2019/2019-08-16-ddia-chapter1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Chao Mai">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="chaomai's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/2019-08-16-ddia-chapter1/" class="post-title-link" itemprop="url">DDIA 第一章 可靠、可扩展、可维护的应用</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-08-16 00:22:53" itemprop="dateCreated datePublished" datetime="2019-08-16T00:22:53+08:00">2019-08-16</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/distritubed-system/" itemprop="url" rel="index"><span itemprop="name">distritubed system</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus: </span>
+    
+    <a title="disqus" href="/2019/2019-08-16-ddia-chapter1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/2019-08-16-ddia-chapter1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="数据密集型应用"><a href="#数据密集型应用" class="headerlink" title="数据密集型应用"></a>数据密集型应用</h1><p>现在的很多应用是<em>数据密集型</em>的，数据是这些应用的主要挑战-数据的总量、数据的复杂度和数据变化的速度。</p>
+<p>很多数据密集型的应用都是基于已有的数据系统提供的常用功能来构建的。例如：</p>
+<ul>
+<li>存储数据，以便自己或其他应用能够找到（基于数据库实现此功能）</li>
+<li>记住一个昂贵操作的结果，来加速读取（缓存）</li>
+<li>允许用户通过关键词搜索数据，或多种方式过滤数据（搜索索引）</li>
+<li>发送消息到另一个进程进行异步处理（流式处理）</li>
+<li>定时处理大量累积的数据（批处理）</li>
+</ul>
+<p>由于数据系统的抽象，这些功能都看似很简单。但是，数据系统在逐渐变得相似，不同的数据系统可能同时具有多种特性，例如：Redis的cache和消息队列功能；应用程序越来越宽泛的需求使得单一数据系统无法完成，需要使用程序代码来组合不同的数据系统；同一需求，可能有多种方式和数据系统来实现。因此选择合适的数据系统和权衡架构的设计是一个值得思考的问题。</p>
+<h1 id="设计数据系统的原则"><a href="#设计数据系统的原则" class="headerlink" title="设计数据系统的原则"></a>设计数据系统的原则</h1><ul>
+<li>可靠性（Reliability）<br>  就算出现问题的时候（硬件或软件错误，人为错误），系统都应该应该持续的正确工作（在期望的水平上提供正确的功能）。</li>
+<li>可扩展性（Scalability）<br>  随着系统的增长（数据量、流量或数据复杂度），应该有合理的方法来应对这些增长。</li>
+<li>可维护性（Maintainability）<br>  随着时间的推移，许多人都会参与系统相关的工作（开发和运维，他们保证系统现有行为正常、并使系统能够应对新的情况），他们应该高效的工作。</li>
+</ul>
+<h2 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h2><p>系统具有容错性（fault-tolerant或resilient）。系统在遇到<strong>特定错误的时候</strong>，也能按预期正常工作。</p>
+<blockquote>
+<p>这里原文特别区别了fault和failure。fault指的是系统组件的运作偏离了预期，而failure指的是系统整体无法提供服务。设计一个完全没有fault的系统是不可能的，但是可以通过设计fault-tolerant机制来避免fault导致failure。<br>下面，failure会写为系统故障。</p>
+</blockquote>
+<p><strong>硬件故障</strong><br>每个硬件都有预期的寿命，系统使用的硬件规模够大、运行时间够长时，硬件总会出故障。</p>
+<p>通过软件和硬件层面冗余的方式，可以避免出现硬件故障时无法提供服务。</p>
+<p><strong>软件错误</strong><br>硬件错误的发生相对独立，但是软件错误更加难以预期，往往会导致很多的系统错误。</p>
+<p>通过完善的考虑系统的假设和交互、测试、进程隔离、监控、允许进程挂了后重启等方式来避免软件错误。</p>
+<p><strong>人为错误</strong><br>系统的设计、构建和运维是由人来进行的，但人是不可靠的。</p>
+<p>通过如下方式来减少人为错误：</p>
+<ul>
+<li>以最小化错误机会的方式来设计系统。例如：设计良好的抽象、API和管理界面来避免“做错误的事”。</li>
+<li>解耦人们最容易犯的错和犯错的地方。例如：提供完整功能的非生产环境sanbox。</li>
+<li>完善的测试。例如：从单元测试到整个系统集成测试。</li>
+<li>提供快速和简单的错误恢复机制。例如：快速的回滚配置，上线新代码应逐步从小范围内到大范围，提供重新计算数据的工具来修复老数据错误。</li>
+<li>详尽和清晰的监控。例如：性能计数和错误率。</li>
+</ul>
+<h2 id="可扩展性"><a href="#可扩展性" class="headerlink" title="可扩展性"></a>可扩展性</h2><p>即便一个系统现在能够可靠的工作，这不意味着未来也能。一个常见的原因就是负载的增加。当讨论可扩展性时，常常需要考虑，“如果系统以一个特定的方式增长，应该怎么办？”，“如何增加计算资源来应对额外的负载？”。</p>
+<p><strong>描述负载</strong><br>首先需要简洁的描述负载，负载可以使用几个数字来描述，叫做负载参数（load parameters），参数的选择依赖于系统的架构，例如：</p>
+<ul>
+<li>web服务器每秒的请求个数。</li>
+<li>数据库的读写比例。</li>
+<li>聊天室同时活跃的用户数。</li>
+<li>cache命中率。</li>
+</ul>
+<p><strong>描述性能</strong><br>一旦有了系统负载的描述，那么可以讨论负载增加时会发生什么，可以有两个角度：</p>
+<ul>
+<li>负载增加时，如果保持系统资源不变，系统的性能会怎样？</li>
+<li>负载增加时，为了保持系统性能不变，需要增加多少资源？</li>
+</ul>
+<p>讨论这两个问题需要描述性能，</p>
+<ol>
+<li>吞吐量（批处理系统）</li>
+<li>响应时间（在线系统）<ul>
+<li>平均响应时间。</li>
+<li>百分比响应时间。<br>  例如：p50，取time的中位数，如果是200ms，那么代表50%的响应时间小于200ms。类似的还有p90，p99。</li>
+<li>高百分比响应时间，又叫做尾部延迟（tail latencies）。</li>
+</ul>
+</li>
+</ol>
+<p>性能与可用性一起被用在SLOs（service level objectives）和SLAs（service level agreements）中，规约定义了服务期望的性能和可用性。</p>
+<p>高百分比响应时间常常受队列延迟（queueing delay）的影响，少量慢请求会阻塞后续请求的处理，这个现象又叫做head-of-line blocking。</p>
+<p>如果一个请求需要进一步使用更多的后端调用来完成，那么一个较慢的调用就会拖慢整个请求，这叫做尾部延迟放大（tail latency amplification）。</p>
+<p><strong>应对负载的方法</strong></p>
+<ol>
+<li>scaling up<br> 垂直缩放，迁移到性能更强的机器。</li>
+<li>scaling out<br> 水平缩放，把负载分布到多个小机器上。也叫做share-nothing architecture。</li>
+</ol>
+<p>实际工程上可能会混用两种方法，几个性能较强的机器可能比非常多的小机器来的划算。把无状态的服务分布到多个机器较为容易，但是把一个有状态的数据系统分布式化会引入很多额外的复杂性。</p>
+<p>大规模分布式系统架构往往是针对应用高度定制化的，并不存在一个通用的分布式架构。因为要解决的问题可能是读为主、写为主、大量数据的存储为主、数据的复杂度、响应时间、访问方式，或者是前面各种因素的混合。</p>
+<h2 id="可维护性"><a href="#可维护性" class="headerlink" title="可维护性"></a>可维护性</h2><p>软件开发的主要成本并不在最初的开发，而是持续的维护-修bug、运维、排错、兼容性的平台等。主要关注以下方面，</p>
+<ol>
+<li>可操作性，便于运维团队的维护。<br> 需要提供：<ul>
+<li>完善的监控</li>
+<li>自动化和集成工具</li>
+<li>避免依赖特定的机器</li>
+<li>文档</li>
+<li>良好的默认行为，并提供修改默认行为的方法</li>
+<li>自我恢复，并提供手动操作的方法</li>
+<li>可预测的行为</li>
+</ul>
+</li>
+<li>简单，管理复杂性，便于其他开发者理解系统。<br> 好的抽象可以隐藏复杂的细节。</li>
+<li>可进化，便于修改和增加系统功能，又叫做可扩展性（extensibility）、可修改性（modifiability）、可塑性（plasticity）。<br> 增加数据系统的敏捷性。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2107,147 +2280,6 @@
 <li>变量和函数的声明简洁清晰</li>
 <li>goroutine</li>
 <li>提供了CSP来实现goroutine之间的通信</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://chaomai.github.io/2019/2019-03-05-python-symtable-module-package/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="chaomai's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/2019-03-05-python-symtable-module-package/" class="post-title-link" itemprop="url">python符号表、module和package</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-03-05 22:12:40" itemprop="dateCreated datePublished" datetime="2019-03-05T22:12:40+08:00">2019-03-05</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Disqus: </span>
-    
-    <a title="disqus" href="/2019/2019-03-05-python-symtable-module-package/#disqus_thread" itemprop="discussionUrl">
-      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="2019/2019-03-05-python-symtable-module-package/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="symbol-table"><a href="#symbol-table" class="headerlink" title="symbol table"></a>symbol table</h1><p>symbol table（符号表）是用于编译器或解释器中的一个数据结构，存储了源码中每个符号以及关联的信息。不同的作用域可能会有各自的符号表。在静态语言中，符号表尤为重要。</p>
-<h2 id="python-variable"><a href="#python-variable" class="headerlink" title="python variable"></a>python variable</h2><p>python中的变量与c/c++的不一样，是绑定到对象的symbolic name。<code>aa</code>，<code>bb</code>都是绑定到一个list对象的名字。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">aa = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">bb = aa</span><br><span class="line">aa[<span class="number">0</span>] = <span class="number">666</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="python-symbol-table"><a href="#python-symbol-table" class="headerlink" title="python symbol table"></a>python symbol table</h2><p>虽然python是动态语言，没有编译时类型检查，但python也有符号表。python的符号表通过编译器由AST生成，用于计算每个标识符的作用域，最终符号表和AST会被共同用于生成字节码。<code>symtable</code>模块提供了关于标识符的作用域等信息，还能够输出在这些作用域中引用到的变量是哪个。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># add.py</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">outer</span>(<span class="params">aa</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inner</span>():</span></span><br><span class="line">        bb = <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> aa + bb + cc</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"></span><br><span class="line">src = <span class="built_in">open</span>(<span class="string">&#x27;add.py&#x27;</span>, <span class="string">&#x27;r&#x27;</span>).read()</span><br><span class="line"><span class="keyword">import</span> symtable</span><br><span class="line">table = symtable.symtable(src, <span class="string">&#x27;src.py&#x27;</span>, <span class="string">&#x27;exec&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">describe_symbol</span>(<span class="params">sym</span>):</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">type</span>(sym) == symtable.Symbol</span><br><span class="line">    print(<span class="string">&quot;Symbol:&quot;</span>, sym.get_name())</span><br><span class="line">    <span class="keyword">for</span> prop <span class="keyword">in</span> [</span><br><span class="line">            <span class="string">&#x27;referenced&#x27;</span>, <span class="string">&#x27;imported&#x27;</span>, <span class="string">&#x27;parameter&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;global&#x27;</span>, <span class="string">&#x27;declared_global&#x27;</span>, <span class="string">&#x27;local&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;free&#x27;</span>, <span class="string">&#x27;assigned&#x27;</span>, <span class="string">&#x27;namespace&#x27;</span>]:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">getattr</span>(sym, <span class="string">&#x27;is_&#x27;</span> + prop)():</span><br><span class="line">            print(<span class="string">&#x27;    is&#x27;</span>, prop)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> table.get_children()[<span class="number">0</span>].get_children()[<span class="number">0</span>].get_symbols():</span><br><span class="line">    describe_symbol(i)</span><br><span class="line"></span><br><span class="line">Symbol: bb</span><br><span class="line">    <span class="keyword">is</span> referenced</span><br><span class="line">    <span class="keyword">is</span> local</span><br><span class="line">    <span class="keyword">is</span> assigned</span><br><span class="line">Symbol: aa</span><br><span class="line">    <span class="keyword">is</span> referenced</span><br><span class="line">    <span class="keyword">is</span> free</span><br><span class="line">Symbol: cc</span><br><span class="line">    <span class="keyword">is</span> referenced</span><br><span class="line">    <span class="keyword">is</span> <span class="keyword">global</span></span><br></pre></td></tr></table></figure>
-
-<p>free variable：如果变量在一个代码块内使用（在代码内被绑定），但是并没有在其中定义，那么这个变量是自由变量。顺便提一句，使用了自由变量的函数就是闭包（closure）。<br>global variable：如果变量代码在模块级别被绑定，这个变量是全局变量。<br>local variable：如果变量在代码块内被绑定，这个变量是局部变量。</p>
-<h1 id="python-module"><a href="#python-module" class="headerlink" title="python module"></a>python module</h1><p>module（模块）是一个包含python定义和语句的文件，文件名由module名和<code>.py</code>后缀构成。module名可由全局变量<code>__name__</code>获取。这个文件可被作为脚本使用或用于repl中，module中的定义可以被其他module或mainmodule导入。</p>
-<p>例如：<code>p.py</code>，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">a, b</span>):</span></span><br><span class="line">    <span class="keyword">return</span> a + b</span><br></pre></td></tr></table></figure>
-
-<p>在repl中，</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 把module名p加入当前的符号表</span></span><br><span class="line"><span class="keyword">import</span> p</span><br><span class="line">p.add(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">Symbol: p</span><br><span class="line">    <span class="keyword">is</span> imported</span><br><span class="line">    <span class="keyword">is</span> local</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把p中的add导入当前符号表</span></span><br><span class="line"><span class="keyword">from</span> p <span class="keyword">import</span> add</span><br><span class="line">add(<span class="number">1</span>, <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">Symbol: add</span><br><span class="line">    <span class="keyword">is</span> imported</span><br><span class="line">    <span class="keyword">is</span> local</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把p中的除_开头的所有名字导入当前符号表</span></span><br><span class="line"><span class="keyword">from</span> p <span class="keyword">import</span> *</span><br></pre></td></tr></table></figure>
-
-<p>一个module，可以包含可执行语句和函数定义，这些语句是用于初始化module的，仅仅在第一次导入这个模块的时候执行，作为脚本运行的时候也会执行。module作为脚本执行的时候，<code>__name__</code>会被设置为<code>&quot;__main__&quot;</code>，很常见的一个语句是<code>if __name__ == &quot;__main__&quot;:</code>，作为脚本执行的时候，运行<code>if</code>内的语句。</p>
-<p>每个module有自己私有的符号表。module内部的全局变量不会与外部的产生冲突，另一个角度看，如果知道模块内的全局变量名称，可以通过<code>modname.itemname</code>的方式访问到。通过<code>dir()</code>函数可以得到module内定义的名字。</p>
-<p>导入module时，module名字的search path为，</p>
-<ol>
-<li><p>内置的module</p>
-</li>
-<li><p><code>sys.path</code><br> 这个变量的值由下列几项初始化得到，</p>
-<ul>
-<li><p>脚本当前目录</p>
-</li>
-<li><p><code>PYTHONPATH</code>环境变量</p>
-</li>
-<li><p>the installation-dependent default</p>
-<p><code>sys.path</code>初始化以后，可以在程序中修改。</p>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="python-package"><a href="#python-package" class="headerlink" title="python package"></a>python package</h2><p>package是一种通过<code>modnameA.submodnameB</code>来组织module的方式。python会把包含<code>__init__.py</code>文件的文件夹当做package。<code>__init__.py</code>文件可以直接留空，也可以加入初始化package的代码或设置<code>__all__</code>变量（用于控制<code>from package imrpot *</code>的时候，导入哪些）。</p>
-<p>导入的方式为，</p>
-<ul>
-<li><code>from package import item</code>。import语句首先测试item是否在package中定义，如果没有，那么假设item是一个module并尝试load。最终如果没有找到，那么会抛出<code>ImportError</code>异常。</li>
-<li><code>import item.subitem.subsubitem</code>，最后一个item可以是module或package，但不能是类、函数或变量，其他必须是package。</li>
-</ul>
-<h1 id="class和module"><a href="#class和module" class="headerlink" title="class和module"></a>class和module</h1><p>在使用的时候，class和module有一些相似的地方，但是二者完全不同。</p>
-<ul>
-<li>class是创建带有属性和方法的实例的蓝图，支持继承等。这些module都不能做。</li>
-<li>module仅仅只是组织代码的方式。</li>
-</ul>
-<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://eli.thegreenplace.net/2010/09/18/python-internals-symbol-tables-part-1">Python internals: Symbol tables, part 1</a></li>
-<li><a target="_blank" rel="noopener" href="https://docs.python.org/2/library/symtable.html">symtable — Access to the compiler’s symbol tables¶</a></li>
 </ol>
 
       
