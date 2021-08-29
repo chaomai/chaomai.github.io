@@ -11,12 +11,12 @@ tags:
 入手了比亚乔 x7 ，主要通勤用，简单记录相关的事项，供有需要的读者参考。后续可能会随着使用不断更新。
 
 
-<a id="orgf0327a4"></a>
+<a id="org3d2c67c"></a>
 
 # 需求
 
 
-<a id="orgd54545d"></a>
+<a id="org8b9bee2"></a>
 
 ## 基本需求
 
@@ -27,7 +27,7 @@ tags:
 车型定为踏板。另外通勤距离较长，不想经常加油，需要油箱大一点的，最终选择了比亚乔 x7。
 
 
-<a id="org07d98c4"></a>
+<a id="org91da92c"></a>
 
 ## 通勤成本
 
@@ -38,7 +38,7 @@ tags:
 345-65\*5=20km，基本足够工作日通勤。
 
 
-<a id="orga7e3b12"></a>
+<a id="org32ad61d"></a>
 
 # 驾照
 
@@ -53,7 +53,7 @@ tags:
 无论选择摩托还是汽车，都要对安全保持敬畏，对自己的能力有清晰的认知。
 
 
-<a id="orgf9da421"></a>
+<a id="orgb6082fa"></a>
 
 # 装备
 
@@ -150,7 +150,14 @@ tags:
 
 
 <tr>
-<td class="org-left">快速补胎工具</td>
+<td class="org-left">补胎工具</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">轮胎打气工具</td>
 <td class="org-left">&#xa0;</td>
 <td class="org-left">&#xa0;</td>
 </tr>
@@ -158,7 +165,7 @@ tags:
 </table>
 
 
-<a id="orgab72bc9"></a>
+<a id="org3f34701"></a>
 
 # 改装
 
@@ -281,24 +288,24 @@ tags:
 </table>
 
 
-<a id="org4d95773"></a>
+<a id="orgcd7748c"></a>
 
 # 车牌
 
 
-<a id="org026e5e6"></a>
+<a id="org1070c71"></a>
 
 ## 京 A
 
 目前只能买到，市场价大概 30w。
 
 
-<a id="orge518d8b"></a>
+<a id="org0fe2453"></a>
 
 ## 京 B
 
 
-<a id="org700f0bf"></a>
+<a id="org2b79a33"></a>
 
 ### 办理限制
 
@@ -306,7 +313,7 @@ tags:
 2.  可上牌的户口或居住证：通州、昌平、房山、门头沟、大兴、顺义、怀柔、密云、延庆、平谷。
 
 
-<a id="org28738dc"></a>
+<a id="org3523be0"></a>
 
 ### 限行
 
@@ -320,7 +327,7 @@ tags:
 违反摩托车禁限行规定，处 100 元罚款，记 3 分。
 
 
-<a id="org0cc1ec6"></a>
+<a id="orgfd90eed"></a>
 
 ### 上牌流程
 
@@ -328,7 +335,7 @@ tags:
 2.  自己上牌可以参考[小白京B私户摩托车上牌历程](https://zhuanlan.zhihu.com/p/128504514)，[北京摩托车京B牌照上牌流程-20210406](https://zhuanlan.zhihu.com/p/362742642)。
 
 
-<a id="orgeb169eb"></a>
+<a id="orgf58f0e5"></a>
 
 # 保险
 
@@ -338,7 +345,7 @@ tags:
 4.  盗强：不确定是否需要，暂时没有买
 
 
-<a id="org4e79328"></a>
+<a id="orgc9064cd"></a>
 
 ## 其他
 
@@ -346,7 +353,7 @@ tags:
 2.  摩托助手：救援
 
 
-<a id="org30c920b"></a>
+<a id="org5ba5993"></a>
 
 # 维护和保养
 
@@ -397,51 +404,34 @@ tags:
 
 
 <tr>
-<td class="org-left">齿轮油 80W-90</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-
-<tr>
-<td class="org-left">机油 5W-40</td>
-<td class="org-left">&#xa0;</td>
-</tr>
-
-
-<tr>
-<td class="org-left">刹车油 DOT 4</td>
-<td class="org-left">每两年换一次</td>
-</tr>
-
-
-<tr>
-<td class="org-left">火花塞</td>
-<td class="org-left">NGK CR8EB</td>
-</tr>
-
-
-<tr>
 <td class="org-left">空气过滤器</td>
 <td class="org-left">肥皂水清洗，汽油＋空气过滤海绵油浸泡后直接装回</td>
-</tr>
-
-
-<tr>
-<td class="org-left">冷却液</td>
-<td class="org-left">每两年换一次</td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org122bdde"></a>
+<a id="org60c7996"></a>
+
+## 维护表
+
+![img](/images/2021/08/ScreenShot2021-08-29at11.57.05AM.png)
+
+![img](/images/2021/08/ScreenShot2021-08-29at11.56.50AM.png)
+
+![img](/images/2021/08/ScreenShot2021-08-29at11.56.29AM.png)
+
+![img](/images/2021/08/ScreenShot2021-08-29at11.57.24AM.png)
+
+
+<a id="org89b42f7"></a>
 
 # 总结
 
-1.  08-17拿到的D本。。。
-2.  裸车 19980，预期全部办完（包括装备 25000）
-3.  实际花费高于预期，落地 23618，装备和改装全部加起来大概 7000
-4.  骑行感受和通勤体验以后更新
+1.  裸车 19980，预期全部办完（包括装备 25000）
+2.  实际花费高于预期，落地 23618，装备和改装全部加起来大概 7000
+3.  骑行感受和通勤体验以后更新
 
 P.S.
 和老爸交流了以下，原来他以前也骑摩托车，对机械的喜爱是有传承的啊。
+
