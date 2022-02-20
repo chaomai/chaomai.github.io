@@ -7,7 +7,7 @@ title: chaomai's blog
 subtitle:
 description:
 keywords:
-author: Chao Mai
+author: chaomai
 language: en
 timezone: ''
 
@@ -136,6 +136,7 @@ theme_config:
     articles: /archives/
     search: /search/
   social_links:
+    enabled: false
     github: /
     twitter: /
     facebook: /
