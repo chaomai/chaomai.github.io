@@ -106,7 +106,7 @@ ignore:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: cactus
+theme: next
 since: 2014
 
 # Deployment
@@ -127,49 +127,3 @@ search:
 
 disqus_shortname: chaomaisblog
 
-theme_config:
-  projects_url: http://github.com/chaomai
-  colorscheme: light
-  nav:
-    home: /
-    about: /about/
-    articles: /archives/
-    search: /search/
-  social_links:
-    enabled: false
-    github: /
-    twitter: /
-    facebook: /
-    linkedin: /
-    mail: /
-  posts_overview:
-    show_all_posts: true
-    post_count: 5
-  copyright:
-    start_year: 2014
-    end_year:
-  logo:
-    enabled: true
-    gravatar: true
-  favicon:
-    desktop:
-      url: /images/favicon.ico
-      gravatar: true
-    android:
-      url: /images/favicon-192x192.png
-      gravatar: true
-    apple:
-      url: /images/apple-touch-icon.png
-      gravatar: true
-  rss: true
-  mathjax:
-    enabled: true
-  disqus:
-    enabled: true
-    shortname: chaomaisblog
-  google_analytics:
-    enabled: true
-    id: UA-34179929-2
-  gravatar:
-    email: loneymai@gmail.com
-    hash: 932f1b40c8d0202ce03a0df412bfb0ff
