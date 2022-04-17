@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,20 +15,21 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Release Sequences如果  有标记为memory_order_release，memory_order_acq_rel或memory_order_seq_cst的store， 和标记为memory_order_consume，memory_order_acquire或memory_order_seq_cst的load， 并且在操作链中的每个操作都load上一个操作write的值，">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Release Sequences 如果  有标记为memory_order_release，memory_order_acq_rel或memory_order_seq_cst的store， 和标记为memory_order_consume，memory_order_acquire或memory_order_seq_cst的load， 并且在操作链中的每个操作都load上一个操作write的值，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Release Sequences">
 <meta property="og:url" content="https://chaomai.github.io/2016/2016-03-17-release-sequences/index.html">
 <meta property="og:site_name" content="chaomai&#39;s blog">
-<meta property="og:description" content="Release Sequences如果  有标记为memory_order_release，memory_order_acq_rel或memory_order_seq_cst的store， 和标记为memory_order_consume，memory_order_acquire或memory_order_seq_cst的load， 并且在操作链中的每个操作都load上一个操作write的值，">
+<meta property="og:description" content="Release Sequences 如果  有标记为memory_order_release，memory_order_acq_rel或memory_order_seq_cst的store， 和标记为memory_order_consume，memory_order_acquire或memory_order_seq_cst的load， 并且在操作链中的每个操作都load上一个操作write的值，">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2016-03-17T11:10:31.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.270Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="release sequence">
 <meta name="twitter:card" content="summary">
 
@@ -46,6 +46,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -74,7 +75,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -88,12 +89,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -124,14 +120,13 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Release-Sequences"><span class="nav-number">1.</span> <span class="nav-text">Release Sequences</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#release-sequences"><span class="nav-number">1.</span> <span class="nav-text">Release Sequences</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -184,7 +179,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -220,12 +214,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Release Sequences | chaomai's blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -242,13 +241,13 @@
 
       <time title="Created: 2016-03-17 19:10:31" itemprop="dateCreated datePublished" datetime="2016-03-17T19:10:31+08:00">2016-03-17</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -283,21 +282,22 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="Release-Sequences"><a href="#Release-Sequences" class="headerlink" title="Release Sequences"></a>Release Sequences</h1><p>如果</p>
+        <h1 id="release-sequences">Release Sequences</h1>
+<p>如果</p>
 <ul>
 <li>有标记为<code>memory_order_release</code>，<code>memory_order_acq_rel</code>或<code>memory_order_seq_cst</code>的store，</li>
 <li>和标记为<code>memory_order_consume</code>，<code>memory_order_acquire</code>或<code>memory_order_seq_cst</code>的load，</li>
 <li>并且在<strong>操作链中的每个操作都load上一个操作write的值</strong>，</li>
 </ul>
-<p>那么这个操作链构成一个<strong>release sequence</strong>，并且</p>
-<ul>
-<li>初始的store synchronizes-with 用<code>memory_order_acquire</code>或<code>memory_order_seq_cst</code>标记的最后的load；</li>
-<li>或初始的store dependency-ordered-before 用<code>memory_order_consume</code>标记的最后的load。</li>
-</ul>
+<p>那么这个操作链构成一个<strong>release sequence</strong>，并且 *
+初始的store synchronizes-with
+用<code>memory_order_acquire</code>或<code>memory_order_seq_cst</code>标记的最后的load；
+* 或初始的store dependency-ordered-before
+用<code>memory_order_consume</code>标记的最后的load。</p>
 <p>操作链中的RMW操作可以被标记为任意一种memory ordering。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; queue_data;</span><br><span class="line">atomic&lt;<span class="keyword">int</span>&gt; count;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  queue_data.push_back(<span class="number">1</span>); <span class="comment">// (1)</span></span><br><span class="line">  count.store(number_of_items, memory_order_release); <span class="comment">// (2)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">int</span> item_index;</span><br><span class="line">    <span class="keyword">if</span>((item_index = count.fetch_sub(<span class="number">1</span>, memory_order_acquire)) &lt;= <span class="number">0</span>) &#123; <span class="comment">// (3)</span></span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    process(queue_data[item_index<span class="number">-1</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">thread <span class="title">a</span><span class="params">(f1)</span></span>;</span><br><span class="line"><span class="function">thread <span class="title">b</span><span class="params">(f2)</span></span>;</span><br><span class="line"><span class="function">thread <span class="title">c</span><span class="params">(f2)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>在上述代码中，执行<code>f2</code>的有两个线程，由于acquire-release语义，(2)肯定是与第一个(3)有synchronizes-with关系的。后面还有一个(3)，第一个(3)写入的值被第二个(3)读取，因此操作链构成一个release sequence，由因为最后一个(3)是<code>memory_order_acquire</code>（无论是哪个线程中的<code>fetch_sub</code>作为最后一个），因此有(2)synchronizes-with最后一个(3)。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;<span class="type">int</span>&gt; queue_data;</span><br><span class="line">atomic&lt;<span class="type">int</span>&gt; count;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  queue_data.<span class="built_in">push_back</span>(<span class="number">1</span>); <span class="comment">// (1)</span></span><br><span class="line">  count.<span class="built_in">store</span>(number_of_items, memory_order_release); <span class="comment">// (2)</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">f2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="type">int</span> item_index;</span><br><span class="line">    <span class="keyword">if</span>((item_index = count.<span class="built_in">fetch_sub</span>(<span class="number">1</span>, memory_order_acquire)) &lt;= <span class="number">0</span>) &#123; <span class="comment">// (3)</span></span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">process</span>(queue_data[item_index<span class="number">-1</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">thread <span class="title">a</span><span class="params">(f1)</span></span>;</span><br><span class="line"><span class="function">thread <span class="title">b</span><span class="params">(f2)</span></span>;</span><br><span class="line"><span class="function">thread <span class="title">c</span><span class="params">(f2)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>在上述代码中，执行<code>f2</code>的有两个线程，由于acquire-release语义，(2)肯定是与第一个(3)有synchronizes-with关系的。后面还有一个(3)，第一个(3)写入的值被第二个(3)读取，因此操作链构成一个release
+sequence，由因为最后一个(3)是<code>memory_order_acquire</code>（无论是哪个线程中的<code>fetch_sub</code>作为最后一个），因此有(2)synchronizes-with最后一个(3)。</p>
 
     </div>
 
@@ -347,11 +347,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -370,6 +370,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

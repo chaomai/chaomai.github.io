@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Sharing data between threads的笔记。">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Sharing data between threads的笔记。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ Concurrency in Action (3) - Sharing data between threads">
 <meta property="og:url" content="https://chaomai.github.io/2015/2015-05-30-cpp-concurrency-in-action-3/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-05-30T14:37:23.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.258Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="cpp">
 <meta property="article:tag" content="reading">
 <meta property="article:tag" content="cpp11">
@@ -50,6 +50,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -78,7 +79,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -92,12 +93,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -128,14 +124,26 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-Concurrency-in-Action-3"><span class="nav-number">1.</span> <span class="nav-text">C++ Concurrency in Action 3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Problems-with-sharing-data-between-threads"><span class="nav-number">1.1.</span> <span class="nav-text">Problems with sharing data between threads</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Race-conditions"><span class="nav-number">1.1.1.</span> <span class="nav-text">Race conditions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Avoiding-problematic-race-conditions"><span class="nav-number">1.1.2.</span> <span class="nav-text">Avoiding problematic race conditions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Protecting-shared-data-with-mutexes"><span class="nav-number">1.2.</span> <span class="nav-text">Protecting shared data with mutexes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Using-mutexes-in-C"><span class="nav-number">1.2.1.</span> <span class="nav-text">Using mutexes in C++</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Structuring-code-for-protecting-shared-data"><span class="nav-number">1.2.2.</span> <span class="nav-text">Structuring code for protecting shared data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spotting-race-conditions-inherent-in-interfaces"><span class="nav-number">1.2.3.</span> <span class="nav-text">Spotting race conditions inherent in interfaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deadlock%EF%BC%9Athe-problem-and-a-solution"><span class="nav-number">1.2.4.</span> <span class="nav-text">Deadlock：the problem and a solution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Further-guidelines-for-avoiding-deadlock"><span class="nav-number">1.2.5.</span> <span class="nav-text">Further guidelines for avoiding deadlock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flexible-locking-with-std-unique-lock"><span class="nav-number">1.2.6.</span> <span class="nav-text">Flexible locking with std::unique_lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transferring-mutex-ownership-between-scopes"><span class="nav-number">1.2.7.</span> <span class="nav-text">Transferring mutex ownership between scopes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Locking-at-an-appropriate-granularity"><span class="nav-number">1.2.8.</span> <span class="nav-text">Locking at an appropriate granularity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Alternative-facilities-for-protecting-shared-data"><span class="nav-number">1.3.</span> <span class="nav-text">Alternative facilities for protecting shared data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Protecting-shared-data-during-initialization"><span class="nav-number">1.3.1.</span> <span class="nav-text">Protecting shared data during initialization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Protecting-rarely-updated-data-structures"><span class="nav-number">1.3.2.</span> <span class="nav-text">Protecting rarely updated data structures</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Recursive-locking"><span class="nav-number">1.3.3.</span> <span class="nav-text">Recursive locking</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">1.4.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#c-concurrency-in-action-3"><span class="nav-number">1.</span> <span class="nav-text">C++ Concurrency in Action 3</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#problems-with-sharing-data-between-threads"><span class="nav-number">1.1.</span> <span class="nav-text">Problems with
+sharing data between threads</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#race-conditions"><span class="nav-number">1.1.1.</span> <span class="nav-text">Race conditions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#avoiding-problematic-race-conditions"><span class="nav-number">1.1.2.</span> <span class="nav-text">Avoiding problematic race
+conditions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#protecting-shared-data-with-mutexes"><span class="nav-number">1.2.</span> <span class="nav-text">Protecting shared data with
+mutexes</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#using-mutexes-in-c"><span class="nav-number">1.2.1.</span> <span class="nav-text">Using mutexes in C++</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#structuring-code-for-protecting-shared-data"><span class="nav-number">1.2.2.</span> <span class="nav-text">Structuring code
+for protecting shared data</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spotting-race-conditions-inherent-in-interfaces"><span class="nav-number">1.2.3.</span> <span class="nav-text">Spotting race
+conditions inherent in interfaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#deadlockthe-problem-and-a-solution"><span class="nav-number">1.2.4.</span> <span class="nav-text">Deadlock：the problem and a
+solution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#further-guidelines-for-avoiding-deadlock"><span class="nav-number">1.2.5.</span> <span class="nav-text">Further guidelines for
+avoiding deadlock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flexible-locking-with-stdunique_lock"><span class="nav-number">1.2.6.</span> <span class="nav-text">Flexible locking with
+std::unique_lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transferring-mutex-ownership-between-scopes"><span class="nav-number">1.2.7.</span> <span class="nav-text">Transferring mutex
+ownership between scopes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#locking-at-an-appropriate-granularity"><span class="nav-number">1.2.8.</span> <span class="nav-text">Locking at an appropriate
+granularity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#alternative-facilities-for-protecting-shared-data"><span class="nav-number">1.3.</span> <span class="nav-text">Alternative
+facilities for protecting shared data</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#protecting-shared-data-during-initialization"><span class="nav-number">1.3.1.</span> <span class="nav-text">Protecting shared
+data during initialization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#protecting-rarely-updated-data-structures"><span class="nav-number">1.3.2.</span> <span class="nav-text">Protecting rarely
+updated data structures</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#recursive-locking"><span class="nav-number">1.3.3.</span> <span class="nav-text">Recursive locking</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">1.4.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -188,7 +196,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -224,12 +231,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C++ Concurrency in Action (3) - Sharing data between threads | chaomai's blog">
+      <meta itemprop="description" content="Sharing data between threads的笔记。">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -246,13 +258,13 @@
 
       <time title="Created: 2015-05-30 22:37:23" itemprop="dateCreated datePublished" datetime="2015-05-30T22:37:23+08:00">2015-05-30</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -288,7 +300,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="C-Concurrency-in-Action-3"><a href="#C-Concurrency-in-Action-3" class="headerlink" title="C++ Concurrency in Action 3"></a>C++ Concurrency in Action 3</h1><h2 id="Problems-with-sharing-data-between-threads"><a href="#Problems-with-sharing-data-between-threads" class="headerlink" title="Problems with sharing data between threads"></a>Problems with sharing data between threads</h2><p>在同一进程中，线程间的数据共享，不仅仅是便捷，还可能造成问题。</p>
+        <h1 id="c-concurrency-in-action-3">C++ Concurrency in Action 3</h1>
+<h2 id="problems-with-sharing-data-between-threads">Problems with
+sharing data between threads</h2>
+<p>在同一进程中，线程间的数据共享，不仅仅是便捷，还可能造成问题。</p>
 <p>线程间共享数据的问题，全都可以归结到修改数据的顺序。</p>
 <ul>
 <li>如果所有数据都是只读的，那么不会有任何问题。</li>
@@ -296,10 +311,19 @@
 </ul>
 <p><strong>Invariant</strong>（不变条件）：关于某个特定的数据结构，始终为真的与君。</p>
 <p>但是在多个线程修改共享数据时，invariant会被broken。</p>
-<h3 id="Race-conditions"><a href="#Race-conditions" class="headerlink" title="Race conditions"></a>Race conditions</h3><p>并发中最常见的导致问题的原因。出现在两个或多个线程的执行结果依赖于相对的执行顺序。在某些情况下，race condition是无害的，但是如果race condition使得broken invariant，这将会导致问题。C++标准定义了一种特别的race condition - data race（由于并发的修改同一个对象），data race将会导致undefined behavior。</p>
-<p>problematic race condition常常出现在完成一个操作需要修改两处或多处不同的数据。在一个线程正在修改数据，另一个可能在未修改完的时候就访问数据。</p>
-<p>由于race condition是timing sensitive的，因此在debug的时候，debugger会影响程序的timing，问题就不会再现。</p>
-<h3 id="Avoiding-problematic-race-conditions"><a href="#Avoiding-problematic-race-conditions" class="headerlink" title="Avoiding problematic race conditions"></a>Avoiding problematic race conditions</h3><ul>
+<h3 id="race-conditions">Race conditions</h3>
+<p>并发中最常见的导致问题的原因。出现在两个或多个线程的执行结果依赖于相对的执行顺序。在某些情况下，race
+condition是无害的，但是如果race condition使得broken
+invariant，这将会导致问题。C++标准定义了一种特别的race condition - data
+race（由于并发的修改同一个对象），data race将会导致undefined
+behavior。</p>
+<p>problematic race
+condition常常出现在完成一个操作需要修改两处或多处不同的数据。在一个线程正在修改数据，另一个可能在未修改完的时候就访问数据。</p>
+<p>由于race condition是timing
+sensitive的，因此在debug的时候，debugger会影响程序的timing，问题就不会再现。</p>
+<h3 id="avoiding-problematic-race-conditions">Avoiding problematic race
+conditions</h3>
+<ul>
 <li>用某种保护机制来包装数据结构。</li>
 </ul>
 <blockquote>
@@ -317,29 +341,42 @@
 <blockquote>
 <p>这就是software transactional memory（STM）。</p>
 </blockquote>
-<h2 id="Protecting-shared-data-with-mutexes"><a href="#Protecting-shared-data-with-mutexes" class="headerlink" title="Protecting shared data with mutexes"></a>Protecting shared data with mutexes</h2><p>mutex（mutual exclusion）：synchronization primitive。线程库保证一旦某个线程已经lock了某个mutex，其他所有尝试lock同一个mutex的线程，都必须等到那个成功lock这个mutex的线程unlock它。</p>
-<p>这可以保证每个线程看到的都是self-consistent view的共享数据，避免broken invariant。</p>
+<h2 id="protecting-shared-data-with-mutexes">Protecting shared data with
+mutexes</h2>
+<p>mutex（mutual exclusion）：synchronization
+primitive。线程库保证一旦某个线程已经lock了某个mutex，其他所有尝试lock同一个mutex的线程，都必须等到那个成功lock这个mutex的线程unlock它。</p>
+<p>这可以保证每个线程看到的都是self-consistent
+view的共享数据，避免broken invariant。</p>
 <p>但mutex<strong>不是</strong>silver bullet！</p>
-<h3 id="Using-mutexes-in-C"><a href="#Using-mutexes-in-C" class="headerlink" title="Using mutexes in C++"></a>Using mutexes in C++</h3><p>通过构造<code>std::mutex</code>的实例来创建一个mutex。</p>
+<h3 id="using-mutexes-in-c">Using mutexes in C++</h3>
+<p>通过构造<code>std::mutex</code>的实例来创建一个mutex。</p>
 <p>不推荐直接调用<code>std::mutex</code>的成员函数，尤其是<code>unlock()</code>。因为你必须在每段代码执行的尾部，包括异常中，都要记得unlock。<code>std::lock_guard</code>以<strong>RAII</strong>的方式来对mutex提供支持，在构造的时候lock，析构的时候unlock。</p>
 <p>用类来封装。</p>
-<h3 id="Structuring-code-for-protecting-shared-data"><a href="#Structuring-code-for-protecting-shared-data" class="headerlink" title="Structuring code for protecting shared data"></a>Structuring code for protecting shared data</h3><p>如果类的成员函数返回了指向受保护数据的指针或引用，那岂不就是开了后门？</p>
+<h3 id="structuring-code-for-protecting-shared-data">Structuring code
+for protecting shared data</h3>
+<p>如果类的成员函数返回了指向受保护数据的指针或引用，那岂不就是开了后门？</p>
 <p>那么是不是禁止返回指向受保护数据的指针或引用就ok了？</p>
 <p>还有一个没有考虑到的就是，不要向那些不在你控制下的被调用函数，传入指向受保护数据的指针或引用。</p>
 <blockquote>
-<p>Don’t  pass  pointers  and  references  to  protected  data  outside  the  scope  of  the  lock,  whether  by returning them from a function, storing them in externally visible memory, or passing them as arguments to user-supplied functions.</p>
+<p>Don't pass pointers and references to protected data outside the
+scope of the lock, whether by returning them from a function, storing
+them in externally visible memory, or passing them as arguments to
+user-supplied functions.</p>
 </blockquote>
-<h3 id="Spotting-race-conditions-inherent-in-interfaces"><a href="#Spotting-race-conditions-inherent-in-interfaces" class="headerlink" title="Spotting race conditions inherent in interfaces"></a>Spotting race conditions inherent in interfaces</h3><p>考虑一个双向链表，如果要使得一个删除操作是线程安全的，那么要必须保证避免并发的访问三个结点（要删除的和两边的）。但这并不足以避免race condition，到目前为止，只能采用避免并发的访问整个list。</p>
+<h3 id="spotting-race-conditions-inherent-in-interfaces">Spotting race
+conditions inherent in interfaces</h3>
+<p>考虑一个双向链表，如果要使得一个删除操作是线程安全的，那么要必须保证避免并发的访问三个结点（要删除的和两边的）。但这并不足以避免race
+condition，到目前为止，只能采用避免并发的访问整个list。</p>
 <p>看下面的例子：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T,<span class="keyword">typename</span> Container=<span class="built_in">std</span>::<span class="built_in">deque</span>&lt;T&gt; &gt;</span><br><span class="line">class <span class="built_in">stack</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">bool</span> empty() <span class="keyword">const</span>;</span><br><span class="line">    <span class="function"><span class="keyword">size_t</span> <span class="title">size</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">    <span class="function">T&amp; <span class="title">top</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">T <span class="keyword">const</span>&amp; <span class="title">top</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(T <span class="keyword">const</span>&amp;)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(T&amp;&amp;)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pop</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="built_in">stack</span>&amp;&amp;)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>就算让<code>top()</code>返回copy，而不是reference，这个接口还是有race conditions。这并不是基于mutex的实现独有的问题，基于lock-free的实现也会有，这是接口设计的问题。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T,<span class="keyword">typename</span> Container=std::deque&lt;T&gt; &gt;</span><br><span class="line"><span class="keyword">class</span> stack &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	...</span><br><span class="line">    <span class="type">bool</span> <span class="built_in">empty</span>() <span class="type">const</span>;</span><br><span class="line">    <span class="function"><span class="type">size_t</span> <span class="title">size</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function">T&amp; <span class="title">top</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">T <span class="type">const</span>&amp; <span class="title">top</span><span class="params">()</span> <span class="type">const</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T <span class="type">const</span>&amp;)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T&amp;&amp;)</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">pop</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(stack&amp;&amp;)</span></span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>就算让<code>top()</code>返回copy，而不是reference，这个接口还是有race
+conditions。这并不是基于mutex的实现独有的问题，基于lock-free的实现也会有，这是接口设计的问题。</p>
 <p>上例中，<code>empty()</code>和<code>top()</code>是不可靠的，因为在调用<code>empty()</code>或<code>size()</code>的线程使用它们返回的值之前，stack可能已经被其他线程改变了（可能已经empty），这时再去<code>top()</code>，stack已经不是调用<code>empty()</code>或<code>size()</code>时候的stack了。而在stack内使用mutex仅仅只能保证同一时刻，只有一个线程运行stack的成员函数，而这并不能解决这样的问题。</p>
 <p>还有一个类似的问题是，<code>top()</code>和<code>pop()</code>之间，stack也有可能被修改。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">stack</span>&lt;<span class="keyword">int</span>&gt; s;</span><br><span class="line"><span class="keyword">if</span>(!s.empty()) &#123;</span><br><span class="line">    <span class="keyword">int</span> <span class="keyword">const</span> value=s.top();</span><br><span class="line">    s.pop();</span><br><span class="line">    do_something(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">stack&lt;<span class="type">int</span>&gt; s;</span><br><span class="line"><span class="keyword">if</span>(!s.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">    <span class="type">int</span> <span class="type">const</span> value=s.<span class="built_in">top</span>();</span><br><span class="line">    s.<span class="built_in">pop</span>();</span><br><span class="line">    <span class="built_in">do_something</span>(value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>或许你觉得可以合并<code>top()</code>和<code>pop()</code>，但是<code>std::stack</code>这样分开设计不是没有理由的，简单来说，如果分开了，在return的时候，系统资源不足，copy构造函数失败，造成已经pop了，但是元素丢失（因为没有return成功）。</p>
-<p>但是，比较头疼的是，要消除race condition就是要避免这样的分开设计（lock的粒度太小，mutex不能保护整个操作），进而避免上例中，不同线程的interleave。</p>
+<p>但是，比较头疼的是，要消除race
+condition就是要避免这样的分开设计（lock的粒度太小，mutex不能保护整个操作），进而避免上例中，不同线程的interleave。</p>
 <p><strong>解法1：PASS IN A REFERENCE</strong></p>
 <p>缺陷：</p>
 <ul>
@@ -347,8 +384,10 @@
 <li>不总是可用，构造函数所需要的参数不是时时可以获得的。</li>
 <li>需要类型可赋值，但是赋值不总是可用的，尤其是自定义的类型。</li>
 </ul>
-<p><strong>解法2：REQUIRE A NO-THROW COPY CONSTRUCTOR OR MOVE CONSTRUCTOR</strong></p>
-<p>There’s only an exception safety problem with a value-returning pop() if the return by value can throw an exception.</p>
+<p><strong>解法2：REQUIRE A NO-THROW COPY CONSTRUCTOR OR MOVE
+CONSTRUCTOR</strong></p>
+<p>There's only an exception safety problem with a value-returning pop()
+if the return by value can throw an exception.</p>
 <p>缺陷：</p>
 <ul>
 <li>限制只让那些有不抛出异常的构造函数或move构造函数的的类型使用stack，虽然可行，但是不通用。</li>
@@ -360,10 +399,12 @@
 </ul>
 <p>缺陷：</p>
 <ul>
-<li>普通的方式需要管理分配给对象的内存，内存管理的开销可能还大于return by value。</li>
+<li>普通的方式需要管理分配给对象的内存，内存管理的开销可能还大于return
+by value。</li>
 </ul>
 <p>如果要使用，<code>std::shared_ptr</code>值得考虑，可以避免很多<code>new</code>和<code>delete</code>。</p>
-<p><strong>解法 4：PROVIDE BOTH OPTION 1 AND EITHER OPTION 2 OR 3</strong></p>
+<p><strong>解法 4：PROVIDE BOTH OPTION 1 AND EITHER OPTION 2 OR
+3</strong></p>
 <p>万金油，糅合1，2或1，3，要用什么，给用户自己选择。</p>
 <p><strong>EXAMPLE DEFINITION OF A THREAD-SAFE STACK</strong></p>
 <ul>
@@ -374,126 +415,173 @@
 <li>对<code>std::stack</code>进行了包装；</li>
 <li>可以加入copy的支持，只要copy的时候lock mutex即可。</li>
 </ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">empty_stack</span>:</span> <span class="built_in">std</span>::exception &#123;</span><br><span class="line">    <span class="function"><span class="keyword">const</span> <span class="keyword">char</span>* <span class="title">what</span><span class="params">()</span> <span class="keyword">const</span> <span class="title">throw</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">threadsafe_stack</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">stack</span>&lt;T&gt; data;</span><br><span class="line">    <span class="keyword">mutable</span> <span class="built_in">std</span>::mutex m;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    threadsafe_stack()&#123;&#125;</span><br><span class="line">    threadsafe_stack(<span class="keyword">const</span> threadsafe_stack&amp; other) &#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(other.m)</span></span>;</span><br><span class="line">        data=other.data;</span><br><span class="line">    &#125;</span><br><span class="line">    threadsafe_stack&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> threadsafe_stack&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">push</span><span class="params">(T new_value)</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        data.push(new_value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;T&gt; <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(data.empty()) <span class="keyword">throw</span> empty_stack();</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;T&gt; <span class="keyword">const</span> <span class="title">res</span><span class="params">(<span class="built_in">std</span>::make_shared&lt;T&gt;(data.top()))</span></span>;</span><br><span class="line">        data.pop();</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">pop</span><span class="params">(T&amp; value)</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(data.empty()) <span class="keyword">throw</span> empty_stack();</span><br><span class="line">        value=data.top();</span><br><span class="line">        data.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> data.empty();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;exception&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stack&gt;</span></span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">empty_stack</span>: std::exception &#123;</span><br><span class="line">    <span class="function"><span class="type">const</span> <span class="type">char</span>* <span class="title">what</span><span class="params">()</span> <span class="type">const</span> <span class="title">throw</span><span class="params">()</span></span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">threadsafe_stack</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::stack&lt;T&gt; data;</span><br><span class="line">    <span class="keyword">mutable</span> std::mutex m;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">threadsafe_stack</span>()&#123;&#125;</span><br><span class="line">    <span class="built_in">threadsafe_stack</span>(<span class="type">const</span> threadsafe_stack&amp; other) &#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(other.m)</span></span>;</span><br><span class="line">        data=other.data;</span><br><span class="line">    &#125;</span><br><span class="line">    threadsafe_stack&amp; <span class="keyword">operator</span>=(<span class="type">const</span> threadsafe_stack&amp;) = <span class="keyword">delete</span>;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">push</span><span class="params">(T new_value)</span> </span>&#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        data.<span class="built_in">push</span>(new_value);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">std::shared_ptr&lt;T&gt; <span class="title">pop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(data.<span class="built_in">empty</span>()) <span class="keyword">throw</span> <span class="built_in">empty_stack</span>();</span><br><span class="line">        <span class="function">std::shared_ptr&lt;T&gt; <span class="type">const</span> <span class="title">res</span><span class="params">(std::make_shared&lt;T&gt;(data.top()))</span></span>;</span><br><span class="line">        data.<span class="built_in">pop</span>();</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">pop</span><span class="params">(T&amp; value)</span> </span>&#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(data.<span class="built_in">empty</span>()) <span class="keyword">throw</span> <span class="built_in">empty_stack</span>();</span><br><span class="line">        value=data.<span class="built_in">top</span>();</span><br><span class="line">        data.<span class="built_in">pop</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m)</span></span>;</span><br><span class="line">        <span class="keyword">return</span> data.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p><strong>为什么m是mutable？</strong></p>
 <p><code>empty()</code>后跟const，说明<code>empty()</code>不能修改类的成员，除非成员被设置为mutable。</p>
 <p><strong>Granularity</strong></p>
 <p>细粒度（fine-grained）锁会导致保护不完全，锁的粒度太大会导致并发失去意义。</p>
 <p>有时细粒度锁意味着需要多个mutex，而这可能会导致deadlock。</p>
-<h3 id="Deadlock：the-problem-and-a-solution"><a href="#Deadlock：the-problem-and-a-solution" class="headerlink" title="Deadlock：the problem and a solution"></a>Deadlock：the problem and a solution</h3><p>如果有两个mutex，那么总是以同样的顺序lock mutex就不会死锁 了。但是有时以同样的顺序lock mutex并不能满足需求。</p>
+<h3 id="deadlockthe-problem-and-a-solution">Deadlock：the problem and a
+solution</h3>
+<p>如果有两个mutex，那么总是以同样的顺序lock mutex就不会死锁
+了。但是有时以同样的顺序lock mutex并不能满足需求。</p>
 <p><code>std::lock</code>：可以一次性锁住两个或多个mutex，而不会deadlock。但是如果分别获得lock，它并不能保证不死锁。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">some_big_object</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">swap</span><span class="params">(some_big_object&amp; lhs,some_big_object&amp; rhs)</span></span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">X</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    some_big_object some_detail;</span><br><span class="line">    <span class="built_in">std</span>::mutex m;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    X(some_big_object <span class="keyword">const</span>&amp; sd):some_detail(sd)&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">friend</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(X&amp; lhs, X&amp; rhs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(&amp;lhs==&amp;rhs)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        <span class="built_in">std</span>::lock(lhs.m,rhs.m);</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock_a</span><span class="params">(lhs.m,<span class="built_in">std</span>::adopt_lock)</span></span>;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock_b</span><span class="params">(rhs.m,<span class="built_in">std</span>::adopt_lock)</span></span>;</span><br><span class="line">        swap(lhs.some_detail,rhs.some_detail);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">some_big_object</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">swap</span><span class="params">(some_big_object&amp; lhs,some_big_object&amp; rhs)</span></span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">X</span> &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    some_big_object some_detail;</span><br><span class="line">    std::mutex m;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">X</span>(some_big_object <span class="type">const</span>&amp; sd):<span class="built_in">some_detail</span>(sd)&#123;&#125;</span><br><span class="line">    <span class="function"><span class="keyword">friend</span> <span class="type">void</span> <span class="title">swap</span><span class="params">(X&amp; lhs, X&amp; rhs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(&amp;lhs==&amp;rhs)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        std::<span class="built_in">lock</span>(lhs.m,rhs.m);</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock_a</span><span class="params">(lhs.m,std::adopt_lock)</span></span>;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock_b</span><span class="params">(rhs.m,std::adopt_lock)</span></span>;</span><br><span class="line">        <span class="built_in">swap</span>(lhs.some_detail,rhs.some_detail);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>上例中有这么几个要注意的地方：</p>
 <p><strong>为什么要检查是否是不同的实例？</strong></p>
 <p><code>std::lock</code>做了这么一个事情：</p>
 <blockquote>
-<p>Locks the given Lockable objects lock1, lock2, …, lockn using a deadlock avoidance algorithm to avoid deadlock. The objects are locked by an unspecified series of calls to lock, try_lock, unlock. If a call to lock or unlock results in an exception, unlock is called for any locked objects before rethrowing.</p>
+<p>Locks the given Lockable objects lock1, lock2, ..., lockn using a
+deadlock avoidance algorithm to avoid deadlock. The objects are locked
+by an unspecified series of calls to lock, try_lock, unlock. If a call
+to lock or unlock results in an exception, unlock is called for any
+locked objects before rethrowing.</p>
 </blockquote>
-<p>换句话说，作为参数的几个mutex都会被an unspecified series of calls to lock, try_lock, unlock一遍。</p>
-<p>要注意的是，必须是<a target="_blank" rel="noopener" href="http://en.cppreference.com/w/cpp/concept/Lockable">Lockable objects</a>。</p>
+<p>换句话说，作为参数的几个mutex都会被an unspecified series of calls to
+lock, try_lock, unlock一遍。</p>
+<p>要注意的是，必须是<a
+target="_blank" rel="noopener" href="http://en.cppreference.com/w/cpp/concept/Lockable">Lockable
+objects</a>。</p>
 <p>对于已经在外部lock的lockables，deadlock是无法保证不发生的。</p>
 <p>如果某个mutex是locked，deadlock是不能够保证会避免的。</p>
 <p><strong><code>std::adopt_lock</code>是什么鬼？</strong></p>
-<p>constexpr（常量表达式），tag type used to specify locking strategy 。其中std::adopt_lock：assume the calling thread already has ownership of the mutex。也就是说告诉<code>std::lock_guard</code>，给你的mutex已经锁上了，你就不要再lock一次了。</p>
+<p>constexpr（常量表达式），tag type used to specify locking strategy
+。其中std::adopt_lock：assume the calling thread already has ownership
+of the
+mutex。也就是说告诉<code>std::lock_guard</code>，给你的mutex已经锁上了，你就不要再lock一次了。</p>
 <p>下面是<code>std::lock_guard</code>的构造函数的定义：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">explicit</span> <span class="title">lock_guard</span><span class="params">(mutex_type&amp; __m)</span> : _<span class="title">M_device</span><span class="params">(__m)</span></span></span><br><span class="line"><span class="function"></span>&#123; _M_device.lock(); &#125;</span><br><span class="line"></span><br><span class="line">lock_guard(mutex_type&amp; __m, <span class="keyword">adopt_lock_t</span>) : _M_device(__m)</span><br><span class="line">&#123; &#125; <span class="comment">// calling thread owns mutex</span></span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">explicit</span> <span class="title">lock_guard</span><span class="params">(mutex_type&amp; __m)</span> : _M_device(__m)</span></span><br><span class="line"><span class="function">&#123;</span> _M_device.<span class="built_in">lock</span>(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">lock_guard</span>(mutex_type&amp; __m, <span class="type">adopt_lock_t</span>) : _M_device(__m)</span><br><span class="line">&#123; &#125; <span class="comment">// calling thread owns mutex</span></span><br></pre></td></tr></table></figure>
 <p>可以很明确的看出使用了<code>adopt_lock_t</code>后，<code>std::lock_guard</code>并没有去lock。</p>
 <p><strong>会不会抛出异常？什么地方会？抛出会怎样？</strong></p>
-<p>比较可能会，如果抛出，函数就退出了，不会进行swap；<br><code>std::lock</code>可能会（确切的说是，<code>std::lock</code>内部<code>lock lhs.m</code>或<code>rhs.m</code>的时候可能会，接着异常会传出<code>std::lock</code>），如果抛出，函数就退出了，不会进行swap；<br>构造<code>lock_guard</code>不会，标准规定的。</p>
+<p>比较可能会，如果抛出，函数就退出了，不会进行swap；
+<code>std::lock</code>可能会（确切的说是，<code>std::lock</code>内部<code>lock lhs.m</code>或<code>rhs.m</code>的时候可能会，接着异常会传出<code>std::lock</code>），如果抛出，函数就退出了，不会进行swap；
+构造<code>lock_guard</code>不会，标准规定的。</p>
 <p><code>std::lock</code>不万能，如果分别获得lock，它并不能保证不deadlock。</p>
-<h3 id="Further-guidelines-for-avoiding-deadlock"><a href="#Further-guidelines-for-avoiding-deadlock" class="headerlink" title="Further guidelines for avoiding deadlock"></a>Further guidelines for avoiding deadlock</h3><p>deadlock不仅仅出现在有lock的时候，也不局限于两个线程。</p>
+<h3 id="further-guidelines-for-avoiding-deadlock">Further guidelines for
+avoiding deadlock</h3>
+<p>deadlock不仅仅出现在有lock的时候，也不局限于两个线程。</p>
 <p>避免deadlock的方法可以归结为：不要等待一个可能等待你的线程。</p>
 <p>下面的准则能检查并消除，有其他线程等待你的可能性。</p>
 <p><strong>AVOID NESTED LOCKS</strong></p>
 <p>如果需要多个lock，用<code>std::lock</code>。</p>
-<p><strong>AVOID CALLING USER-SUPPLIED CODE WHILE HOLDING A LOCK</strong></p>
+<p><strong>AVOID CALLING USER-SUPPLIED CODE WHILE HOLDING A
+LOCK</strong></p>
 <p>用户提供的代码可能会请求另一个lock，进而违反上一个准则。</p>
 <p><strong>ACQUIRE LOCKS IN A FIXED ORDER</strong></p>
-<p>如果要获取两个或更多的lock，并且不能使用<code>std::lock</code>一次性获取，次优的方案是在每个线程中以同样的顺序获取。the key is to define the order in a way that’s consistent between threads.</p>
+<p>如果要获取两个或更多的lock，并且不能使用<code>std::lock</code>一次性获取，次优的方案是在每个线程中以同样的顺序获取。the
+key is to define the order in a way that's consistent between
+threads.</p>
 <p><strong>USE A LOCK HIERARCHY</strong></p>
-<p>lock hierarchy提供了一种方法，可以在运行时检查是否遵循lock oerding。如果一段代码已经获得了低层的lock，那么它不允许获得高层的lock。本质上就是为了保证获取lock的顺序。但是这种lock的机制，要求chain中每个mutex的hierarchy value都比前一个低，可能在某些情况下并不实用。</p>
+<p>lock hierarchy提供了一种方法，可以在运行时检查是否遵循lock
+oerding。如果一段代码已经获得了低层的lock，那么它不允许获得高层的lock。本质上就是为了保证获取lock的顺序。但是这种lock的机制，要求chain中每个mutex的hierarchy
+value都比前一个低，可能在某些情况下并不实用。</p>
 <p>下面是一个hierarchical mutex的例子，</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">hierarchical_mutex</span> &#123;</span></span><br><span class="line">  <span class="built_in">std</span>::mutex internal_mutex;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="keyword">const</span> hierarchy_value;</span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">long</span> previous_hierarchy_value;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">thread_local</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> this_thread_hierarchy_value;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">check_for_hierarchy_violation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (this_thread_hierarchy_value &lt;= hierarchy_value) &#123;</span><br><span class="line">      <span class="keyword">throw</span> <span class="built_in">std</span>::logic_error(<span class="string">&quot;mutex hierarchy violated&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">update_hierarchy_value</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    previous_hierarchy_value = this_thread_hierarchy_value;</span><br><span class="line">    this_thread_hierarchy_value = hierarchy_value;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">hierarchical_mutex</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> value)</span> :</span></span><br><span class="line">      hierarchy_value(value),</span><br><span class="line">      previous_hierarchy_value(<span class="number">0</span>) &#123;&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    check_for_hierarchy_violation();</span><br><span class="line">    internal_mutex.lock();</span><br><span class="line">    update_hierarchy_value();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    this_thread_hierarchy_value = previous_hierarchy_value;</span><br><span class="line">    internal_mutex.unlock();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">try_lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    check_for_hierarchy_violation();</span><br><span class="line">    <span class="keyword">if</span> (!internal_mutex.try_lock())</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    update_hierarchy_value();</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">thread_local</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> <span class="title">hierarchical_mutex::this_thread_hierarchy_value</span><span class="params">(ULONG_MAX)</span></span>;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">hierarchical_mutex</span> &#123;</span><br><span class="line">  std::mutex internal_mutex;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> <span class="type">const</span> hierarchy_value;</span><br><span class="line">  <span class="type">unsigned</span> <span class="type">long</span> previous_hierarchy_value;</span><br><span class="line">  <span class="type">static</span> <span class="keyword">thread_local</span> <span class="type">unsigned</span> <span class="type">long</span> this_thread_hierarchy_value;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">check_for_hierarchy_violation</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (this_thread_hierarchy_value &lt;= hierarchy_value) &#123;</span><br><span class="line">      <span class="keyword">throw</span> std::<span class="built_in">logic_error</span>(<span class="string">&quot;mutex hierarchy violated&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">update_hierarchy_value</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    previous_hierarchy_value = this_thread_hierarchy_value;</span><br><span class="line">    this_thread_hierarchy_value = hierarchy_value;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">explicit</span> <span class="title">hierarchical_mutex</span><span class="params">(<span class="type">unsigned</span> <span class="type">long</span> value)</span> :</span></span><br><span class="line"><span class="function">      hierarchy_value(value),</span></span><br><span class="line"><span class="function">      previous_hierarchy_value(<span class="number">0</span>) &#123;</span>&#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">check_for_hierarchy_violation</span>();</span><br><span class="line">    internal_mutex.<span class="built_in">lock</span>();</span><br><span class="line">    <span class="built_in">update_hierarchy_value</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    this_thread_hierarchy_value = previous_hierarchy_value;</span><br><span class="line">    internal_mutex.<span class="built_in">unlock</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="type">bool</span> <span class="title">try_lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">check_for_hierarchy_violation</span>();</span><br><span class="line">    <span class="keyword">if</span> (!internal_mutex.<span class="built_in">try_lock</span>())</span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="built_in">update_hierarchy_value</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">thread_local</span> <span class="type">unsigned</span> <span class="type">long</span> <span class="title">hierarchical_mutex::this_thread_hierarchy_value</span><span class="params">(ULONG_MAX)</span></span>;</span><br></pre></td></tr></table></figure>
 <p>有这么几个要注意的地方：</p>
 <p><strong><code>thread_local</code></strong></p>
-<p>这个是这段代码的关键。<code>thread_local</code>变量允许你在每个线程中都有一个独立的实例。在namespace的变量、类的static data member和局部变量都可以被声明为<code>thread_local</code>，并且拥有thread storage duration。</p>
-<p>{ %blockquote% }<br>When thread_local is applied to a variable of block scope, the storage-class-specifier static is implied if it does not appear explicitly.<br>{ %endblockquote% }</p>
+<p>这个是这段代码的关键。<code>thread_local</code>变量允许你在每个线程中都有一个独立的实例。在namespace的变量、类的static
+data
+member和局部变量都可以被声明为<code>thread_local</code>，并且拥有thread
+storage duration。</p>
+<p>{ %blockquote% } When thread_local is applied to a variable of block
+scope, the storage-class-specifier static is implied if it does not
+appear explicitly. { %endblockquote% }</p>
 <p>因此上例中，</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">thread_local</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> this_thread_hierarchy_value;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">thread_local</span> <span class="type">unsigned</span> <span class="type">long</span> this_thread_hierarchy_value;</span><br></pre></td></tr></table></figure>
 <p>等价于</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">thread_local</span> <span class="keyword">unsigned</span> <span class="keyword">long</span> this_thread_hierarchy_value;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">thread_local</span> <span class="type">unsigned</span> <span class="type">long</span> this_thread_hierarchy_value;</span><br></pre></td></tr></table></figure>
 <p>又因为，C++规定const静态类成员可以直接初始化，其他非const的静态类成员需要在类声明以外初始化，所以有最后的初始化。</p>
 <p><strong>一个线程有多个mutex的情况下，<code>thread_local</code>变量是共享的？</strong></p>
 <p>是的，因为它属于类，而不是某个对象。</p>
 <p><strong>三个value会不会在多个线程并发时，出现interleaving修改？</strong></p>
 <p>不会，修改是在internal mutex的lock和unlock之间。</p>
-<p>hierarchy mutex本质上说的还是lock的order，其目的就是为了避免多个线程中出现wait cycle，hierarchy mutex是把这种order强制化了。</p>
-<h3 id="Flexible-locking-with-std-unique-lock"><a href="#Flexible-locking-with-std-unique-lock" class="headerlink" title="Flexible locking with std::unique_lock"></a>Flexible locking with std::unique_lock</h3><p><code>std::unique_lock</code>提供了比<code>std::lock_guard</code>更多的灵活度（构造函数的可传入：<code>std::defer_lock</code>、<code>std::try_to_lock</code>和<code>std::adopt_lock</code>），并且不总是拥有mutex的ownership（locked）。但这两者是有代价的，<code>std::unique_lock</code>要占用更多的空间，并且稍微慢一点点，这个可以用源码看出来：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    ...</span><br><span class="line">    unique_lock(mutex_type&amp; __m, <span class="keyword">defer_lock_t</span>) <span class="keyword">noexcept</span></span><br><span class="line">    : _M_device(&amp;__m), _M_owns(<span class="literal">false</span>)</span><br><span class="line">    &#123; &#125;</span><br><span class="line">    unique_lock(mutex_type&amp; __m, <span class="keyword">try_to_lock_t</span>)</span><br><span class="line">    : _M_device(&amp;__m), _M_owns(_M_device-&gt;try_lock())</span><br><span class="line">    &#123; &#125;</span><br><span class="line">    unique_lock(mutex_type&amp; __m, <span class="keyword">adopt_lock_t</span>)</span><br><span class="line">    : _M_device(&amp;__m), _M_owns(<span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line"><span class="comment">// XXX calling thread owns mutex</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    mutex_type* _M_device;</span><br><span class="line">    <span class="keyword">bool</span> _M_owns; <span class="comment">// XXX use atomic_bool</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
-
-<p><code>std::unique_lock</code>需要flag，<code>_M_owns</code>来存储mutex的ownership，在unlock、析构等时候，需要根据flag来判断是否要forward to<code> _M_device</code>的成员函数来做实际的工作。flag可以通过<code>std::unique_lock</code>的<code>owns_lock()</code>来获得。</p>
+<p>hierarchy
+mutex本质上说的还是lock的order，其目的就是为了避免多个线程中出现wait
+cycle，hierarchy mutex是把这种order强制化了。</p>
+<h3 id="flexible-locking-with-stdunique_lock">Flexible locking with
+std::unique_lock</h3>
+<p><code>std::unique_lock</code>提供了比<code>std::lock_guard</code>更多的灵活度（构造函数的可传入：<code>std::defer_lock</code>、<code>std::try_to_lock</code>和<code>std::adopt_lock</code>），并且不总是拥有mutex的ownership（locked）。但这两者是有代价的，<code>std::unique_lock</code>要占用更多的空间，并且稍微慢一点点，这个可以用源码看出来：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">    ...</span><br><span class="line">    <span class="built_in">unique_lock</span>(mutex_type&amp; __m, <span class="type">defer_lock_t</span>) <span class="keyword">noexcept</span></span><br><span class="line">    : _M_device(&amp;__m), _M_owns(<span class="literal">false</span>)</span><br><span class="line">    &#123; &#125;</span><br><span class="line">    <span class="built_in">unique_lock</span>(mutex_type&amp; __m, <span class="type">try_to_lock_t</span>)</span><br><span class="line">    : _M_device(&amp;__m), _M_owns(_M_device-&gt;<span class="built_in">try_lock</span>())</span><br><span class="line">    &#123; &#125;</span><br><span class="line">    <span class="built_in">unique_lock</span>(mutex_type&amp; __m, <span class="type">adopt_lock_t</span>)</span><br><span class="line">    : _M_device(&amp;__m), _M_owns(<span class="literal">true</span>)</span><br><span class="line">    &#123;</span><br><span class="line"><span class="comment">// XXX calling thread owns mutex</span></span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">  <span class="keyword">private</span>:</span><br><span class="line">    mutex_type* _M_device;</span><br><span class="line">    <span class="type">bool</span> _M_owns; <span class="comment">// XXX use atomic_bool</span></span><br><span class="line">  &#125;;</span><br></pre></td></tr></table></figure>
+<p><code>std::unique_lock</code>需要flag，<code>_M_owns</code>来存储mutex的ownership，在unlock、析构等时候，需要根据flag来判断是否要forward
+to<code>_M_device</code>的成员函数来做实际的工作。flag可以通过<code>std::unique_lock</code>的<code>owns_lock()</code>来获得。</p>
 <p><code>std::unique_lock</code>还允许在实例销毁前释放lock，这样就可以在明确知道不再需要lock的时候，进行release，而不必等到销毁时，避免了其他线程额外的等待。</p>
 <p>一般来说推荐使用<code>std::lock_gurad</code>，但是如果需要额外的灵活度，那就用<code>std::unique_lock</code>，例如：</p>
 <ul>
 <li>延迟锁</li>
 <li>Transfer ownership of lock</li>
 </ul>
-<h3 id="Transferring-mutex-ownership-between-scopes"><a href="#Transferring-mutex-ownership-between-scopes" class="headerlink" title="Transferring mutex ownership between scopes"></a>Transferring mutex ownership between scopes</h3><p>Because <code>std::unique_lock</code> instances don’t have to own their associated mutexes, the ownership of a mutex can be transferred between instances by moving the instances around.</p>
+<h3 id="transferring-mutex-ownership-between-scopes">Transferring mutex
+ownership between scopes</h3>
+<p>Because <code>std::unique_lock</code> instances don't have to own
+their associated mutexes, the ownership of a mutex can be transferred
+between instances by moving the instances around.</p>
 <p><code>std::unique_lock</code>是movable，但不是copyable的。</p>
 <p>其中一个应用是返回一个lock，来transfer ownership给调用函数。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">get_lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">extern</span> <span class="built_in">std</span>::mutex some_mutex;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lk</span><span class="params">(some_mutex)</span></span>;</span><br><span class="line">    prepare_data();</span><br><span class="line">    <span class="keyword">return</span> lk;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">process_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::unique_lock&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lk</span><span class="params">(get_lock())</span></span>;</span><br><span class="line">    do_something();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="Locking-at-an-appropriate-granularity"><a href="#Locking-at-an-appropriate-granularity" class="headerlink" title="Locking at an appropriate granularity"></a>Locking at an appropriate granularity</h3><p>lock的粒度是用来描述被一个锁保护的数据的数量。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">get_lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">extern</span> std::mutex some_mutex;</span><br><span class="line">    <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(some_mutex)</span></span>;</span><br><span class="line">    <span class="built_in">prepare_data</span>();</span><br><span class="line">    <span class="keyword">return</span> lk;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">process_data</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(get_lock())</span></span>;</span><br><span class="line">    <span class="built_in">do_something</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="locking-at-an-appropriate-granularity">Locking at an appropriate
+granularity</h3>
+<p>lock的粒度是用来描述被一个锁保护的数据的数量。</p>
 <p>如果可能，只有在真正访问共享数据的时候才lock a mutex。</p>
 <p>一般来说，不要在拥有锁的时候做耗时的工作，尤其是等待其他的lock（就算知道不会deadlock），或者文件I/O（除非真的是需要保护文件的访问）。</p>
 <p><code>std::unique_lock</code>很适合用于这样的情况，因为你可以在不需要访问共享数据的时候<code>unlock()</code>，需要的时候<code>再lcok()</code>。</p>
 <p><strong>关于lock的粒度和拥有锁的时长</strong></p>
-<ol>
+<ol type="1">
 <li>如果只有一个mutex来保护整个数据结构，那么不仅仅很可能会出现更多的竞争，而且减少了lock被held的时间。</li>
 <li>对于同一个mutex，如果获得lock以后进行的操作越多，那么lock就会被held越长。</li>
 </ol>
-<p>找到一个合适的粒度，不仅仅要看锁住的数据的数量，还要看lock被获得的时长和获得lock的时候做了什么操作。In general, a lock should be held for only the minimum possible time needed to perform the required operations.</p>
+<p>找到一个合适的粒度，不仅仅要看锁住的数据的数量，还要看lock被获得的时长和获得lock的时候做了什么操作。In
+general, a lock should be held for only the minimum possible time needed
+to perform the required operations.</p>
 <p>还有一个问题就是，由于改变了lock的方式，可能会导致代码语义上的改变，有时这样的改变会导致错误。</p>
-<h2 id="Alternative-facilities-for-protecting-shared-data"><a href="#Alternative-facilities-for-protecting-shared-data" class="headerlink" title="Alternative facilities for protecting shared data"></a>Alternative facilities for protecting shared data</h2><p>在特殊情况下，有一些比mutex更合适的方式来保护共享数据。</p>
-<h3 id="Protecting-shared-data-during-initialization"><a href="#Protecting-shared-data-during-initialization" class="headerlink" title="Protecting shared data during initialization"></a>Protecting shared data during initialization</h3><p>有时候可能共享数据在创建以后就是只读的，因此只需要在创建的时候进行保护。但是如果使用mutex，仅仅在初始化的时候保护，这是不必要的，并且还会带来不必要的性能损失。</p>
+<h2 id="alternative-facilities-for-protecting-shared-data">Alternative
+facilities for protecting shared data</h2>
+<p>在特殊情况下，有一些比mutex更合适的方式来保护共享数据。</p>
+<h3 id="protecting-shared-data-during-initialization">Protecting shared
+data during initialization</h3>
+<p>有时候可能共享数据在创建以后就是只读的，因此只需要在创建的时候进行保护。但是如果使用mutex，仅仅在初始化的时候保护，这是不必要的，并且还会带来不必要的性能损失。</p>
 <p><strong>Double-Checked Locking</strong></p>
-<p>最早接触<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/double-checked-locking-with-delay-initialization">DCL</a>是在设计模式里，单例模式提到过。这个看似高效的方法之所以被骂，就是因为CPU乱序执行可能会导致线程访问没有初始化的对象。</p>
+<p>最早接触<a
+target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/double-checked-locking-with-delay-initialization">DCL</a>是在设计模式里，单例模式提到过。这个看似高效的方法之所以被骂，就是因为CPU乱序执行可能会导致线程访问没有初始化的对象。</p>
 <p>在这里也是类似的，也会带来问题。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">undefined_behaviour_with_double_checked_locking</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!resource_ptr) &#123;</span><br><span class="line">        <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lk</span><span class="params">(resource_mutex)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(!resource_ptr) &#123;</span><br><span class="line">            resource_ptr.reset(<span class="keyword">new</span> some_resource);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    resource_ptr-&gt;do_something();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">undefined_behaviour_with_double_checked_locking</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(!resource_ptr) &#123;</span><br><span class="line">        <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(resource_mutex)</span></span>;</span><br><span class="line">        <span class="keyword">if</span>(!resource_ptr) &#123;</span><br><span class="line">            resource_ptr.<span class="built_in">reset</span>(<span class="keyword">new</span> some_resource);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    resource_ptr-&gt;<span class="built_in">do_something</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这种类型的race condition叫做data race，是undefined behavior。</p>
-<p><strong>lazy initialization with <code>std::once_flag</code>和<code>std::call_once</code></strong></p>
+<p><strong>lazy initialization with
+<code>std::once_flag</code>和<code>std::call_once</code></strong></p>
 <p><code>std::call_once</code>通常比显式使用mutex会有更低的开销，尤其是当初始化已经完成的时候。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;some_resource&gt; resource_ptr;</span><br><span class="line"><span class="built_in">std</span>::once_flag resource_flag;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init_resource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    resource_ptr.reset(<span class="keyword">new</span> some_resource);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::call_once(resource_flag,init_resource);</span><br><span class="line">    resource_ptr-&gt;do_something();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">std::shared_ptr&lt;some_resource&gt; resource_ptr;</span><br><span class="line">std::once_flag resource_flag;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init_resource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    resource_ptr.<span class="built_in">reset</span>(<span class="keyword">new</span> some_resource);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    std::<span class="built_in">call_once</span>(resource_flag,init_resource);</span><br><span class="line">    resource_ptr-&gt;<span class="built_in">do_something</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当初始化函数是带有函数调用操作符的类的实例的时候，<code>std::call_once</code>也支持像<code>std::thread</code>和<code>std::bind()</code>的用法。</p>
 <p>要注意的是，如果类的成员含有不能copy或move的，那么要为它们定义特殊成员函数。</p>
 <p><strong>static</strong></p>
 <p>C++11中，规范了在多线程的情况下初始化static变量。初始化被定义为只发生在一个线程上，直到初始化完成其他线程才能继续。</p>
 <p>这可以作为<code>std::call_once</code>的替代。</p>
-<h3 id="Protecting-rarely-updated-data-structures"><a href="#Protecting-rarely-updated-data-structures" class="headerlink" title="Protecting rarely updated data structures"></a>Protecting rarely updated data structures</h3><p>用mutex来保护较少更新的数据结构不合适，当没有进行更新的时候，它消除了并发读的可能。</p>
+<h3 id="protecting-rarely-updated-data-structures">Protecting rarely
+updated data structures</h3>
+<p>用mutex来保护较少更新的数据结构不合适，当没有进行更新的时候，它消除了并发读的可能。</p>
 <p><strong>reader-writer mutex</strong></p>
 <p>允许：</p>
-<ol>
+<ol type="1">
 <li>互斥的写或共享；</li>
 <li>并发的的读。</li>
 </ol>
 <p>C++标准库没有提供这种锁，这里使用的是boost库。这种锁不是万能的，它的性能依赖于处理器的数量和读写线程相对的工作负载。</p>
 <p><strong><code>boot::shared_mutex</code></strong></p>
 <p>由boost提供。</p>
-<h3 id="Recursive-locking"><a href="#Recursive-locking" class="headerlink" title="Recursive locking"></a>Recursive locking</h3><p>可以在同一个线程中从同一个<code>std::recursive_lock</code>的实例获得多次lock。在其他线程获得lock前，当前线程<code>lock()</code>了多少次，就必须<code>unlock()</code>多少次。</p>
-<p>但是并不建议使用<code>std::recursive_lock</code>，当持有lock的时候，invariant很可能是broke的。继续lock，意味着要在invariant broken的情况下做操作。</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
-<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/18047413/is-this-an-exception-safe-implementation-of-swapmultithread">Is this an exception safe implementation of swap(multithread)?</a></li>
-<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/22794382/are-c11-thread-local-variables-automatically-static">Are C++11 thread_local variables automatically static?</a></li>
-<li><a target="_blank" rel="noopener" href="http://en.cppreference.com/w/cpp/concept/Lockable">C++ concepts: Lockable</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/double-checked-locking-with-delay-initialization">双重检查锁定与延迟初始化</a></li>
+<h3 id="recursive-locking">Recursive locking</h3>
+<p>可以在同一个线程中从同一个<code>std::recursive_lock</code>的实例获得多次lock。在其他线程获得lock前，当前线程<code>lock()</code>了多少次，就必须<code>unlock()</code>多少次。</p>
+<p>但是并不建议使用<code>std::recursive_lock</code>，当持有lock的时候，invariant很可能是broke的。继续lock，意味着要在invariant
+broken的情况下做操作。</p>
+<h2 id="reference">Reference</h2>
+<ol type="1">
+<li><a
+target="_blank" rel="noopener" href="http://stackoverflow.com/questions/18047413/is-this-an-exception-safe-implementation-of-swapmultithread">Is
+this an exception safe implementation of swap(multithread)?</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://stackoverflow.com/questions/22794382/are-c11-thread-local-variables-automatically-static">Are
+C++11 thread_local variables automatically static?</a></li>
+<li><a target="_blank" rel="noopener" href="http://en.cppreference.com/w/cpp/concept/Lockable">C++
+concepts: Lockable</a></li>
+<li><a
+target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/double-checked-locking-with-delay-initialization">双重检查锁定与延迟初始化</a></li>
 <li>C++ Concurrency in Action</li>
 </ol>
 
@@ -549,11 +637,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -572,6 +660,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

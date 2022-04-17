@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,23 +15,24 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="ziplist结构ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。 12345ziplist：&lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt;entry：&lt;prevl">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="ziplist 结构 ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。 12345ziplist：&lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt;entry：&lt;pre">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis ziplist">
 <meta property="og:url" content="https://chaomai.github.io/2019/2019-12-06-redis-ziplist/index.html">
 <meta property="og:site_name" content="chaomai&#39;s blog">
-<meta property="og:description" content="ziplist结构ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。 12345ziplist：&lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt;entry：&lt;prevl">
+<meta property="og:description" content="ziplist 结构 ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。 12345ziplist：&lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt;entry：&lt;pre">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://chaomai.github.io/images/2019/15757879857637.jpg">
 <meta property="og:image" content="https://chaomai.github.io/images/2019/15757965712995.jpg">
 <meta property="og:image" content="https://chaomai.github.io/images/2019/15757965415426.jpg">
 <meta property="article:published_time" content="2019-12-05T16:00:00.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.286Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://chaomai.github.io/images/2019/15757879857637.jpg">
@@ -50,6 +50,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -78,7 +79,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -92,12 +93,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -133,9 +129,8 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -188,7 +183,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -224,12 +218,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="redis ziplist | chaomai's blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -246,13 +245,13 @@
 
       <time title="Created: 2019-12-06 00:00:00" itemprop="dateCreated datePublished" datetime="2019-12-06T00:00:00+08:00">2019-12-06</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -287,141 +286,141 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="ziplist"><a href="#ziplist" class="headerlink" title="ziplist"></a>ziplist</h1><h1 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h1><p>ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。</p>
+        <h1 id="ziplist">ziplist</h1>
+<h1 id="结构">结构</h1>
+<p>ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ziplist：</span><br><span class="line">&lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt;</span><br><span class="line"></span><br><span class="line">entry：</span><br><span class="line">&lt;prevlen&gt; &lt;encoding&gt; &lt;entry-data&gt;</span><br></pre></td></tr></table></figure>
+<p>ziplist： *
+<code>uint32_t zlbytes</code>：ziplist占据的内存大小，包括<code>zlbytes</code>字段。
+*
+<code>uint32_t zltail</code>：最后一个entry（非zlend）的offset，记录了尾节点距离起始地址的字节数，相当于尾指针的作用。
+*
+<code>uint16_t zllen</code>：entry的数目，如果元素数目大于<code>2^16-2</code>，那么值为<code>2^16-1</code>，只有通过遍历才能得知，有多少个元素。zlen不计入entry数目。
+*
+<code>uint8_t zlend</code>：特殊的entry，ziplist的结尾标记，值为<code>0xFF</code>。</p>
+<p>每个entry大小是不固定的： *
+<code>prevlen</code>：前一个entry的长度，用于从后往前遍历时计算prev
+entry的起始地址。长度小于254字节和大于等于254字节分别使用两种存储方式。</p>
+<pre><code>| value  | prevlen | size |
+|--------|---------|------|
+|   &lt; 254     |   `0xbb`     | 1字节 |
+|   &gt;=254     |   `0xFE xx xx xx xx`   | 5字节 |
 
-<p>ziplist：</p>
+当长度大于等于254时，`0xFE`代表`prevlen`值的类型，后面的4个字节才是长度。
+
+这样存储方式刚好可以与`zlend`的`0xFF`区分开来，没有一个entry的开头会是`0xFF`。</code></pre>
 <ul>
-<li><code>uint32_t zlbytes</code>：ziplist占据的内存大小，包括<code>zlbytes</code>字段。</li>
-<li><code>uint32_t zltail</code>：最后一个entry（非zlend）的offset，记录了尾节点距离起始地址的字节数，相当于尾指针的作用。</li>
-<li><code>uint16_t zllen</code>：entry的数目，如果元素数目大于<code>2^16-2</code>，那么值为<code>2^16-1</code>，只有通过遍历才能得知，有多少个元素。zlen不计入entry数目。</li>
-<li><code>uint8_t zlend</code>：特殊的entry，ziplist的结尾标记，值为<code>0xFF</code>。</li>
-</ul>
-<p>每个entry大小是不固定的：</p>
-<ul>
-<li><p><code>prevlen</code>：前一个entry的长度，用于从后往前遍历时计算prev entry的起始地址。长度小于254字节和大于等于254字节分别使用两种存储方式。</p>
-<table>
-<thead>
-<tr>
-<th>value</th>
-<th>prevlen</th>
-<th>size</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>&lt; 254</td>
-<td><code>0xbb</code></td>
-<td>1字节</td>
-</tr>
-<tr>
-<td>&gt;=254</td>
-<td><code>0xFE xx xx xx xx</code></td>
-<td>5字节</td>
-</tr>
-</tbody></table>
-<p>  当长度大于等于254时，<code>0xFE</code>代表<code>prevlen</code>值的类型，后面的4个字节才是长度。</p>
-<p>  这样存储方式刚好可以与<code>zlend</code>的<code>0xFF</code>区分开来，没有一个entry的开头会是<code>0xFF</code>。</p>
-</li>
 <li><p><code>encoding</code>：记录了<code>entry-data</code>数据类型和长度。</p>
-<p>  前两个bit代表存储的是字节数组，还是整型。</p>
+<p>前两个bit代表存储的是字节数组，还是整型。</p>
 <table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 23%" />
+<col style="width: 34%" />
+</colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>encoding</th>
 <th>size</th>
 <th>值的类型</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td><code>00pppppp</code></td>
 <td>1 byte</td>
 <td>长度&lt;=63的字节数组</td>
 </tr>
-<tr>
-<td>`01pppppp</td>
-<td>qqqqqqqq`</td>
+<tr class="even">
+<td><code>01pppppp|qqqqqqqq</code></td>
 <td>2 bytes（14 bits使用大端序存储）</td>
+<td>长度&lt;=16383的字节数组</td>
 </tr>
-<tr>
-<td>`10000000</td>
-<td>qqqqqqqq</td>
-<td>rrrrrrrr</td>
+<tr class="odd">
+<td><code>10000000|qqqqqqqq|rrrrrrrr|ssssssss|tttttttt</code></td>
+<td>5 bytes（32 bits使用大端序存储）</td>
+<td>长度&gt;=16384，且&lt;=2^32 - 1的字节数组</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>11000000</code></td>
 <td>1 byte</td>
 <td>int16_t</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>11010000</code></td>
 <td>1 byte</td>
 <td>int32_t</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>11100000</code></td>
 <td>1 byte</td>
 <td>int64_t</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>11110000</code></td>
 <td>1 byte</td>
 <td>24 bit signed integer</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>11111110</code></td>
 <td>1 byte</td>
 <td>8 bit signed integer</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>1111xxxx</code></td>
 <td>1 byte</td>
 <td>没有<code>content</code>属性，4个bit存储[0, 12]的值</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>11111111</code></td>
 <td>1 byte</td>
 <td>zlend</td>
 </tr>
-</tbody></table>
-</li>
-<li><p><code>entry-data</code>：节点的值，字节数组或整形。</p>
-</li>
+</tbody>
+</table></li>
+<li><p><code>entry-data</code>：节点的值，字节数组或整形。</p></li>
 </ul>
-<h1 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h1><p>ziplist使用了很多宏来实现，主要是进行类型转换和指针运算以便访问相关的字段。</p>
-<p>插入分三个情况，<br><img data-src="/images/2019/15757879857637.jpg" alt="-w629"></p>
+<h1 id="插入">插入</h1>
+<p>ziplist使用了很多宏来实现，主要是进行类型转换和指针运算以便访问相关的字段。</p>
+<p>插入分三个情况， <img data-src="/images/2019/15757879857637.jpg"
+alt="-w629" /></p>
 <p>需要分别准备新entry的<code>prevlen</code>，<code>encoding</code>，分配空间。</p>
-<ol>
-<li><p><code>prevlen</code><br> 先看插入位置是否在<code>zlen</code>之前，</p>
+<ol type="1">
+<li><p><code>prevlen</code>
+先看插入位置是否在<code>zlen</code>之前，</p>
 <ul>
-<li><p>如果不在，<code>p</code>处的<code>prevlen</code>就是新entry的<code>prevlen</code>。</p>
-</li>
-<li><p>如果在，此时无法直接得知<code>prevlen</code>，需要看<code>zlend</code>前是否还有元素。若没有，则<code>zipRawEntryLength(ptail)</code>计算<code>tail</code>元素的长度。</p>
-<p><code>p</code>不是<code>zlend</code>的时候，新entry的len会作为<code>p</code>处entry的<code>prevlen</code>，需要确保<code>p</code>处<code>prevlen</code>空间足够。</p>
-<p><img data-src="/images/2019/15757965712995.jpg" alt="-w736"></p>
-</li>
+<li>如果不在，<code>p</code>处的<code>prevlen</code>就是新entry的<code>prevlen</code>。</li>
+<li>如果在，此时无法直接得知<code>prevlen</code>，需要看<code>zlend</code>前是否还有元素。若没有，则<code>zipRawEntryLength(ptail)</code>计算<code>tail</code>元素的长度。</li>
 </ul>
-</li>
-<li><p><code>encoding</code><br> 对于<code>encoding</code>，先会尝试编码为整型<code>zipTryEncoding(s,slen,&amp;value,&amp;encoding)</code>，</p>
+<p><code>p</code>不是<code>zlend</code>的时候，新entry的len会作为<code>p</code>处entry的<code>prevlen</code>，需要确保<code>p</code>处<code>prevlen</code>空间足够。</p>
+<figure>
+<img data-src="/images/2019/15757965712995.jpg" alt="-w736" />
+<figcaption aria-hidden="true">-w736</figcaption>
+</figure></li>
+<li><p><code>encoding</code>
+对于<code>encoding</code>，先会尝试编码为整型<code>zipTryEncoding(s,slen,&amp;value,&amp;encoding)</code>，</p>
 <ul>
 <li>如果可以编码为整型，那么<code>zipIntSize(encoding)</code>得到entry-data的大小。</li>
 <li>如果无法合法的编码为整型，那么根据<code>slen</code>编码为字节数组<code>zipStoreEntryEncoding(NULL,encoding,slen)</code>，entry-data的大小为<code>slen</code>。</li>
-</ul>
-</li>
-<li><p>分配空间，<br> 计算出各字段所需的空间后，<code>memmove()</code>来完成空间的调整。要注意对源地址的处理，<code>p-nextdiff</code>。</p>
+</ul></li>
+<li><p>分配空间，
+计算出各字段所需的空间后，<code>memmove()</code>来完成空间的调整。要注意对源地址的处理，<code>p-nextdiff</code>。</p>
 <ul>
-<li><p>如果<code>nextdiff == 0</code>，说明<code>p</code>处entry的<code>prevlen</code>，可以保存新entry的大小。</p>
-</li>
-<li><p>如果<code>nextdiff == 4</code>，那么说明空间不够，此时<code>p</code>处entry的<code>prevlen</code>原大小为1 byte，从<code>p</code>往前数4 bytes，加起来的5 bytes作为新<code>prevlen</code>的存储，因此从<code>p - 4</code>处开始<code>memmove()</code>。</p>
-<p>  <img data-src="/images/2019/15757965415426.jpg" alt="-w614"></p>
-</li>
-<li><p>如果<code>nextdiff == -4</code>，说明空间多出4 bytes，从<code>p + 4</code>的位置开始<code>memmove()</code>。</p>
-</li>
-</ul>
-</li>
+<li><p>如果<code>nextdiff == 0</code>，说明<code>p</code>处entry的<code>prevlen</code>，可以保存新entry的大小。</p></li>
+<li><p>如果<code>nextdiff == 4</code>，那么说明空间不够，此时<code>p</code>处entry的<code>prevlen</code>原大小为1
+byte，从<code>p</code>往前数4 bytes，加起来的5
+bytes作为新<code>prevlen</code>的存储，因此从<code>p - 4</code>处开始<code>memmove()</code>。</p>
+<figure>
+<img data-src="/images/2019/15757965415426.jpg" alt="-w614" />
+<figcaption aria-hidden="true">-w614</figcaption>
+</figure></li>
+<li><p>如果<code>nextdiff == -4</code>，说明空间多出4
+bytes，从<code>p + 4</code>的位置开始<code>memmove()</code>。</p></li>
+</ul></li>
 </ol>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> *__ziplistInsert(<span class="keyword">unsigned</span> <span class="keyword">char</span> *zl, <span class="keyword">unsigned</span> <span class="keyword">char</span> *p, <span class="keyword">unsigned</span> <span class="keyword">char</span> *s, <span class="keyword">unsigned</span> <span class="keyword">int</span> slen) &#123;</span><br><span class="line">    <span class="keyword">size_t</span> curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> prevlensize, prevlen = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">size_t</span> offset;</span><br><span class="line">    <span class="keyword">int</span> nextdiff = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> encoding = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> value = <span class="number">123456789</span>; <span class="comment">/* initialized to avoid warning. Using a value</span></span><br><span class="line"><span class="comment">                                    that is easy to see if for some reason</span></span><br><span class="line"><span class="comment">                                    we use it uninitialized. */</span></span><br><span class="line">    zlentry tail;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Find out prevlen for the entry that is inserted.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * entry开头的1 byte是不是0xFF</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 如果插入位置是在zlend处，需要判断zlend前是否有entry，</span></span><br><span class="line"><span class="comment">     * 如果没有，那么新prevlen为0，</span></span><br><span class="line"><span class="comment">     * 如果有，那么需要计算zl+zltail处entry的大小，将其设置为新entry的prevlen</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (p[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">        ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">char</span> *ptail = ZIPLIST_ENTRY_TAIL(zl);</span><br><span class="line">        <span class="keyword">if</span> (ptail[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">            prevlen = zipRawEntryLength(ptail);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* See if the entry can be encoded */</span></span><br><span class="line">    <span class="keyword">if</span> (zipTryEncoding(s,slen,&amp;value,&amp;encoding)) &#123;</span><br><span class="line">        <span class="comment">/* &#x27;encoding&#x27; is set to the appropriate integer encoding */</span></span><br><span class="line">        reqlen = zipIntSize(encoding);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* &#x27;encoding&#x27; is untouched, however zipStoreEntryEncoding will use the</span></span><br><span class="line"><span class="comment">         * string length to figure out how to encode it. */</span></span><br><span class="line">        reqlen = slen;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* We need space for both the length of the previous entry and</span></span><br><span class="line"><span class="comment">     * the length of the payload. */</span></span><br><span class="line">    reqlen += zipStorePrevEntryLength(<span class="literal">NULL</span>,prevlen);</span><br><span class="line">    reqlen += zipStoreEntryEncoding(<span class="literal">NULL</span>,encoding,slen);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* When the insert position is not equal to the tail, we need to</span></span><br><span class="line"><span class="comment">     * make sure that the next entry can hold this entry&#x27;s length in</span></span><br><span class="line"><span class="comment">     * its prevlen field. */</span></span><br><span class="line">    <span class="keyword">int</span> forcelarge = <span class="number">0</span>;</span><br><span class="line">    nextdiff = (p[<span class="number">0</span>] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (nextdiff == <span class="number">-4</span> &amp;&amp; reqlen &lt; <span class="number">4</span>) &#123;</span><br><span class="line">        nextdiff = <span class="number">0</span>;</span><br><span class="line">        forcelarge = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Store offset because a realloc may change the address of zl. */</span></span><br><span class="line">    offset = p-zl;</span><br><span class="line">    zl = ziplistResize(zl,curlen+reqlen+nextdiff);</span><br><span class="line">    p = zl+offset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Apply memory move when necessary and update tail offset. */</span></span><br><span class="line">    <span class="keyword">if</span> (p[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">        <span class="comment">/* Subtract one because of the ZIP_END bytes */</span></span><br><span class="line">        memmove(p+reqlen,p-nextdiff,curlen-offset<span class="number">-1</span>+nextdiff);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Encode this entry&#x27;s raw length in the next entry. */</span></span><br><span class="line">        <span class="keyword">if</span> (forcelarge)</span><br><span class="line">            zipStorePrevEntryLengthLarge(p+reqlen,reqlen);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            zipStorePrevEntryLength(p+reqlen,reqlen);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Update offset for tail */</span></span><br><span class="line">        ZIPLIST_TAIL_OFFSET(zl) =</span><br><span class="line">            intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+reqlen);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* When the tail contains more than one entry, we need to take</span></span><br><span class="line"><span class="comment">         * &quot;nextdiff&quot; in account as well. Otherwise, a change in the</span></span><br><span class="line"><span class="comment">         * size of prevlen doesn&#x27;t have an effect on the *tail* offset. */</span></span><br><span class="line">        zipEntry(p+reqlen, &amp;tail);</span><br><span class="line">        <span class="keyword">if</span> (p[reqlen+tail.headersize+tail.len] != ZIP_END) &#123;</span><br><span class="line">            ZIPLIST_TAIL_OFFSET(zl) =</span><br><span class="line">                intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+nextdiff);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* This element will be the new tail. */</span></span><br><span class="line">        ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(p-zl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* When nextdiff != 0, the raw length of the next entry has changed, so</span></span><br><span class="line"><span class="comment">     * we need to cascade the update throughout the ziplist */</span></span><br><span class="line">    <span class="keyword">if</span> (nextdiff != <span class="number">0</span>) &#123;</span><br><span class="line">        offset = p-zl;</span><br><span class="line">        zl = __ziplistCascadeUpdate(zl,p+reqlen);</span><br><span class="line">        p = zl+offset;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Write the entry */</span></span><br><span class="line">    p += zipStorePrevEntryLength(p,prevlen);</span><br><span class="line">    p += zipStoreEntryEncoding(p,encoding,slen);</span><br><span class="line">    <span class="keyword">if</span> (ZIP_IS_STR(encoding)) &#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(p,s,slen);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        zipSaveInteger(p,value,encoding);</span><br><span class="line">    &#125;</span><br><span class="line">    ZIPLIST_INCR_LENGTH(zl,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> zl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="连锁更新"><a href="#连锁更新" class="headerlink" title="连锁更新"></a>连锁更新</h2><p>插入或删除时，可能导致后面entry存储的<code>prevlen</code>发生变化。理论上，扩张和缩小都会有，但redis有意忽略了缩小的情况，避免连续的插入导致频繁的扩容和缩小。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">unsigned</span> <span class="type">char</span> *__ziplistInsert(<span class="type">unsigned</span> <span class="type">char</span> *zl, <span class="type">unsigned</span> <span class="type">char</span> *p, <span class="type">unsigned</span> <span class="type">char</span> *s, <span class="type">unsigned</span> <span class="type">int</span> slen) &#123;</span><br><span class="line">    <span class="type">size_t</span> curlen = intrev32ifbe(ZIPLIST_BYTES(zl)), reqlen;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">int</span> prevlensize, prevlen = <span class="number">0</span>;</span><br><span class="line">    <span class="type">size_t</span> offset;</span><br><span class="line">    <span class="type">int</span> nextdiff = <span class="number">0</span>;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span> encoding = <span class="number">0</span>;</span><br><span class="line">    <span class="type">long</span> <span class="type">long</span> value = <span class="number">123456789</span>; <span class="comment">/* initialized to avoid warning. Using a value</span></span><br><span class="line"><span class="comment">                                    that is easy to see if for some reason</span></span><br><span class="line"><span class="comment">                                    we use it uninitialized. */</span></span><br><span class="line">    zlentry tail;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Find out prevlen for the entry that is inserted.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * entry开头的1 byte是不是0xFF</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 如果插入位置是在zlend处，需要判断zlend前是否有entry，</span></span><br><span class="line"><span class="comment">     * 如果没有，那么新prevlen为0，</span></span><br><span class="line"><span class="comment">     * 如果有，那么需要计算zl+zltail处entry的大小，将其设置为新entry的prevlen</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">if</span> (p[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">        ZIP_DECODE_PREVLEN(p, prevlensize, prevlen);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">char</span> *ptail = ZIPLIST_ENTRY_TAIL(zl);</span><br><span class="line">        <span class="keyword">if</span> (ptail[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">            prevlen = zipRawEntryLength(ptail);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* See if the entry can be encoded */</span></span><br><span class="line">    <span class="keyword">if</span> (zipTryEncoding(s,slen,&amp;value,&amp;encoding)) &#123;</span><br><span class="line">        <span class="comment">/* &#x27;encoding&#x27; is set to the appropriate integer encoding */</span></span><br><span class="line">        reqlen = zipIntSize(encoding);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* &#x27;encoding&#x27; is untouched, however zipStoreEntryEncoding will use the</span></span><br><span class="line"><span class="comment">         * string length to figure out how to encode it. */</span></span><br><span class="line">        reqlen = slen;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* We need space for both the length of the previous entry and</span></span><br><span class="line"><span class="comment">     * the length of the payload. */</span></span><br><span class="line">    reqlen += zipStorePrevEntryLength(<span class="literal">NULL</span>,prevlen);</span><br><span class="line">    reqlen += zipStoreEntryEncoding(<span class="literal">NULL</span>,encoding,slen);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* When the insert position is not equal to the tail, we need to</span></span><br><span class="line"><span class="comment">     * make sure that the next entry can hold this entry&#x27;s length in</span></span><br><span class="line"><span class="comment">     * its prevlen field. */</span></span><br><span class="line">    <span class="type">int</span> forcelarge = <span class="number">0</span>;</span><br><span class="line">    nextdiff = (p[<span class="number">0</span>] != ZIP_END) ? zipPrevLenByteDiff(p,reqlen) : <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (nextdiff == <span class="number">-4</span> &amp;&amp; reqlen &lt; <span class="number">4</span>) &#123;</span><br><span class="line">        nextdiff = <span class="number">0</span>;</span><br><span class="line">        forcelarge = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Store offset because a realloc may change the address of zl. */</span></span><br><span class="line">    offset = p-zl;</span><br><span class="line">    zl = ziplistResize(zl,curlen+reqlen+nextdiff);</span><br><span class="line">    p = zl+offset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Apply memory move when necessary and update tail offset. */</span></span><br><span class="line">    <span class="keyword">if</span> (p[<span class="number">0</span>] != ZIP_END) &#123;</span><br><span class="line">        <span class="comment">/* Subtract one because of the ZIP_END bytes */</span></span><br><span class="line">        memmove(p+reqlen,p-nextdiff,curlen-offset<span class="number">-1</span>+nextdiff);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Encode this entry&#x27;s raw length in the next entry. */</span></span><br><span class="line">        <span class="keyword">if</span> (forcelarge)</span><br><span class="line">            zipStorePrevEntryLengthLarge(p+reqlen,reqlen);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            zipStorePrevEntryLength(p+reqlen,reqlen);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Update offset for tail */</span></span><br><span class="line">        ZIPLIST_TAIL_OFFSET(zl) =</span><br><span class="line">            intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+reqlen);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* When the tail contains more than one entry, we need to take</span></span><br><span class="line"><span class="comment">         * &quot;nextdiff&quot; in account as well. Otherwise, a change in the</span></span><br><span class="line"><span class="comment">         * size of prevlen doesn&#x27;t have an effect on the *tail* offset. */</span></span><br><span class="line">        zipEntry(p+reqlen, &amp;tail);</span><br><span class="line">        <span class="keyword">if</span> (p[reqlen+tail.headersize+tail.len] != ZIP_END) &#123;</span><br><span class="line">            ZIPLIST_TAIL_OFFSET(zl) =</span><br><span class="line">                intrev32ifbe(intrev32ifbe(ZIPLIST_TAIL_OFFSET(zl))+nextdiff);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">/* This element will be the new tail. */</span></span><br><span class="line">        ZIPLIST_TAIL_OFFSET(zl) = intrev32ifbe(p-zl);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* When nextdiff != 0, the raw length of the next entry has changed, so</span></span><br><span class="line"><span class="comment">     * we need to cascade the update throughout the ziplist */</span></span><br><span class="line">    <span class="keyword">if</span> (nextdiff != <span class="number">0</span>) &#123;</span><br><span class="line">        offset = p-zl;</span><br><span class="line">        zl = __ziplistCascadeUpdate(zl,p+reqlen);</span><br><span class="line">        p = zl+offset;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Write the entry */</span></span><br><span class="line">    p += zipStorePrevEntryLength(p,prevlen);</span><br><span class="line">    p += zipStoreEntryEncoding(p,encoding,slen);</span><br><span class="line">    <span class="keyword">if</span> (ZIP_IS_STR(encoding)) &#123;</span><br><span class="line">        <span class="built_in">memcpy</span>(p,s,slen);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        zipSaveInteger(p,value,encoding);</span><br><span class="line">    &#125;</span><br><span class="line">    ZIPLIST_INCR_LENGTH(zl,<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> zl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="连锁更新">连锁更新</h2>
+<p>插入或删除时，可能导致后面entry存储的<code>prevlen</code>发生变化。理论上，扩张和缩小都会有，但redis有意忽略了缩小的情况，避免连续的插入导致频繁的扩容和缩小。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (next.prevrawlensize &gt; rawlensize) &#123;</span><br><span class="line">    <span class="comment">/* This would result in shrinking, which we want to avoid.</span></span><br><span class="line"><span class="comment">     * So, set &quot;rawlen&quot; in the available bytes. */</span></span><br><span class="line">    zipStorePrevEntryLengthLarge(p+rawlen,rawlen);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    zipStorePrevEntryLength(p+rawlen,rawlen);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Stop here, as the raw length of &quot;next&quot; has not changed. */</span></span><br><span class="line"><span class="keyword">break</span>;</span><br></pre></td></tr></table></figure>
 
     </div>
@@ -472,11 +471,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -495,6 +494,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="在写代码是发现拷贝构造函数有时候没有调用，想起C++ Primer中提到过  the compiler can omit calls to the copy constructor.  后来查到是发生了copy elision。 首先有那么一个类定义，其中静态成员c是对象编号。 12345678910111213141516171819202122232425class C &amp;#123; publ">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="在写代码是发现拷贝构造函数有时候没有调用，想起C++ Primer中提到过  the compiler can omit calls to the copy constructor.  后来查到是发生了copy elision。 首先有那么一个类定义，其中静态成员c是对象编号。 12345678910111213141516171819202122232425class C &amp;#123; publ">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ Copy Elision">
 <meta property="og:url" content="https://chaomai.github.io/2016/2016-03-05-cpp-copy-elision/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2016-03-05T05:03:30.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.268Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="copy elision">
 <meta name="twitter:card" content="summary">
 
@@ -46,6 +46,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -74,7 +75,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -88,12 +89,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -128,9 +124,8 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -183,7 +178,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -219,12 +213,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C++ Copy Elision | chaomai's blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -241,13 +240,13 @@
 
       <time title="Created: 2016-03-05 13:03:30" itemprop="dateCreated datePublished" datetime="2016-03-05T13:03:30+08:00">2016-03-05</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -288,42 +287,55 @@
 </blockquote>
 <p>后来查到是发生了copy elision。</p>
 <p>首先有那么一个类定义，其中静态成员c是对象编号。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> &#123;</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  C() &#123;</span><br><span class="line">    name_ = c;</span><br><span class="line">    ++c;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; __func__ &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  C(<span class="keyword">const</span> <span class="keyword">int</span> name) : name_(name) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; __func__ &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  C(<span class="keyword">const</span> C &amp;rhs) : name_(c++) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;copy from c&quot;</span> &lt;&lt; rhs.name_ &lt;&lt; <span class="string">&quot;, c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; __func__</span><br><span class="line">         &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  C &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> C &amp;rhs) &#123;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;copy assign from c&quot;</span> &lt;&lt; rhs.name_ &lt;&lt; <span class="string">&quot;, c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span></span><br><span class="line">         &lt;&lt; __func__ &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> name_ = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">int</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> C::c = <span class="number">10000</span>;</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">C</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">C</span>() &#123;</span><br><span class="line">    name_ = c;</span><br><span class="line">    ++c;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; __func__ &lt;&lt; endl;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">C</span>(<span class="type">const</span> <span class="type">int</span> name) : <span class="built_in">name_</span>(name) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; __func__ &lt;&lt; endl;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">C</span>(<span class="type">const</span> C &amp;rhs) : <span class="built_in">name_</span>(c++) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;copy from c&quot;</span> &lt;&lt; rhs.name_ &lt;&lt; <span class="string">&quot;, c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; __func__</span><br><span class="line">         &lt;&lt; endl;</span><br><span class="line">  &#125;</span><br><span class="line">  C &amp;<span class="keyword">operator</span>=(<span class="type">const</span> C &amp;rhs) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;copy assign from c&quot;</span> &lt;&lt; rhs.name_ &lt;&lt; <span class="string">&quot;, c&quot;</span> &lt;&lt; name_ &lt;&lt; <span class="string">&quot;: &quot;</span></span><br><span class="line">         &lt;&lt; __func__ &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> name_ = <span class="number">0</span>;</span><br><span class="line">  <span class="type">static</span> <span class="type">int</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> C::c = <span class="number">10000</span>;</span><br></pre></td></tr></table></figure>
 <p>然后是有下面的几个函数定义和调用，</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(C c)</span> </span>&#123;</span><br><span class="line">  <span class="function">C <span class="title">tmp</span><span class="params">()</span></span>;</span><br><span class="line">  tmp = c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">C <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> C(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="function">C <span class="title">c1</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">f(c1);</span><br><span class="line">f(C(<span class="number">2</span>));</span><br><span class="line">C c = f();</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">f</span><span class="params">(C c)</span> </span>&#123;</span><br><span class="line">  <span class="function">C <span class="title">tmp</span><span class="params">()</span></span>;</span><br><span class="line">  tmp = c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">C <span class="title">f</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> <span class="built_in">C</span>(); &#125;</span><br><span class="line"></span><br><span class="line"><span class="function">C <span class="title">c1</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line"><span class="built_in">f</span>(c1);</span><br><span class="line"><span class="built_in">f</span>(<span class="built_in">C</span>(<span class="number">2</span>));</span><br><span class="line">C c = <span class="built_in">f</span>();</span><br></pre></td></tr></table></figure>
 <p>以上三个f的调用分别输出什么？</p>
 <p>下面是结果，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c1: C</span><br><span class="line">copy from c1, c10000: C</span><br><span class="line">c10001: C</span><br><span class="line">copy assign from c10000, c10001: operator&#x3D;</span><br><span class="line">-----</span><br><span class="line">c2: C</span><br><span class="line">c10002: C</span><br><span class="line">copy assign from c2, c10002: operator&#x3D;</span><br><span class="line">-----</span><br><span class="line">c10003: C</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">c1: C</span><br><span class="line">copy from c1, c10000: C</span><br><span class="line">c10001: C</span><br><span class="line">copy assign from c10000, c10001: operator=</span><br><span class="line">-----</span><br><span class="line">c2: C</span><br><span class="line">c10002: C</span><br><span class="line">copy assign from c2, c10002: operator=</span><br><span class="line">-----</span><br><span class="line">c10003: C</span><br></pre></td></tr></table></figure>
 <p>第一个没什么好说的，首先用<code>c1</code>对形参<code>c</code>做拷贝初始化，接着<code>tmp</code>进行默认初始化，然后用拷贝赋值，将<code>c</code>赋值给<code>tmp</code>。</p>
 <p>第二个的结果就有点怪了，为什么<code>C(2)</code>得到的临时对象直接进行了赋值，而不首先初始化形参<code>c</code>？而第三个，为什么返回的临时对象一次拷贝都没发生？</p>
-<p>因为在这两种情况中发生了copy elision（<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization">1</a>，<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/8451212/passing-temporary-object-as-parameter-by-value-is-copy-constructor-called">2</a>，<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Copy_elision">3</a>，<a target="_blank" rel="noopener" href="http://cstdlib.com/tech/2014/07/12/nrvo-and-copy-elision/">4</a>）。<strong>Copy elision</strong>是一种优化手段，满足特定条件时会发生，当传入的参数是rvalue的时候，无需进行额外的拷贝，直接使用源对象。<strong>RVO</strong>，全称叫<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Return_value_optimization">return value optimization</a>，编译器会让调用函数在其栈上分配空间，被调函数返回值处的临时对象会在这块内存上构造，进而避免了return时临时对象的拷贝，是copy elision常见形式。根据返回的对象是否是临时的，有<strong>named return value optimization</strong>和<strong>return value optimization</strong>。</p>
-<p>Copy elision和rvo即使在有可观察的到的side-effects时，也会发生，是<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/As-if_rule">As-if rule</a>的例外中的一种。Dave Abrahams写过pass by value的一系列<a target="_blank" rel="noopener" href="https://web.archive.org/web/20140205194657/http://cpp-next.com/archive/2009/08/want-speed-pass-by-value/">文章</a>。Ayman B. Shoukry在<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/ms364057(v=vs.80).aspx#nrvo_cpp05_topic3">这里</a>讨论了nrvo的局限（multiple return points和conditional initialization）。</p>
+<p>因为在这两种情况中发生了copy elision（<a
+target="_blank" rel="noopener" href="http://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization">1</a>，<a
+target="_blank" rel="noopener" href="http://stackoverflow.com/questions/8451212/passing-temporary-object-as-parameter-by-value-is-copy-constructor-called">2</a>，<a
+target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Copy_elision">3</a>，<a
+target="_blank" rel="noopener" href="http://cstdlib.com/tech/2014/07/12/nrvo-and-copy-elision/">4</a>）。<strong>Copy
+elision</strong>是一种优化手段，满足特定条件时会发生，当传入的参数是rvalue的时候，无需进行额外的拷贝，直接使用源对象。<strong>RVO</strong>，全称叫<a
+target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Return_value_optimization">return
+value
+optimization</a>，编译器会让调用函数在其栈上分配空间，被调函数返回值处的临时对象会在这块内存上构造，进而避免了return时临时对象的拷贝，是copy
+elision常见形式。根据返回的对象是否是临时的，有<strong>named return
+value optimization</strong>和<strong>return value
+optimization</strong>。</p>
+<p>Copy elision和rvo即使在有可观察的到的side-effects时，也会发生，是<a
+target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/As-if_rule">As-if
+rule</a>的例外中的一种。Dave Abrahams写过pass by value的一系列<a
+target="_blank" rel="noopener" href="https://web.archive.org/web/20140205194657/http://cpp-next.com/archive/2009/08/want-speed-pass-by-value/">文章</a>。Ayman
+B. Shoukry在<a
+target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/ms364057(v=vs.80).aspx#nrvo_cpp05_topic3">这里</a>讨论了nrvo的局限（multiple
+return points和conditional initialization）。</p>
 <p>clang++和g++可以用<code>-fno-elide-constructors</code>控制是否开启优化。关闭优化后，输出的结果就和期待的一致了，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">c1: C</span><br><span class="line">copy from c1, c10000: C</span><br><span class="line">c10001: C</span><br><span class="line">copy assign from c10000, c10001: operator&#x3D;</span><br><span class="line">-----</span><br><span class="line">c2: C</span><br><span class="line">copy from c2, c10002: C</span><br><span class="line">c10003: C</span><br><span class="line">copy assign from c10002, c10003: operator&#x3D;</span><br><span class="line">-----</span><br><span class="line">c10004: C</span><br><span class="line">copy from c10004, c10005: C</span><br><span class="line">copy from c10005, c10006: C</span><br></pre></td></tr></table></figure>
-
-<p>stackoverflow的这个<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization">答案</a>，给出了Standard reference和发生copy elision以及return value optimization常见的例子，下面是搬运例子，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">c1: C</span><br><span class="line">copy from c1, c10000: C</span><br><span class="line">c10001: C</span><br><span class="line">copy assign from c10000, c10001: operator=</span><br><span class="line">-----</span><br><span class="line">c2: C</span><br><span class="line">copy from c2, c10002: C</span><br><span class="line">c10003: C</span><br><span class="line">copy assign from c10002, c10003: operator=</span><br><span class="line">-----</span><br><span class="line">c10004: C</span><br><span class="line">copy from c10004, c10005: C</span><br><span class="line">copy from c10005, c10006: C</span><br></pre></td></tr></table></figure>
+<p>stackoverflow的这个<a
+target="_blank" rel="noopener" href="http://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization">答案</a>，给出了Standard
+reference和发生copy elision以及return value
+optimization常见的例子，下面是搬运例子，</p>
 <ul>
 <li>nrvo</li>
 </ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> &#123;</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  Thing();</span><br><span class="line">  ~Thing();</span><br><span class="line">  Thing(<span class="keyword">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function">Thing <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Thing t;</span><br><span class="line">  <span class="keyword">return</span> t; <span class="comment">// optimization</span></span><br><span class="line">&#125;</span><br><span class="line">Thing t2 = f();</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Thing</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Thing</span>();</span><br><span class="line">  ~<span class="built_in">Thing</span>();</span><br><span class="line">  <span class="built_in">Thing</span>(<span class="type">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function">Thing <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Thing t;</span><br><span class="line">  <span class="keyword">return</span> t; <span class="comment">// optimization</span></span><br><span class="line">&#125;</span><br><span class="line">Thing t2 = <span class="built_in">f</span>();</span><br></pre></td></tr></table></figure>
 <ul>
 <li>rvo</li>
 </ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> &#123;</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  Thing();</span><br><span class="line">  ~Thing();</span><br><span class="line">  Thing(<span class="keyword">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function">Thing <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> Thing(); <span class="comment">// optimization</span></span><br><span class="line">&#125;</span><br><span class="line">Thing t2 = f();</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Thing</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Thing</span>();</span><br><span class="line">  ~<span class="built_in">Thing</span>();</span><br><span class="line">  <span class="built_in">Thing</span>(<span class="type">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function">Thing <span class="title">f</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">Thing</span>(); <span class="comment">// optimization</span></span><br><span class="line">&#125;</span><br><span class="line">Thing t2 = <span class="built_in">f</span>();</span><br></pre></td></tr></table></figure>
 <ul>
 <li>pass a temporary object by value</li>
 </ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Thing</span> &#123;</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  Thing();</span><br><span class="line">  ~Thing();</span><br><span class="line">  Thing(<span class="keyword">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(Thing t)</span></span>; <span class="comment">// optimization</span></span><br><span class="line"></span><br><span class="line">foo(Thing());</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Thing</span> &#123;</span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Thing</span>();</span><br><span class="line">  ~<span class="built_in">Thing</span>();</span><br><span class="line">  <span class="built_in">Thing</span>(<span class="type">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">(Thing t)</span></span>; <span class="comment">// optimization</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">foo</span>(<span class="built_in">Thing</span>());</span><br></pre></td></tr></table></figure>
 <ul>
 <li>exception is thrown and caught by value</li>
 </ul>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Thing</span>&#123;</span></span><br><span class="line">  Thing();</span><br><span class="line">  Thing(<span class="keyword">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Thing c;</span><br><span class="line">  <span class="keyword">throw</span> c; <span class="comment">// optimization</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    foo();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">catch</span>(Thing c) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Thing</span>&#123;</span><br><span class="line">  <span class="built_in">Thing</span>();</span><br><span class="line">  <span class="built_in">Thing</span>(<span class="type">const</span> Thing&amp;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Thing c;</span><br><span class="line">  <span class="keyword">throw</span> c; <span class="comment">// optimization</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="built_in">foo</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">catch</span>(Thing c) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -373,11 +385,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -396,6 +408,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

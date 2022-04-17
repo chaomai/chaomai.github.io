@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="这篇是k-ary的第二篇，为k-ary加入了range query，列举了range query的各种实现方法：STM，lock，Persistent data structures和snapshots，并说明各种方法的优劣，提出了range query的新方法。">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这篇是k-ary的第二篇，为k-ary加入了range query，列举了range query的各种实现方法：STM，lock，Persistent data structures和snapshots，并说明各种方法的优劣，提出了range query的新方法。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Notes of Range Queries in Non-blocking k-ary Search Trees">
 <meta property="og:url" content="https://chaomai.github.io/2015/2015-12-12-notes-of-k-ary-range-query/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-12-12T06:20:46.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.266Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="reading">
 <meta property="article:tag" content="k-ary search tree">
 <meta name="twitter:card" content="summary">
@@ -47,6 +47,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -75,7 +76,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -89,12 +90,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -125,14 +121,15 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Approaches-to-Range-Queries"><span class="nav-number">1.</span> <span class="nav-text">Approaches to Range Queries</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Range-Query-in-k-ary-Search-Trees"><span class="nav-number">2.</span> <span class="nav-text">Range Query in k-ary Search Trees</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty-field"><span class="nav-number">2.1.</span> <span class="nav-text">dirty field</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Validate"><span class="nav-number">2.2.</span> <span class="nav-text">Validate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Range-Query"><span class="nav-number">2.3.</span> <span class="nav-text">Range Query</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Differences-between-snaphots-in-BST-and-range-query-in-k-ary-search-trees"><span class="nav-number">3.</span> <span class="nav-text">Differences between snaphots in BST and range query in k-ary search trees</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Some-Doubts"><span class="nav-number">4.</span> <span class="nav-text">Some Doubts</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Theorem-3-in-Proof"><span class="nav-number">4.1.</span> <span class="nav-text">Theorem 3 in Proof</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#approaches-to-range-queries"><span class="nav-number">1.</span> <span class="nav-text">Approaches to Range Queries</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#range-query-in-k-ary-search-trees"><span class="nav-number">2.</span> <span class="nav-text">Range Query in k-ary Search
+Trees</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#dirty-field"><span class="nav-number">2.1.</span> <span class="nav-text">dirty field</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#validate"><span class="nav-number">2.2.</span> <span class="nav-text">Validate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#range-query"><span class="nav-number">2.3.</span> <span class="nav-text">Range Query</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#differences-between-snaphots-in-bst-and-range-query-in-k-ary-search-trees"><span class="nav-number">3.</span> <span class="nav-text">Differences
+between snaphots in BST and range query in k-ary search trees</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#some-doubts"><span class="nav-number">4.</span> <span class="nav-text">Some Doubts</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#theorem-3-in-proof"><span class="nav-number">4.1.</span> <span class="nav-text">Theorem 3 in Proof</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#references"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -185,7 +182,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -221,12 +217,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Notes of Range Queries in Non-blocking k-ary Search Trees | chaomai's blog">
+      <meta itemprop="description" content="这篇是k-ary的第二篇，为k-ary加入了range query，列举了range query的各种实现方法：STM，lock，Persistent data structures和snapshots，并说明各种方法的优劣，提出了range query的新方法。">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -243,13 +244,13 @@
 
       <time title="Created: 2015-12-12 14:20:46" itemprop="dateCreated datePublished" datetime="2015-12-12T14:20:46+08:00">2015-12-12</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -285,57 +286,94 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="Approaches-to-Range-Queries"><a href="#Approaches-to-Range-Queries" class="headerlink" title="Approaches to Range Queries"></a>Approaches to Range Queries</h1><ul>
+        <h1 id="approaches-to-range-queries">Approaches to Range Queries</h1>
+<ul>
 <li>STM</li>
 <li>Lock</li>
 <li>Persistent data structures</li>
-<li>Snapshot<ul>
+<li>Snapshot
+<ul>
 <li>Ctrie</li>
 <li>Snap</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h1 id="Range-Query-in-k-ary-Search-Trees"><a href="#Range-Query-in-k-ary-Search-Trees" class="headerlink" title="Range Query in k-ary Search Trees"></a>Range Query in k-ary Search Trees</h1><h2 id="dirty-field"><a href="#dirty-field" class="headerlink" title="dirty field"></a><code>dirty</code> field</h2><p>The <code>dirty</code> field is set to dirty when the leaf is affected by some update operations (<code>helpInsert</code> and <code>helpMark</code>).</p>
-<h2 id="Validate"><a href="#Validate" class="headerlink" title="Validate"></a><code>Validate</code></h2><p>The <code>Validate</code> check all leaves stored in <code>snap</code>. If any <code>dirty</code> field is true, than <code>Validate</code> returns false.</p>
-<h2 id="Range-Query"><a href="#Range-Query" class="headerlink" title="Range Query"></a>Range Query</h2><p>The abridged <code>RangeQuery</code> follows few steps,</p>
-<ol>
-<li>Use DFS to populate <code>snap</code> with all leaves that may contain a key in range.</li>
-<li>Invoke <code>Validate</code> to check all the leaves stored in <code>snap</code>. If <code>Validate</code> returns false, than retry.</li>
+<h1 id="range-query-in-k-ary-search-trees">Range Query in k-ary Search
+Trees</h1>
+<h2 id="dirty-field"><code>dirty</code> field</h2>
+<p>The <code>dirty</code> field is set to dirty when the leaf is
+affected by some update operations (<code>helpInsert</code> and
+<code>helpMark</code>).</p>
+<h2 id="validate"><code>Validate</code></h2>
+<p>The <code>Validate</code> check all leaves stored in
+<code>snap</code>. If any <code>dirty</code> field is true, than
+<code>Validate</code> returns false.</p>
+<h2 id="range-query">Range Query</h2>
+<p>The abridged <code>RangeQuery</code> follows few steps,</p>
+<ol type="1">
+<li>Use DFS to populate <code>snap</code> with all leaves that may
+contain a key in range.</li>
+<li>Invoke <code>Validate</code> to check all the leaves stored in
+<code>snap</code>. If <code>Validate</code> returns false, than
+retry.</li>
 <li>Extract all keys in range from <code>snap</code> and return.</li>
 </ol>
-<h1 id="Differences-between-snaphots-in-BST-and-range-query-in-k-ary-search-trees"><a href="#Differences-between-snaphots-in-BST-and-range-query-in-k-ary-search-trees" class="headerlink" title="Differences between snaphots in BST and range query in k-ary search trees"></a>Differences between snaphots in BST and range query in k-ary search trees</h1><table>
+<h1
+id="differences-between-snaphots-in-bst-and-range-query-in-k-ary-search-trees">Differences
+between snaphots in BST and range query in k-ary search trees</h1>
+<table>
 <thead>
-<tr>
+<tr class="header">
 <th>-</th>
-<th align="center">snapshots in BST</th>
-<th align="center">range query in k-ary search trees</th>
+<th style="text-align: center;">snapshots in BST</th>
+<th style="text-align: center;">range query in k-ary search trees</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td>Efficiency</td>
-<td align="center">low (iterate all nodes while checking)</td>
-<td align="center">high</td>
+<td style="text-align: center;">low (iterate all nodes while
+checking)</td>
+<td style="text-align: center;">high</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Scope</td>
-<td align="center">global</td>
-<td align="center">partial</td>
+<td style="text-align: center;">global</td>
+<td style="text-align: center;">partial</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p><em>Just personal opinion, may contain errors.</em></p>
-<h1 id="Some-Doubts"><a href="#Some-Doubts" class="headerlink" title="Some Doubts"></a>Some Doubts</h1><h2 id="Theorem-3-in-Proof"><a href="#Theorem-3-in-Proof" class="headerlink" title="Theorem 3 in Proof"></a>Theorem 3 in Proof</h2><p>In the paper,</p>
+<h1 id="some-doubts">Some Doubts</h1>
+<h2 id="theorem-3-in-proof">Theorem 3 in Proof</h2>
+<p>In the paper,</p>
 <blockquote>
 <p>Theorem 3. All operations are non-blocking.</p>
 </blockquote>
-<p>After discussing this with Keren, both of us feel it should be a bug.</p>
-<p>But actually it’s correct.</p>
+<p>After discussing this with Keren, both of us feel it should be a
+bug.</p>
+<p>But actually it's correct.</p>
 <blockquote>
-<p>My question:<br>If the update operations are always exist (insertion and deletion are frequently invoked), than <code>RangeQuery</code> cannot return. So the <code>RangeQuery</code> is actually blocked by these update operations.</p>
-<p>Answer from Brown:<br>However, your intuition about range queries blocking is not quite correct. What you are referring to is <strong>starvation</strong>. <strong>Starvation can happen in any algorithm that is not wait-free.</strong> In order to be non-blocking, the algorithm simply needs to guarantee that, if operations are performed infinitely often, then operations will succeed infinitely often. (I.e., the system, as a whole, makes progress, even if some thread(s) starve.) Equivalently, a non-blocking progress guarantee simply states that it is impossible for /all/ threads to block forever. In your example, the fact that a range query is blocked by updates is not a problem, because the updates make progress.</p>
+<p>My question: If the update operations are always exist (insertion and
+deletion are frequently invoked), than <code>RangeQuery</code> cannot
+return. So the <code>RangeQuery</code> is actually blocked by these
+update operations.</p>
+<p>Answer from Brown: However, your intuition about range queries
+blocking is not quite correct. What you are referring to is
+<strong>starvation</strong>. <strong>Starvation can happen in any
+algorithm that is not wait-free.</strong> In order to be non-blocking,
+the algorithm simply needs to guarantee that, if operations are
+performed infinitely often, then operations will succeed infinitely
+often. (I.e., the system, as a whole, makes progress, even if some
+thread(s) starve.) Equivalently, a non-blocking progress guarantee
+simply states that it is impossible for /all/ threads to block forever.
+In your example, the fact that a range query is blocked by updates is
+not a problem, because the updates make progress.</p>
 </blockquote>
-<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><ol>
+<h1 id="references">References</h1>
+<ol type="1">
 <li>Non-blocking k-ary Search Trees, Trevor Brown, Joanna Helga</li>
-<li>Range Queries in Non-blocking k-ary Search Trees, Trevor Brown, Hillel Avni</li>
+<li>Range Queries in Non-blocking k-ary Search Trees, Trevor Brown,
+Hillel Avni</li>
 </ol>
 
     </div>
@@ -387,11 +425,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -410,6 +448,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,20 +15,21 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="最近看 mit-6.824，每个 lecture 会做一次笔记，每个笔记基本都分为，  Readings：课前阅读的论文 Lecture：讲义 Lab：实验  ReadingsMapReduce: Simplified Data Processing on Large Clusters论文实现map task运行时，  定期将生成的kv pair写入本地磁盘，并被parition函数分为R个分区。">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最近看 mit-6.824，每个 lecture 会做一次笔记，每个笔记基本都分为，  Readings：课前阅读的论文 Lecture：讲义 Lab：实验  Readings MapReduce: Simplified Data Processing on Large Clusters论文 实现 map task运行时，  定期将生成的kv pair写入本地磁盘，并被parition函数分为R个">
 <meta property="og:type" content="article">
 <meta property="og:title" content="6.824 - Spring 2017 Lecture 1 Introduction">
 <meta property="og:url" content="https://chaomai.github.io/2017/2017-04-02-6.824-Spring-2017-Lecture-1/index.html">
 <meta property="og:site_name" content="chaomai&#39;s blog">
-<meta property="og:description" content="最近看 mit-6.824，每个 lecture 会做一次笔记，每个笔记基本都分为，  Readings：课前阅读的论文 Lecture：讲义 Lab：实验  ReadingsMapReduce: Simplified Data Processing on Large Clusters论文实现map task运行时，  定期将生成的kv pair写入本地磁盘，并被parition函数分为R个分区。">
+<meta property="og:description" content="最近看 mit-6.824，每个 lecture 会做一次笔记，每个笔记基本都分为，  Readings：课前阅读的论文 Lecture：讲义 Lab：实验  Readings MapReduce: Simplified Data Processing on Large Clusters论文 实现 map task运行时，  定期将生成的kv pair写入本地磁盘，并被parition函数分为R个">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2017-04-02T07:18:30.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.271Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="6.824">
 <meta property="article:tag" content="mapreduce">
 <meta name="twitter:card" content="summary">
@@ -47,6 +47,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -75,7 +76,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -89,12 +90,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -125,14 +121,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Readings"><span class="nav-number">1.</span> <span class="nav-text">Readings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce-Simplified-Data-Processing-on-Large-Clusters%E8%AE%BA%E6%96%87"><span class="nav-number">1.1.</span> <span class="nav-text">MapReduce: Simplified Data Processing on Large Clusters论文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">master数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E9%94%99"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">容错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">局部性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%B2%92%E5%BA%A6"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">任务粒度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%A4%87%E4%BB%BD"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">任务备份</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B"><span class="nav-number">1.1.2.</span> <span class="nav-text">改进</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Partitioning-%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Partitioning 函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E8%AF%81%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">保证顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Combiner-%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">Combiner 函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">输入输出类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%AF%E4%BD%9C%E7%94%A8"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">副作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%B3%E8%BF%87-Bad-Records"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">跳过 Bad Records</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%89%A7%E8%A1%8C"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">本地执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.2.8.</span> <span class="nav-text">状态信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.1.2.9.</span> <span class="nav-text">计数器</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lectures"><span class="nav-number">2.</span> <span class="nav-text">Lectures</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Distributed-System"><span class="nav-number">2.1.</span> <span class="nav-text">Distributed System</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MapReduce"><span class="nav-number">2.2.</span> <span class="nav-text">MapReduce</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce%E6%A6%82%E8%BF%B0"><span class="nav-number">2.2.1.</span> <span class="nav-text">MapReduce概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce%E9%9A%90%E8%97%8F%E4%BA%86%E5%BE%88%E5%A4%9A%E7%97%9B%E8%8B%A6%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">2.2.2.</span> <span class="nav-text">MapReduce隐藏了很多痛苦的细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce%E6%9C%89%E5%BE%88%E5%A5%BD%E7%9A%84%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">2.2.3.</span> <span class="nav-text">MapReduce有很好的可扩展性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%8F%97%E9%99%90%E7%9A%84%E6%BD%9C%E5%9C%A8%E5%9B%A0%E7%B4%A0"><span class="nav-number">2.2.4.</span> <span class="nav-text">性能受限的潜在因素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E7%BB%86%E8%8A%82"><span class="nav-number">2.2.5.</span> <span class="nav-text">更多细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%BB%86%E8%8A%82%EF%BC%9A%E5%87%8F%E5%B0%91%E4%BD%8E%E9%80%9F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">2.2.6.</span> <span class="nav-text">设计细节：减少低速网络的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%89%AF%E5%A5%BD%E7%9A%84load-balance%EF%BC%9F"><span class="nav-number">2.2.7.</span> <span class="nav-text">如何实现良好的load balance？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%AE%B9%E9%94%99%EF%BC%9F"><span class="nav-number">2.2.8.</span> <span class="nav-text">如何实现容错？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crash-recovery%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">2.2.9.</span> <span class="nav-text">crash recovery的细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%94%99%E8%AF%AF%E5%92%8C%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.10.</span> <span class="nav-text">其他错误和问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84app%E4%B8%8D%E9%80%82%E7%94%A8%E4%BA%8EMapReduce%EF%BC%9F"><span class="nav-number">2.2.11.</span> <span class="nav-text">什么样的app不适用于MapReduce？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">2.2.12.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lab-1-MapReduce"><span class="nav-number">2.3.</span> <span class="nav-text">Lab 1: MapReduce</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#readings"><span class="nav-number">1.</span> <span class="nav-text">Readings</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce-simplified-data-processing-on-large-clusters%E8%AE%BA%E6%96%87"><span class="nav-number">1.1.</span> <span class="nav-text">MapReduce:
+Simplified Data Processing on Large Clusters论文</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#master%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">master数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%B9%E9%94%99"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">容错</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E6%80%A7"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">局部性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%B2%92%E5%BA%A6"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">任务粒度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%A4%87%E4%BB%BD"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">任务备份</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B"><span class="nav-number">1.1.2.</span> <span class="nav-text">改进</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#partitioning-%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">Partitioning 函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E8%AF%81%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">保证顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#combiner-%E5%87%BD%E6%95%B0"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">Combiner 函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">输入输出类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%AF%E4%BD%9C%E7%94%A8"><span class="nav-number">1.1.2.5.</span> <span class="nav-text">副作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%B3%E8%BF%87-bad-records"><span class="nav-number">1.1.2.6.</span> <span class="nav-text">跳过 Bad Records</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%89%A7%E8%A1%8C"><span class="nav-number">1.1.2.7.</span> <span class="nav-text">本地执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.2.8.</span> <span class="nav-text">状态信息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">1.1.2.9.</span> <span class="nav-text">计数器</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#lectures"><span class="nav-number">2.</span> <span class="nav-text">Lectures</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#distributed-system"><span class="nav-number">2.1.</span> <span class="nav-text">Distributed System</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapreduce"><span class="nav-number">2.2.</span> <span class="nav-text">MapReduce</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mapreduce%E6%A6%82%E8%BF%B0"><span class="nav-number">2.2.1.</span> <span class="nav-text">MapReduce概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mapreduce%E9%9A%90%E8%97%8F%E4%BA%86%E5%BE%88%E5%A4%9A%E7%97%9B%E8%8B%A6%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">2.2.2.</span> <span class="nav-text">MapReduce隐藏了很多痛苦的细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mapreduce%E6%9C%89%E5%BE%88%E5%A5%BD%E7%9A%84%E5%8F%AF%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">2.2.3.</span> <span class="nav-text">MapReduce有很好的可扩展性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%8F%97%E9%99%90%E7%9A%84%E6%BD%9C%E5%9C%A8%E5%9B%A0%E7%B4%A0"><span class="nav-number">2.2.4.</span> <span class="nav-text">性能受限的潜在因素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E7%BB%86%E8%8A%82"><span class="nav-number">2.2.5.</span> <span class="nav-text">更多细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%BB%86%E8%8A%82%E5%87%8F%E5%B0%91%E4%BD%8E%E9%80%9F%E7%BD%91%E7%BB%9C%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">2.2.6.</span> <span class="nav-text">设计细节：减少低速网络的影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E8%89%AF%E5%A5%BD%E7%9A%84load-balance"><span class="nav-number">2.2.7.</span> <span class="nav-text">如何实现良好的load balance？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%AE%B9%E9%94%99"><span class="nav-number">2.2.8.</span> <span class="nav-text">如何实现容错？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#crash-recovery%E7%9A%84%E7%BB%86%E8%8A%82"><span class="nav-number">2.2.9.</span> <span class="nav-text">crash recovery的细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%94%99%E8%AF%AF%E5%92%8C%E9%97%AE%E9%A2%98"><span class="nav-number">2.2.10.</span> <span class="nav-text">其他错误和问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%A0%B7%E7%9A%84app%E4%B8%8D%E9%80%82%E7%94%A8%E4%BA%8Emapreduce"><span class="nav-number">2.2.11.</span> <span class="nav-text">什么样的app不适用于MapReduce？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">2.2.12.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lab-1-mapreduce"><span class="nav-number">2.3.</span> <span class="nav-text">Lab 1: MapReduce</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -185,7 +181,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -221,12 +216,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="6.824 - Spring 2017 Lecture 1 Introduction | chaomai's blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -243,13 +243,13 @@
 
       <time title="Created: 2017-04-02 15:18:30" itemprop="dateCreated datePublished" datetime="2017-04-02T15:18:30+08:00">2017-04-02</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -290,66 +290,132 @@
 <li>Lecture：讲义</li>
 <li>Lab：实验</li>
 </ul>
-<h1 id="Readings"><a href="#Readings" class="headerlink" title="Readings"></a>Readings</h1><h2 id="MapReduce-Simplified-Data-Processing-on-Large-Clusters论文"><a href="#MapReduce-Simplified-Data-Processing-on-Large-Clusters论文" class="headerlink" title="MapReduce: Simplified Data Processing on Large Clusters论文"></a>MapReduce: Simplified Data Processing on Large Clusters论文</h2><h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><p>map task运行时，</p>
+<h1 id="readings">Readings</h1>
+<h2
+id="mapreduce-simplified-data-processing-on-large-clusters论文">MapReduce:
+Simplified Data Processing on Large Clusters论文</h2>
+<h3 id="实现">实现</h3>
+<p>map task运行时，</p>
 <ul>
 <li>定期将生成的kv pair写入本地磁盘，并被parition函数分为R个分区。</li>
-<li>这些在磁盘上的pair的位置会被返回给master，master进而把这些位置发给reduce task。</li>
+<li>这些在磁盘上的pair的位置会被返回给master，master进而把这些位置发给reduce
+task。</li>
 </ul>
 <p>reduce task运行时，</p>
 <ul>
 <li>使用RPC读取map task缓存到磁盘的数据。</li>
-<li>当reduce worker读取到所有数据时，按临时key对数据排序。因为多个intermediate key可能会由同一个Reducer处理，因此需要排序使得相同的key在一起。</li>
-<li>reduce worker遍历已排序的中间数据，将key和中间value传给用户定义的reduce函数。</li>
+<li>当reduce
+worker读取到所有数据时，按临时key对数据排序。因为多个intermediate
+key可能会由同一个Reducer处理，因此需要排序使得相同的key在一起。</li>
+<li>reduce
+worker遍历已排序的中间数据，将key和中间value传给用户定义的reduce函数。</li>
 </ul>
-<h4 id="master数据结构"><a href="#master数据结构" class="headerlink" title="master数据结构"></a>master数据结构</h4><ul>
-<li>对于每个map task和reduce task，master保存了任务状态（idle, in-progress, or completed），以及每个worker机器的身份。</li>
-<li>对于每个已完成的map task，master保存了R个分区的中间数据文件的位置和大小，每当一个map task完成，中间数据文件的位置和大小就被更新。这些信息以增量的形式，发送给有正在运行reduce task任务的机器。</li>
+<h4 id="master数据结构">master数据结构</h4>
+<ul>
+<li>对于每个map task和reduce task，master保存了任务状态（idle,
+in-progress, or completed），以及每个worker机器的身份。</li>
+<li>对于每个已完成的map
+task，master保存了R个分区的中间数据文件的位置和大小，每当一个map
+task完成，中间数据文件的位置和大小就被更新。这些信息以增量的形式，发送给有正在运行reduce
+task任务的机器。</li>
 </ul>
-<h4 id="容错"><a href="#容错" class="headerlink" title="容错"></a>容错</h4><p>由于长时间未响应master的ping，worker故障，</p>
+<h4 id="容错">容错</h4>
+<p>由于长时间未响应master的ping，worker故障，</p>
 <ul>
 <li>正在运行的map task或reduce task重置为idle-&gt;重跑。</li>
-<li>已完成的map task重置为idle-&gt;重跑，因为map task生成的中间数据是本地存储的。</li>
+<li>已完成的map task重置为idle-&gt;重跑，因为map
+task生成的中间数据是本地存储的。</li>
 <li>已完成的reduce task无需重跑，因为输出已经保存到GFS。</li>
 </ul>
-<p>当一个map task先被worker A执行，接着又被B执行（worker A失败），这次重跑会被通知到所有执行reduce task的机器。任何还没有从A读取数据的reduce task，都转而向B读取。</p>
+<p>当一个map task先被worker A执行，接着又被B执行（worker
+A失败），这次重跑会被通知到所有执行reduce
+task的机器。任何还没有从A读取数据的reduce task，都转而向B读取。</p>
 <p>master故障，</p>
 <ul>
 <li>定期保存master数据结构的checkpoint。</li>
 </ul>
 <p>semantics in the presence of failures，</p>
 <ul>
-<li><p>当用户提供的 map 和 reduce 操作的执行结果是确定的，那么分布式的实现也会产生相同的执行结果，这个结果与整个程序顺序执行产生的结果一致。这依赖于，map task 和 reduce task 输出的原子提交。每个正在执行的任务都会把输出写到临时文件。当某个map task完成时，worker向master发送包含有R个临时文件列表的消息。如果master已经收到了这个任务完成的消息，那么本条就会被忽略。而对于 reduce task，输出到GFS的时候，GFS保证了原子性。</p>
-</li>
-<li><p>当 map 和 reduce 的执行结果是不确定的，那么最终结果也是不确定的，每个 reduce 任务的执行结果都不同的不确定的串行执行的结果。</p>
-</li>
+<li><p>当用户提供的 map 和 reduce
+操作的执行结果是确定的，那么分布式的实现也会产生相同的执行结果，这个结果与整个程序顺序执行产生的结果一致。这依赖于，map
+task 和 reduce task
+输出的原子提交。每个正在执行的任务都会把输出写到临时文件。当某个map
+task完成时，worker向master发送包含有R个临时文件列表的消息。如果master已经收到了这个任务完成的消息，那么本条就会被忽略。而对于
+reduce task，输出到GFS的时候，GFS保证了原子性。</p></li>
+<li><p>当 map 和 reduce
+的执行结果是不确定的，那么最终结果也是不确定的，每个 reduce
+任务的执行结果都不同的不确定的串行执行的结果。</p></li>
 </ul>
-<h4 id="局部性"><a href="#局部性" class="headerlink" title="局部性"></a>局部性</h4><p>GFS 将文件分为 64MB 的块，并在不同机器上冗余存储。Master 可以利用文件的位置信息，在包含这个副本的机器上调度 map 任务。如果无法进行上述调度，那么就近调度（例如：同一个交换机下的 worker）。</p>
-<h4 id="任务粒度"><a href="#任务粒度" class="headerlink" title="任务粒度"></a>任务粒度</h4><p>MapReduce 把 map 任务和 reduce 任务分别分为 M 份和 R 份，理想情况下，M 和 R 应该远大于机器数目，这样有利于提高动态负载均衡和加速（当某个 worker 挂了情况下的）错误恢复：这个挂了的 worker 所执行的任务可以被重新调度到其他 worker 上进行。</p>
-<p>实现时，master 需要进行 <code>O(M + R)</code> 次调度，需要 <code>O(M * R)</code> 状态跟踪 map 产生的临时文件位置（每个 map 产生 R 个临时文件），每个 map/reduce pair 需要一个 byte。</p>
-<p>通常 R 的数量是由用户指定的，实际应用中对 M 的划分是要保证一个分片的数据量大小大约是 16-64M，R 的期望是一个比较小的数。</p>
-<h4 id="任务备份"><a href="#任务备份" class="headerlink" title="任务备份"></a>任务备份</h4><p>一个导致任务执行总时间大大延长的重要原因是存在“拖后腿的任务”，这些执行缓慢的任务可能由多种原因导致。一个通用的解决方案是，当一个 MapReduce 任务将要执行完成时，master 调度一个备份执行。当主任务（原始的）或备份执行的其中之一完成时，这个任务被标记完成。这个方法在消耗少许额外资源的情况下，大大减少了总执行时间。</p>
-<h3 id="改进"><a href="#改进" class="headerlink" title="改进"></a>改进</h3><p>提升效率的方法。</p>
-<h4 id="Partitioning-函数"><a href="#Partitioning-函数" class="headerlink" title="Partitioning 函数"></a>Partitioning 函数</h4><p>用户指定 reducer 的数目为 R，map 的中间结果按照 partitioning 函数对临时 key 的计算结果分成了 R 个部分。一般来说，默认的 partitioning 函数是足够的，但也可以自己提供 partitioning 函数来实现特定的 partition 目标。</p>
-<h4 id="保证顺序"><a href="#保证顺序" class="headerlink" title="保证顺序"></a>保证顺序</h4><p>每个 partition 的 kv 是按照临时 key 升序的顺序处理的。这保证了，</p>
+<h4 id="局部性">局部性</h4>
+<p>GFS 将文件分为 64MB 的块，并在不同机器上冗余存储。Master
+可以利用文件的位置信息，在包含这个副本的机器上调度 map
+任务。如果无法进行上述调度，那么就近调度（例如：同一个交换机下的
+worker）。</p>
+<h4 id="任务粒度">任务粒度</h4>
+<p>MapReduce 把 map 任务和 reduce 任务分别分为 M 份和 R
+份，理想情况下，M 和 R
+应该远大于机器数目，这样有利于提高动态负载均衡和加速（当某个 worker
+挂了情况下的）错误恢复：这个挂了的 worker
+所执行的任务可以被重新调度到其他 worker 上进行。</p>
+<p>实现时，master 需要进行 <code>O(M + R)</code> 次调度，需要
+<code>O(M * R)</code> 状态跟踪 map 产生的临时文件位置（每个 map 产生 R
+个临时文件），每个 map/reduce pair 需要一个 byte。</p>
+<p>通常 R 的数量是由用户指定的，实际应用中对 M
+的划分是要保证一个分片的数据量大小大约是 16-64M，R
+的期望是一个比较小的数。</p>
+<h4 id="任务备份">任务备份</h4>
+<p>一个导致任务执行总时间大大延长的重要原因是存在“拖后腿的任务”，这些执行缓慢的任务可能由多种原因导致。一个通用的解决方案是，当一个
+MapReduce 任务将要执行完成时，master
+调度一个备份执行。当主任务（原始的）或备份执行的其中之一完成时，这个任务被标记完成。这个方法在消耗少许额外资源的情况下，大大减少了总执行时间。</p>
+<h3 id="改进">改进</h3>
+<p>提升效率的方法。</p>
+<h4 id="partitioning-函数">Partitioning 函数</h4>
+<p>用户指定 reducer 的数目为 R，map 的中间结果按照 partitioning
+函数对临时 key 的计算结果分成了 R 个部分。一般来说，默认的 partitioning
+函数是足够的，但也可以自己提供 partitioning 函数来实现特定的 partition
+目标。</p>
+<h4 id="保证顺序">保证顺序</h4>
+<p>每个 partition 的 kv 是按照临时 key 升序的顺序处理的。这保证了，</p>
 <ul>
 <li>每个 reduce 产生的结果是有序的。</li>
 <li>利于按 key 的随机访问。</li>
 <li>用户觉得有序的结果方便。</li>
 </ul>
-<h4 id="Combiner-函数"><a href="#Combiner-函数" class="headerlink" title="Combiner 函数"></a>Combiner 函数</h4><p>当，</p>
+<h4 id="combiner-函数">Combiner 函数</h4>
+<p>当，</p>
 <ul>
 <li>每个 map 任务会产生大量重复的临时 key，</li>
 <li>用户提供的 reduce 函数是可交换和可结合的，</li>
 </ul>
-<p>可以在 map 任务结束以后，使用 combiner 对 map 任务的结果进行部分合并，减少网络传输的开销。</p>
-<h4 id="输入输出类型"><a href="#输入输出类型" class="headerlink" title="输入输出类型"></a>输入输出类型</h4><p>MapReduce 提供了读写多种文件格式的支持，用户也可以通过实现相应接口来自定义读写其他格式文件。</p>
-<h4 id="副作用"><a href="#副作用" class="headerlink" title="副作用"></a>副作用</h4><p>MapReduce 允许 map 或 reduce 生成辅助的输出文件，其原子性依赖于应用的实现。</p>
-<h4 id="跳过-Bad-Records"><a href="#跳过-Bad-Records" class="headerlink" title="跳过 Bad Records"></a>跳过 Bad Records</h4><p>某些特定的数据会让含有 bug 的 map 或 reduce 函数崩溃，有时无法修复这些 bug，且忽略这些数据是可接受的，那么可以使用 MapReduce 提供的机制来忽略。</p>
-<p>每个 worker 都会监控 segmentation violations 和 bus errors，如果崩溃，发送记录 -&gt; master，如果 master 发现某条记录失败次数大于 1，那么下次执行时就会跳过这条记录。</p>
-<h4 id="本地执行"><a href="#本地执行" class="headerlink" title="本地执行"></a>本地执行</h4><p>分布式环境下，debug 一个 map 或 reduce 函数是困难的。MapReduce 库允许在本地执行任务，便于调试。</p>
-<h4 id="状态信息"><a href="#状态信息" class="headerlink" title="状态信息"></a>状态信息</h4><p>master 会运行一个内部的 HTTP 服务器，展示状态信息。</p>
-<h4 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h4><p>MapReduce 库提供了一个计数器来统计事件发生的次数。worker 响应 master 的 ping 时，计数器的值就被放在 pong 中，发送到 master。master 聚合计数器的值，并在 map 和 reduce 任务结束后返回给用户。当聚合时，重复执行任务的计数器只会被统计一次。有的计数器值是由 MapReduce 库直接维护的。</p>
-<h1 id="Lectures"><a href="#Lectures" class="headerlink" title="Lectures"></a>Lectures</h1><h2 id="Distributed-System"><a href="#Distributed-System" class="headerlink" title="Distributed System"></a>Distributed System</h2><p>分布式系统提供了app使用的基础设施，通过抽象隐藏了实现的细节，这些抽象包括：</p>
+<p>可以在 map 任务结束以后，使用 combiner 对 map
+任务的结果进行部分合并，减少网络传输的开销。</p>
+<h4 id="输入输出类型">输入输出类型</h4>
+<p>MapReduce
+提供了读写多种文件格式的支持，用户也可以通过实现相应接口来自定义读写其他格式文件。</p>
+<h4 id="副作用">副作用</h4>
+<p>MapReduce 允许 map 或 reduce
+生成辅助的输出文件，其原子性依赖于应用的实现。</p>
+<h4 id="跳过-bad-records">跳过 Bad Records</h4>
+<p>某些特定的数据会让含有 bug 的 map 或 reduce
+函数崩溃，有时无法修复这些 bug，且忽略这些数据是可接受的，那么可以使用
+MapReduce 提供的机制来忽略。</p>
+<p>每个 worker 都会监控 segmentation violations 和 bus
+errors，如果崩溃，发送记录 -&gt; master，如果 master
+发现某条记录失败次数大于 1，那么下次执行时就会跳过这条记录。</p>
+<h4 id="本地执行">本地执行</h4>
+<p>分布式环境下，debug 一个 map 或 reduce 函数是困难的。MapReduce
+库允许在本地执行任务，便于调试。</p>
+<h4 id="状态信息">状态信息</h4>
+<p>master 会运行一个内部的 HTTP 服务器，展示状态信息。</p>
+<h4 id="计数器">计数器</h4>
+<p>MapReduce 库提供了一个计数器来统计事件发生的次数。worker 响应 master
+的 ping 时，计数器的值就被放在 pong 中，发送到 master。master
+聚合计数器的值，并在 map 和 reduce
+任务结束后返回给用户。当聚合时，重复执行任务的计数器只会被统计一次。有的计数器值是由
+MapReduce 库直接维护的。</p>
+<h1 id="lectures">Lectures</h1>
+<h2 id="distributed-system">Distributed System</h2>
+<p>分布式系统提供了app使用的基础设施，通过抽象隐藏了实现的细节，这些抽象包括：</p>
 <ul>
 <li>存储（storage）</li>
 <li>通信（communication）</li>
@@ -357,75 +423,79 @@
 </ul>
 <p>在讨论分布式系统时，下面几个话题会时常出现：</p>
 <ul>
-<li><p>实现<br>  RPC，线程，并发控制。</p>
-</li>
+<li><p>实现 RPC，线程，并发控制。</p></li>
 <li><p>性能</p>
 <ul>
 <li>理想情况：可扩展的吞吐量。N倍的服务器数量-&gt;（通过并行的CPU，磁盘，网络实现）N倍的吞吐量。因此为了处理更多的负载，只需要添加更多的机器。</li>
-<li>可扩展性随着N增加而变得困难：<ul>
+<li>可扩展性随着N增加而变得困难：
+<ul>
 <li>负载不均衡（Load im-blance），集群里有慢的机器（stragglers）。</li>
 <li>不可并行的代码：初始化，交互</li>
 <li>共享资源的瓶颈：网络</li>
-</ul>
-</li>
-</ul>
-</li>
+</ul></li>
+</ul></li>
 <li><p>容错</p>
 <ul>
 <li>大集群，复杂的网络-&gt;总会有出问题的地方</li>
-<li>希望能够隐藏这些错误，使得错误对app不可见<ul>
+<li>希望能够隐藏这些错误，使得错误对app不可见
+<ul>
 <li>可用性（Availability）：在出错的情况下，app能继续使用数据。</li>
 <li>持久性（Durability）：修复错误后，app能够继续正常工作。</li>
-</ul>
-</li>
-<li>big idea：多个服务器。如果一个server crash，client能继续使用其他的。</li>
-</ul>
-</li>
+</ul></li>
+<li>big idea：多个服务器。如果一个server
+crash，client能继续使用其他的。</li>
+</ul></li>
 <li><p>一致性（consistency）</p>
 <ul>
-<li>通用目的的架构需要有良好定义的行为。<ul>
+<li>通用目的的架构需要有良好定义的行为。
+<ul>
 <li>例如：<code>get(k)</code>应该返回最近的<code>put(k, v)</code>。</li>
-</ul>
-</li>
-<li>实现良好定义的行为是困难的。<ul>
+</ul></li>
+<li>实现良好定义的行为是困难的。
+<ul>
 <li>难以保证多个服务器一致。</li>
 <li>在含有多个操作的更新中，客户端执行到一半可能crash了。</li>
 <li>服务器在尴尬的时刻崩溃，例如：执行了操作但没有返回结果。</li>
 <li>由于网络问题，服务器看起来好像挂了。</li>
-</ul>
-</li>
-<li>一致性和性能是冲突的。<ul>
+</ul></li>
+<li>一致性和性能是冲突的。
+<ul>
 <li>实现一致性需要通信。</li>
 <li>“强一致性”常常导致系统性能低下。</li>
 <li>高性能通常会对app造成“弱一致性”。</li>
+</ul></li>
+<li>开发者在这个范围内追求了很多设计点（People have pursued many design
+points in this spectrum）。</li>
+</ul></li>
 </ul>
-</li>
-<li>开发者在这个范围内追求了很多设计点（People have pursued many design points in this spectrum）。</li>
-</ul>
-</li>
-</ul>
-<h2 id="MapReduce"><a href="#MapReduce" class="headerlink" title="MapReduce"></a>MapReduce</h2><h3 id="MapReduce概述"><a href="#MapReduce概述" class="headerlink" title="MapReduce概述"></a>MapReduce概述</h3><ul>
+<h2 id="mapreduce">MapReduce</h2>
+<h3 id="mapreduce概述">MapReduce概述</h3>
+<ul>
 <li>上下文：对海量数据进行多个小时的运算。</li>
 <li>总目标：普通程序员能够在保证合理的效率的情况下，轻松的将数据处理切分到多个服务器。</li>
 <li>需要定义Map和Reduce函数，非并发的代码，且常常是很简单的。</li>
 <li>MR运行在集群上，处理海量数据，隐藏分布式的细节。</li>
 </ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">input is divided into M files</span><br><span class="line">Input1 -&gt; Map -&gt; a,1 b,1 c,1</span><br><span class="line">Input2 -&gt; Map -&gt;     b,1</span><br><span class="line">Input3 -&gt; Map -&gt; a,1     c,1</span><br><span class="line">                  |   |   |</span><br><span class="line">                  |   |   -&gt; Reduce -&gt; c,2</span><br><span class="line">                  |   -----&gt; Reduce -&gt; b,2</span><br><span class="line">                  ---------&gt; Reduce -&gt; a,2</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">input is divided into M files</span><br><span class="line">Input1 -&gt; Map -&gt; a,1 b,1 c,1</span><br><span class="line">Input2 -&gt; Map -&gt;     b,1</span><br><span class="line">Input3 -&gt; Map -&gt; a,1     c,1</span><br><span class="line">                  |   |   |</span><br><span class="line">                  |   |   -&gt; Reduce -&gt; c,2</span><br><span class="line">                  |   -----&gt; Reduce -&gt; b,2</span><br><span class="line">                  ---------&gt; Reduce -&gt; a,2</span><br></pre></td></tr></table></figure>
 <ul>
 <li><code>MR</code>对每个输入文件调用<code>Map()</code>，生成<code>&lt;k2, v2&gt;</code>（中间数据）的集合</li>
 <li><code>MR</code>收集每个<code>k2</code>对应的所有<code>v2</code>，并输入给Reduce调用</li>
 <li>最后从<code>Reduce（）</code>输出<code>&lt;k2, v3&gt;</code>的集合</li>
 </ul>
-<h3 id="MapReduce隐藏了很多痛苦的细节"><a href="#MapReduce隐藏了很多痛苦的细节" class="headerlink" title="MapReduce隐藏了很多痛苦的细节"></a>MapReduce隐藏了很多痛苦的细节</h3><ul>
+<h3
+id="mapreduce隐藏了很多痛苦的细节">MapReduce隐藏了很多痛苦的细节</h3>
+<ul>
 <li>在服务器上启动s/w</li>
 <li>跟踪已结束的任务</li>
 <li>数据移动</li>
 <li>错误恢复</li>
 </ul>
-<h3 id="MapReduce有很好的可扩展性"><a href="#MapReduce有很好的可扩展性" class="headerlink" title="MapReduce有很好的可扩展性"></a>MapReduce有很好的可扩展性</h3><p>N台机器-&gt;N倍吞吐量。假设M和R都&gt;=R（大量的输入文件和map输出的key）。由于<code>Map()</code>之间无交互，可以并行执行，<code>Reduce()</code>也是，都能够并行执行，因此可以通过添加机器来增加吞吐量。</p>
-<h3 id="性能受限的潜在因素"><a href="#性能受限的潜在因素" class="headerlink" title="性能受限的潜在因素"></a>性能受限的潜在因素</h3><p>网络。在Map-&gt;Reduce的shuffle时，所有数据都需要通过网络传输，因此减少通过网络来移动的数据是关键。</p>
-<h3 id="更多细节"><a href="#更多细节" class="headerlink" title="更多细节"></a>更多细节</h3><ul>
+<h3 id="mapreduce有很好的可扩展性">MapReduce有很好的可扩展性</h3>
+<p>N台机器-&gt;N倍吞吐量。假设M和R都&gt;=R（大量的输入文件和map输出的key）。由于<code>Map()</code>之间无交互，可以并行执行，<code>Reduce()</code>也是，都能够并行执行，因此可以通过添加机器来增加吞吐量。</p>
+<h3 id="性能受限的潜在因素">性能受限的潜在因素</h3>
+<p>网络。在Map-&gt;Reduce的shuffle时，所有数据都需要通过网络传输，因此减少通过网络来移动的数据是关键。</p>
+<h3 id="更多细节">更多细节</h3>
+<ul>
 <li>mater：为worker分配任务，记录中间输出的位置。</li>
 <li>M Map tasks, R Reduce tasks。</li>
 <li>输入存储在GFS，3份冗余。</li>
@@ -434,55 +504,76 @@
 <li>mater为每个worker分配Map task，在旧任务结束时分发新任务。</li>
 <li>Map worker在本地磁盘将中间key hash到R个partition</li>
 <li>只有当所有Map结束后，本地的Reduce调用才会开始。</li>
-<li>mater告诉Reducer从Map worker获取中间数据partition（intermediate data partitions）。</li>
-<li>Reduce workers将最终结果写入GFS（一个文件对应一个Reduce task）。</li>
+<li>mater告诉Reducer从Map worker获取中间数据partition（intermediate data
+partitions）。</li>
+<li>Reduce workers将最终结果写入GFS（一个文件对应一个Reduce
+task）。</li>
 </ul>
-<h3 id="设计细节：减少低速网络的影响"><a href="#设计细节：减少低速网络的影响" class="headerlink" title="设计细节：减少低速网络的影响"></a>设计细节：减少低速网络的影响</h3><ul>
+<h3 id="设计细节减少低速网络的影响">设计细节：减少低速网络的影响</h3>
+<ul>
 <li>Map从本地磁盘读入GFS上的数据副本（replica），而不是从网络。</li>
-<li>中间数据仅仅在网络中传输一次。Map worker将数据写入本地磁盘，而不是GFS。</li>
+<li>中间数据仅仅在网络中传输一次。Map
+worker将数据写入本地磁盘，而不是GFS。</li>
 <li>中间数据被partition到包含很多key的文件。大网络中的传输更加高效。</li>
 </ul>
-<h3 id="如何实现良好的load-balance？"><a href="#如何实现良好的load-balance？" class="headerlink" title="如何实现良好的load balance？"></a>如何实现良好的load balance？</h3><p>load balance对于可扩展性很重要，N-1个server都等待1个server结束是不好的。但是有的任务就是会比其他花费更长的时间。</p>
-<p>解决方案：任务数比worker数更多。<br>master为已完成当前任务的worker分配新的任务。一般来说，就不会有大任务占据主要的计算时间。那么快的server会比慢的server完成更多的任务，最终同时完成所有任务。</p>
-<h3 id="如何实现容错？"><a href="#如何实现容错？" class="headerlink" title="如何实现容错？"></a>如何实现容错？</h3><p>如果某个server在执行MR任务期间crash怎么办？<br>不是重启整个job，MR只重新运行失败的<code>Map()</code>和<code>Reduce()</code>。这两个操作必须是纯函数：</p>
+<h3 id="如何实现良好的load-balance">如何实现良好的load balance？</h3>
+<p>load
+balance对于可扩展性很重要，N-1个server都等待1个server结束是不好的。但是有的任务就是会比其他花费更长的时间。</p>
+<p>解决方案：任务数比worker数更多。
+master为已完成当前任务的worker分配新的任务。一般来说，就不会有大任务占据主要的计算时间。那么快的server会比慢的server完成更多的任务，最终同时完成所有任务。</p>
+<h3 id="如何实现容错">如何实现容错？</h3>
+<p>如果某个server在执行MR任务期间crash怎么办？
+不是重启整个job，MR只重新运行失败的<code>Map()</code>和<code>Reduce()</code>。这两个操作必须是纯函数：</p>
 <ul>
 <li>不保留调用之间的状态。</li>
 <li>不读取和写入除了MR输入/输入的文件。</li>
 <li>任务之间没有隐藏的通信。</li>
 </ul>
 <p>因此重新执行会生成相同的结果。纯函数的要求是MR相比于其他并发编程模型的主要局限，当它也是MR简洁的关键。</p>
-<h3 id="crash-recovery的细节"><a href="#crash-recovery的细节" class="headerlink" title="crash recovery的细节"></a>crash recovery的细节</h3><ul>
-<li>Map worker crashes：<ul>
+<h3 id="crash-recovery的细节">crash recovery的细节</h3>
+<ul>
+<li>Map worker crashes：
+<ul>
 <li>master观察到worker再也不响应ping。</li>
 <li>crash的worker的中间Map输出丢失，但这个数据有可能每个Reduce任务都需要。</li>
 <li>master根据GFS上输入数据的其他副本来分配任务，并重新执行。</li>
-<li>某些Reduce worker可能已经读取了crash的worker生成的中间数据。此时就需要依赖于<code>Map()</code>的纯函数特性和确定性。</li>
+<li>某些Reduce
+worker可能已经读取了crash的worker生成的中间数据。此时就需要依赖于<code>Map()</code>的纯函数特性和确定性。</li>
 <li>如果Reduce获取到了所有的中间数据，那么master就不需要重新运行Map。然后接下来的一个Reduce会crash，进而导致强制重跑失败的Map。</li>
-</ul>
-</li>
-<li>Reduce worker crashes：<ul>
+</ul></li>
+<li>Reduce worker crashes：
+<ul>
 <li>已结束的任务不受影响，数据以冗余的形式存储在GFS。</li>
 <li>master重新执行其他worker上未完成的任务。</li>
-</ul>
-</li>
-<li>Reduce worker在写入输出数据期间crash：<ul>
+</ul></li>
+<li>Reduce worker在写入输出数据期间crash：
+<ul>
 <li>GFS的rename是atomic的，在写入完成前数据不可见。因此master可以安全的在其他地方重跑Reduce任务。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h3 id="其他错误和问题"><a href="#其他错误和问题" class="headerlink" title="其他错误和问题"></a>其他错误和问题</h3><ul>
-<li>master给两个worker分配了相同的<code>Map()</code>任务怎么办？<br>  原因可能是master错误的认为worker挂了。master只会将其中一个告诉给Reduce worker。</li>
-<li>master给两个worker分配了相同的<code>Reduce()</code>任务怎么办？<br>  两个都会尝试在GFS中写入相同的文件。GFS rename的atomic性质避免了结果是两者的混合，只有一个完整的文件可见。而<code>Reduce()</code>的纯函数特性使得两次输出的文件是一样的。</li>
-<li>如果某个worker很慢怎么办？<br>  原因可能是硬件问题。master重新运行最后几个任务。</li>
-<li>如果worker由于h/w或s/w问题计算出了错误的输出怎么办？<br>  ╮(╯_╰)╭，MR假设CPU和software是“<a target="_blank" rel="noopener" href="https://github.com/chaomai/mit-6.824/blob/master/docs/LEC%201/FailStop.pdf">fail-stop</a>”的。</li>
-<li>如果master crash了怎么办？<ul>
+<h3 id="其他错误和问题">其他错误和问题</h3>
+<ul>
+<li>master给两个worker分配了相同的<code>Map()</code>任务怎么办？
+原因可能是master错误的认为worker挂了。master只会将其中一个告诉给Reduce
+worker。</li>
+<li>master给两个worker分配了相同的<code>Reduce()</code>任务怎么办？
+两个都会尝试在GFS中写入相同的文件。GFS
+rename的atomic性质避免了结果是两者的混合，只有一个完整的文件可见。而<code>Reduce()</code>的纯函数特性使得两次输出的文件是一样的。</li>
+<li>如果某个worker很慢怎么办？
+原因可能是硬件问题。master重新运行最后几个任务。</li>
+<li>如果worker由于h/w或s/w问题计算出了错误的输出怎么办？
+╮(╯_╰)╭，MR假设CPU和software是“<a
+target="_blank" rel="noopener" href="https://github.com/chaomai/mit-6.824/blob/master/docs/LEC%201/FailStop.pdf">fail-stop</a>”的。</li>
+<li>如果master crash了怎么办？
+<ul>
 <li>从check-point恢复。</li>
 <li>放弃执行任务。</li>
 <li>使用多个master，一个可用，剩余standby。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h3 id="什么样的app不适用于MapReduce？"><a href="#什么样的app不适用于MapReduce？" class="headerlink" title="什么样的app不适用于MapReduce？"></a>什么样的app不适用于MapReduce？</h3><ul>
+<h3
+id="什么样的app不适用于mapreduce">什么样的app不适用于MapReduce？</h3>
+<ul>
 <li>不是所有app都适用于map/shuffle/reduce模式。</li>
 <li>小数据量，因为开销很高。例如：网站的后端。</li>
 <li>对海量数据的小更新。例如：为一个大索引添加小文件。</li>
@@ -490,18 +581,26 @@
 <li>多次shuffle，例如：page-rank。可以使用多个MR来实现，但是不高效。</li>
 <li>更灵活的系统可以实现上述目标，但会导致更复杂的模型。</li>
 </ul>
-<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>MapReduce让集群计算受欢迎。</p>
+<h3 id="结论">结论</h3>
+<p>MapReduce让集群计算受欢迎。</p>
 <ul>
 <li>不是最高效和灵活的。</li>
 <li>可扩展性良好。</li>
 <li>易于编程，错误和数据移动被隐藏了。</li>
 </ul>
 <p>这些在实践中是很好的权衡。</p>
-<h2 id="Lab-1-MapReduce"><a href="#Lab-1-MapReduce" class="headerlink" title="Lab 1: MapReduce"></a>Lab 1: MapReduce</h2><ul>
+<h2 id="lab-1-mapreduce">Lab 1: MapReduce</h2>
+<ul>
 <li>实验给出了框架代码，需要完成关键函数。</li>
-<li>MapReduce的分布式实现除了需要关注task，还需要考虑存储，分布式存储不是这里的重点，因此实验在一台机器上运行worker thread，使用系统的文件系统模拟分布式存储。</li>
-<li>实验要求实现两种模式的MR，顺序执行所有task，以及分别并行执行map和reduce task。实验给出了的框架代码使用了go的channel来实现并行执行task。而对于顺序执行task的实现，实际上是分别把所有map和reduce task做了一次封装，得到“一个map task”和“一个reduce task”，分别执行封装好的“map task”和“reduce task”，其中每个实际的map和reduce都是顺序执行的。</li>
-<li>lab的代码在<a target="_blank" rel="noopener" href="https://github.com/chaomai/mit-6.824/tree/master/src/mapreduce">github.com/chaomai/mit-6.824</a></li>
+<li>MapReduce的分布式实现除了需要关注task，还需要考虑存储，分布式存储不是这里的重点，因此实验在一台机器上运行worker
+thread，使用系统的文件系统模拟分布式存储。</li>
+<li>实验要求实现两种模式的MR，顺序执行所有task，以及分别并行执行map和reduce
+task。实验给出了的框架代码使用了go的channel来实现并行执行task。而对于顺序执行task的实现，实际上是分别把所有map和reduce
+task做了一次封装，得到“一个map task”和“一个reduce
+task”，分别执行封装好的“map task”和“reduce
+task”，其中每个实际的map和reduce都是顺序执行的。</li>
+<li>lab的代码在<a
+target="_blank" rel="noopener" href="https://github.com/chaomai/mit-6.824/tree/master/src/mapreduce">github.com/chaomai/mit-6.824</a></li>
 </ul>
 
     </div>
@@ -553,11 +652,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -576,6 +675,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

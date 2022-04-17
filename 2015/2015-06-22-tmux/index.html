@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="tmux的简单操作。">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="tmux的简单操作。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Tmux">
 <meta property="og:url" content="https://chaomai.github.io/2015/2015-06-22-tmux/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-06-22T12:36:57.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.261Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="tmux">
 <meta name="twitter:card" content="summary">
 
@@ -46,6 +46,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -74,7 +75,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -88,12 +89,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -124,14 +120,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Basic"><span class="nav-number">1.</span> <span class="nav-text">Basic</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Creating-Named-Sessions"><span class="nav-number">1.1.</span> <span class="nav-text">Creating Named Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Detaching-Sessions"><span class="nav-number">1.2.</span> <span class="nav-text">Detaching Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reattaching-to-Existing-Sessions"><span class="nav-number">1.3.</span> <span class="nav-text">Reattaching to Existing Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Killing-Sessions"><span class="nav-number">1.4.</span> <span class="nav-text">Killing Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Creating-and-Naming-Windows"><span class="nav-number">1.5.</span> <span class="nav-text">Creating and Naming Windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Moving-Between-Windows"><span class="nav-number">1.6.</span> <span class="nav-text">Moving Between Windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Close-a-Window"><span class="nav-number">1.7.</span> <span class="nav-text">Close a Window</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Panes"><span class="nav-number">1.8.</span> <span class="nav-text">Panes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pane-Layouts"><span class="nav-number">1.9.</span> <span class="nav-text">Pane Layouts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Closing-Panes"><span class="nav-number">1.10.</span> <span class="nav-text">Closing Panes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Command-Mode"><span class="nav-number">1.11.</span> <span class="nav-text">Command Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Quick-Reference"><span class="nav-number">1.12.</span> <span class="nav-text">Quick Reference</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">2.</span> <span class="nav-text">References</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#basic"><span class="nav-number">1.</span> <span class="nav-text">Basic</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#creating-named-sessions"><span class="nav-number">1.1.</span> <span class="nav-text">Creating Named Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#detaching-sessions"><span class="nav-number">1.2.</span> <span class="nav-text">Detaching Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reattaching-to-existing-sessions"><span class="nav-number">1.3.</span> <span class="nav-text">Reattaching to Existing
+Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#killing-sessions"><span class="nav-number">1.4.</span> <span class="nav-text">Killing Sessions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#creating-and-naming-windows"><span class="nav-number">1.5.</span> <span class="nav-text">Creating and Naming Windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#moving-between-windows"><span class="nav-number">1.6.</span> <span class="nav-text">Moving Between Windows</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#close-a-window"><span class="nav-number">1.7.</span> <span class="nav-text">Close a Window</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#panes"><span class="nav-number">1.8.</span> <span class="nav-text">Panes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pane-layouts"><span class="nav-number">1.9.</span> <span class="nav-text">Pane Layouts</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#closing-panes"><span class="nav-number">1.10.</span> <span class="nav-text">Closing Panes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#command-mode"><span class="nav-number">1.11.</span> <span class="nav-text">Command Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#quick-reference"><span class="nav-number">1.12.</span> <span class="nav-text">Quick Reference</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">2.</span> <span class="nav-text">References</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -184,7 +180,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -220,12 +215,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Tmux | chaomai's blog">
+      <meta itemprop="description" content="tmux的简单操作。">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -242,13 +242,13 @@
 
       <time title="Created: 2015-06-22 20:36:57" itemprop="dateCreated datePublished" datetime="2015-06-22T20:36:57+08:00">2015-06-22</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -284,70 +284,75 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="Basic"><a href="#Basic" class="headerlink" title="Basic"></a>Basic</h2><h3 id="Creating-Named-Sessions"><a href="#Creating-Named-Sessions" class="headerlink" title="Creating Named Sessions"></a>Creating Named Sessions</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new-session -s basic</span><br></pre></td></tr></table></figure>
-
+        <h2 id="basic">Basic</h2>
+<h3 id="creating-named-sessions">Creating Named Sessions</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new-session -s basic</span><br></pre></td></tr></table></figure>
 <p>or</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new -s basic</span><br></pre></td></tr></table></figure>
-
-<h3 id="Detaching-Sessions"><a href="#Detaching-Sessions" class="headerlink" title="Detaching Sessions"></a>Detaching Sessions</h3><p><code>CTRL-b</code>, then <code>d</code></p>
-<h3 id="Reattaching-to-Existing-Sessions"><a href="#Reattaching-to-Existing-Sessions" class="headerlink" title="Reattaching to Existing Sessions"></a>Reattaching to Existing Sessions</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new-session -s basic</span><br></pre></td></tr></table></figure>
-
+<h3 id="detaching-sessions">Detaching Sessions</h3>
+<p><code>CTRL-b</code>, then <code>d</code></p>
+<h3 id="reattaching-to-existing-sessions">Reattaching to Existing
+Sessions</h3>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new-session -s basic</span><br></pre></td></tr></table></figure>
 <p>or</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux ls</span><br></pre></td></tr></table></figure>
-
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux <span class="built_in">ls</span></span><br></pre></td></tr></table></figure>
 <blockquote>
-<ol>
+<ol type="1">
 <li>If there is only session, then <code>tmux attach</code>.</li>
-<li>If there are multiple sessions, then <code>tmux attach -t second_session</code>. BTY, you can also use this when you only have one session.</li>
+<li>If there are multiple sessions, then
+<code>tmux attach -t second_session</code>. BTY, you can also use this
+when you only have one session.</li>
 </ol>
 </blockquote>
-<h3 id="Killing-Sessions"><a href="#Killing-Sessions" class="headerlink" title="Killing Sessions"></a>Killing Sessions</h3><ul>
+<h3 id="killing-sessions">Killing Sessions</h3>
+<ul>
 <li>In sesssion, use <code>exit</code>.</li>
 <li>Kill specific session when not in session,</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux kill-session -t basic</span><br></pre></td></tr></table></figure>
-
-<p>BTY, if there is no sessions, after typing <code>tmux ls</code>, you will get</p>
+<p>BTY, if there is no sessions, after typing <code>tmux ls</code>, you
+will get</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">failed to connect to server: Connection refused</span><br></pre></td></tr></table></figure>
-
-<h3 id="Creating-and-Naming-Windows"><a href="#Creating-and-Naming-Windows" class="headerlink" title="Creating and Naming Windows"></a>Creating and Naming Windows</h3><ul>
+<h3 id="creating-and-naming-windows">Creating and Naming Windows</h3>
+<ul>
 <li><p>In terminal</p>
-<p>  <code>-n</code>: the name of new window.</p>
-  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new -s windows -n shell</span><br></pre></td></tr></table></figure></li>
+<p><code>-n</code>: the name of new window.</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux new -s windows -n shell</span><br></pre></td></tr></table></figure></p></li>
 <li><p>In session</p>
-<p>  <code>PREFIX c</code></p>
-<p>  <code>PREFIX ,</code> will rename the new window.</p>
-</li>
+<p><code>PREFIX c</code></p>
+<p><code>PREFIX ,</code> will rename the new window.</p></li>
 </ul>
-<h3 id="Moving-Between-Windows"><a href="#Moving-Between-Windows" class="headerlink" title="Moving Between Windows"></a>Moving Between Windows</h3><ul>
+<h3 id="moving-between-windows">Moving Between Windows</h3>
+<ul>
 <li><p>next and previous window</p>
-<p>  <code>PREFIX n</code> and <code>PREFIX p</code></p>
-</li>
+<p><code>PREFIX n</code> and <code>PREFIX p</code></p></li>
 <li><p>default id of window</p>
-<p>  <code>PREFIX 0</code> to <code>PREFIX 9</code></p>
-</li>
+<p><code>PREFIX 0</code> to <code>PREFIX 9</code></p></li>
 <li><p>find a window</p>
-<p>  <code>PREFIX f</code></p>
-</li>
+<p><code>PREFIX f</code></p></li>
 <li><p>window list</p>
-<p>  <code>PREFIX w</code></p>
-</li>
+<p><code>PREFIX w</code></p></li>
 </ul>
-<h3 id="Close-a-Window"><a href="#Close-a-Window" class="headerlink" title="Close a Window"></a>Close a Window</h3><ul>
+<h3 id="close-a-window">Close a Window</h3>
+<ul>
 <li>type <code>exit</code> after command finish executed.</li>
 <li><code>PREFIX &amp;</code></li>
 </ul>
-<p>If you want to quit a tmux session, you’ll have to close all windows.</p>
-<h3 id="Panes"><a href="#Panes" class="headerlink" title="Panes"></a>Panes</h3><ul>
+<p>If you want to quit a tmux session, you'll have to close all
+windows.</p>
+<h3 id="panes">Panes</h3>
+<ul>
 <li>vertically: <code>PREFIX %</code></li>
-<li>horizontally: <code>PREFIX &quot;</code></li>
-<li>switch between them:<ul>
+<li>horizontally: <code>PREFIX "</code></li>
+<li>switch between them:
+<ul>
 <li>cycle through: <code>PREFIX o</code></li>
-<li><code>PREFIX UP</code>, <code>PREFIX DOWN</code>, <code>PREFIX LEFT</code>, or <code>PREFIX RIGHT</code></li>
+<li><code>PREFIX UP</code>, <code>PREFIX DOWN</code>,
+<code>PREFIX LEFT</code>, or <code>PREFIX RIGHT</code></li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<h3 id="Pane-Layouts"><a href="#Pane-Layouts" class="headerlink" title="Pane Layouts"></a>Pane Layouts</h3><p>types:</p>
+<h3 id="pane-layouts">Pane Layouts</h3>
+<p>types:</p>
 <ul>
 <li>even-horizontal</li>
 <li>even-vertical</li>
@@ -355,111 +360,130 @@
 <li>main-vertical</li>
 <li>tiled</li>
 </ul>
-<p>cycle through these types by pressing <code>PREFIX SPACEBAR</code>.</p>
-<h3 id="Closing-Panes"><a href="#Closing-Panes" class="headerlink" title="Closing Panes"></a>Closing Panes</h3><ul>
+<p>cycle through these types by pressing
+<code>PREFIX SPACEBAR</code>.</p>
+<h3 id="closing-panes">Closing Panes</h3>
+<ul>
 <li><code>exit</code></li>
-<li><code>PREFIX X</code>. If there is only one pane in current window, it will close this window at the same time.</li>
+<li><code>PREFIX X</code>. If there is only one pane in current window,
+it will close this window at the same time.</li>
 </ul>
-<h3 id="Command-Mode"><a href="#Command-Mode" class="headerlink" title="Command Mode"></a>Command Mode</h3><p>press <code>PREFIX :</code> to enter command mode.</p>
+<h3 id="command-mode">Command Mode</h3>
+<p>press <code>PREFIX :</code> to enter command mode.</p>
 <ul>
 <li>create new window with a name,</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new-window -n console</span><br></pre></td></tr></table></figure>
-
 <ul>
 <li>create new window with a name and a command,</li>
 </ul>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new-window -n processes <span class="string">&quot;top&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>top</code> will execute immediately after new window created. What’s really cool is that <strong>this window close instantly when you press <code>q</code> to close top.</strong></p>
-<h3 id="Quick-Reference"><a href="#Quick-Reference" class="headerlink" title="Quick Reference"></a>Quick Reference</h3><p><strong>创建会话</strong></p>
+<p><code>top</code> will execute immediately after new window created.
+What's really cool is that <strong>this window close instantly when you
+press <code>q</code> to close top.</strong></p>
+<h3 id="quick-reference">Quick Reference</h3>
+<p><strong>创建会话</strong></p>
 <table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>命令</th>
 <th>描述</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td><code>tmux new-session</code></td>
-<td>创建一个未命名的会话。可以简写为 <code>tmux new</code> 或者就一个简单的 <code>tmux</code></td>
+<td>创建一个未命名的会话。可以简写为 <code>tmux new</code>
+或者就一个简单的 <code>tmux</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>tmux new -s development</code></td>
 <td>创建一个名为“development”的会话</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>tmux new -s development -n editor</code></td>
 <td>创建一个名为“development”的会话并把该会话的第一个窗口命名为“editor”</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>tmux attach -t development</code></td>
 <td>连接到一个名为“development”的会话</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p><strong>会话、窗口和面板的默认快捷键</strong></p>
 <table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>快捷键</th>
 <th>功能</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr class="odd">
 <td><code>PREFIX d</code></td>
 <td>从一个会话中分离，让该会话在后台运行。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>PREFIX :</code></td>
 <td>进入命令模式</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>PREFIX c</code></td>
 <td>在当前tmux会话创建一个新的窗口，是 new-window 命令的简写</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>PREFIX 0...9</code></td>
 <td>根据窗口的编号选择窗口</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>PREFIX w</code></td>
 <td>显示当前会话中所有窗口的可选择列表</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>PREFIX ,</code></td>
 <td>显示一个提示符来重命名一个窗口</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>PREFIX &amp;</code></td>
 <td>关闭当前窗口，带有确认提示</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>PREFIX %</code></td>
 <td>把当前窗口垂直地一分为二，分割后的两个面板各占50%大小</td>
 </tr>
-<tr>
-<td><code>PREFIX &quot;</code></td>
+<tr class="odd">
+<td><code>PREFIX "</code></td>
 <td>把当前窗口水平地一分为二，分割后的两个面板各占50%大小</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>PREFIX o</code></td>
 <td>在已打开的面板之间循环移动当前焦点</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>PREFIX q</code></td>
 <td>短暂地显示每个面板的编号</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>PREFIX x</code></td>
 <td>关闭当前面板，带有确认提示</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>PREFIX SPACE</code></td>
 <td>循环地使用tmux的几个默认面板布局</td>
 </tr>
-</tbody></table>
-<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><ol>
-<li>[tmux-Productive-Mouse-Free-Development_zh(<a target="_blank" rel="noopener" href="https://github.com/aqua7regia/tmux-Productive-Mouse-Free-Development_zh">https://github.com/aqua7regia/tmux-Productive-Mouse-Free-Development_zh</a>)</li>
+</tbody>
+</table>
+<h2 id="references">References</h2>
+<ol type="1">
+<li>[tmux-Productive-Mouse-Free-Development_zh(https://github.com/aqua7regia/tmux-Productive-Mouse-Free-Development_zh)</li>
 </ol>
 
     </div>
@@ -510,11 +534,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -533,6 +557,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

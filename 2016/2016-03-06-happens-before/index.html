@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,23 +15,24 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。 Happens-before关系假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。 关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是独立于时">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。 Happens-before关系 假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。 关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是独立于">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Happens-before">
 <meta property="og:url" content="https://chaomai.github.io/2016/2016-03-06-happens-before/index.html">
 <meta property="og:site_name" content="chaomai&#39;s blog">
-<meta property="og:description" content="取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。 Happens-before关系假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。 关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是独立于时">
+<meta property="og:description" content="取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。 Happens-before关系 假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。 关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是独立于">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="https://chaomai.github.io/images/2016/happens_before_two-cones.png">
 <meta property="og:image" content="https://chaomai.github.io/images/2016/happens_before_no-cones.png">
 <meta property="og:image" content="https://chaomai.github.io/images/2016/happens_before_org-chart.png">
 <meta property="article:published_time" content="2016-03-06T13:51:54.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.269Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="happens-before">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://chaomai.github.io/images/2016/happens_before_two-cones.png">
@@ -50,6 +50,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -78,7 +79,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -92,12 +93,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -128,14 +124,16 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Happens-before%E5%85%B3%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">Happens-before关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Happens-before%E5%B9%B6%E4%B8%8D%E6%84%8F%E5%91%B3%E7%9D%80happening-before"><span class="nav-number">1.1.</span> <span class="nav-text">Happens-before并不意味着happening before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Happening-before%E5%B9%B6%E4%B8%8D%E6%84%8F%E5%91%B3%E7%9D%80happens-before"><span class="nav-number">1.2.</span> <span class="nav-text">Happening before并不意味着happens-before</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%AD%E7%9A%84happens-before%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">单线程中的happens-before关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%AD%E7%9A%84happens-before%E5%85%B3%E7%B3%BB"><span class="nav-number">3.</span> <span class="nav-text">多线程中的happens-before关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Acquire%E5%92%8CRelease%E8%AF%AD%E4%B9%89"><span class="nav-number">3.1.</span> <span class="nav-text">Acquire和Release语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%98%BE%E5%BC%8F%E7%9A%84CPU-fence%E6%8C%87%E4%BB%A4%E5%AE%9E%E7%8E%B0acquire%E5%92%8Crelease%E8%AF%AD%E4%B9%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">通过显式的CPU fence指令实现acquire和release语义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Synchronizes-with%E5%85%B3%E7%B3%BB"><span class="nav-number">3.2.</span> <span class="nav-text">Synchronizes-with关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AAWrite-Release%E8%83%BD%E5%A4%9FSynchronize-with%E4%B8%80%E4%B8%AARead-Acquire%E7%9A%84"><span class="nav-number">3.2.1.</span> <span class="nav-text">一个Write-Release能够Synchronize-with一个Read-Acquire的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%85%B3%E7%B3%BB"><span class="nav-number">3.2.2.</span> <span class="nav-text">运行时关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AE%9E%E7%8E%B0Synchronize-with%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.3.</span> <span class="nav-text">其他实现Synchronize-with的方法</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#happens-before%E5%85%B3%E7%B3%BB"><span class="nav-number">1.</span> <span class="nav-text">Happens-before关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#happens-before%E5%B9%B6%E4%B8%8D%E6%84%8F%E5%91%B3%E7%9D%80happening-before"><span class="nav-number">1.1.</span> <span class="nav-text">Happens-before并不意味着happening
+before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#happening-before%E5%B9%B6%E4%B8%8D%E6%84%8F%E5%91%B3%E7%9D%80happens-before"><span class="nav-number">1.2.</span> <span class="nav-text">Happening
+before并不意味着happens-before</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%AD%E7%9A%84happens-before%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">单线程中的happens-before关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%AD%E7%9A%84happens-before%E5%85%B3%E7%B3%BB"><span class="nav-number">3.</span> <span class="nav-text">多线程中的happens-before关系</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#acquire%E5%92%8Crelease%E8%AF%AD%E4%B9%89"><span class="nav-number">3.1.</span> <span class="nav-text">Acquire和Release语义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E6%98%BE%E5%BC%8F%E7%9A%84cpu-fence%E6%8C%87%E4%BB%A4%E5%AE%9E%E7%8E%B0acquire%E5%92%8Crelease%E8%AF%AD%E4%B9%89"><span class="nav-number">3.1.1.</span> <span class="nav-text">通过显式的CPU
+fence指令实现acquire和release语义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#synchronizes-with%E5%85%B3%E7%B3%BB"><span class="nav-number">3.2.</span> <span class="nav-text">Synchronizes-with关系</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%AAwrite-release%E8%83%BD%E5%A4%9Fsynchronize-with%E4%B8%80%E4%B8%AAread-acquire%E7%9A%84"><span class="nav-number">3.2.1.</span> <span class="nav-text">一个Write-Release能够Synchronize-with一个Read-Acquire的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%85%B3%E7%B3%BB"><span class="nav-number">3.2.2.</span> <span class="nav-text">运行时关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AE%9E%E7%8E%B0synchronize-with%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.3.</span> <span class="nav-text">其他实现Synchronize-with的方法</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -188,7 +186,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -224,12 +221,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Happens-before | chaomai's blog">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -246,13 +248,13 @@
 
       <time title="Created: 2016-03-06 21:51:54" itemprop="dateCreated datePublished" datetime="2016-03-06T21:51:54+08:00">2016-03-06</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -287,34 +289,69 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>取自<a target="_blank" rel="noopener" href="http://preshing.com/">preshing博客</a>上的几篇文章（<a target="_blank" rel="noopener" href="http://preshing.com/20120913/acquire-and-release-semantics/">1</a>，<a target="_blank" rel="noopener" href="http://preshing.com/20130702/the-happens-before-relation/">2</a>，<a target="_blank" rel="noopener" href="http://preshing.com/20130823/the-synchronizes-with-relation/">3</a>）。除了部分翻译外，还有自己的理解。</p>
-<h1 id="Happens-before关系"><a href="#Happens-before关系" class="headerlink" title="Happens-before关系"></a>Happens-before关系</h1><p>假设A和B两个操作是由多线程程序执行的，如果<strong>A happens-before B</strong>，那么A对内存的操作在<strong>B被执行前</strong>对执行B的线程切实可见。</p>
-<p>关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是<strong>独立于时间的</strong>，并不是happening before。</p>
-<h2 id="Happens-before并不意味着happening-before"><a href="#Happens-before并不意味着happening-before" class="headerlink" title="Happens-before并不意味着happening before"></a>Happens-before并不意味着happening before</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> A = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> B = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  A = B + <span class="number">1</span>;              <span class="comment">// (1)</span></span><br><span class="line">  B = <span class="number">1</span>;                  <span class="comment">// (2)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上代码中，只看program order的话，(1)是happens-before(2)的。但编译器可能会对上面的代码进行reorder（用clang++ 3.7 -O2没有发生），使得B的store<strong>先于A完成</strong>。</p>
-<p>从happens-before定义来看，(1)对内存的修改必须在(2)执行前切实可见，也就是说A的store必须影响到B的store。但从这个例子来看，A的store并未影响到A，就算没有(1)，(2)的行为也是一样的，这就等价于(1)的操作是<a target="_blank" rel="noopener" href="http://preshing.com/20130702/the-happens-before-relation/">可见的</a>。</p>
-<p>因此(1)和(2)行为并不违背happens-before，happens-before并不意味着happening before。</p>
-<h2 id="Happening-before并不意味着happens-before"><a href="#Happening-before并不意味着happens-before" class="headerlink" title="Happening before并不意味着happens-before"></a>Happening before并不意味着happens-before</h2><p>假设下面对的int的store和load都是原子的，有两个线程分别执行两个函数。就program order而言，(1)和(2)，(3)和(4)之间有happens-before关系。再假设在运行时，(2)在(3)之前完成，(3)读到了1。</p>
+        <p>取自<a target="_blank" rel="noopener" href="http://preshing.com/">preshing博客</a>上的几篇文章（<a
+target="_blank" rel="noopener" href="http://preshing.com/20120913/acquire-and-release-semantics/">1</a>，<a
+target="_blank" rel="noopener" href="http://preshing.com/20130702/the-happens-before-relation/">2</a>，<a
+target="_blank" rel="noopener" href="http://preshing.com/20130823/the-synchronizes-with-relation/">3</a>）。除了部分翻译外，还有自己的理解。</p>
+<h1 id="happens-before关系">Happens-before关系</h1>
+<p>假设A和B两个操作是由多线程程序执行的，如果<strong>A happens-before
+B</strong>，那么A对内存的操作在<strong>B被执行前</strong>对执行B的线程切实可见。</p>
+<p>关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是<strong>独立于时间的</strong>，并不是happening
+before。</p>
+<h2
+id="happens-before并不意味着happening-before">Happens-before并不意味着happening
+before</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> A = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> B = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  A = B + <span class="number">1</span>;              <span class="comment">// (1)</span></span><br><span class="line">  B = <span class="number">1</span>;                  <span class="comment">// (2)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码中，只看program
+order的话，(1)是happens-before(2)的。但编译器可能会对上面的代码进行reorder（用clang++
+3.7 -O2没有发生），使得B的store<strong>先于A完成</strong>。</p>
+<p>从happens-before定义来看，(1)对内存的修改必须在(2)执行前切实可见，也就是说A的store必须影响到B的store。但从这个例子来看，A的store并未影响到A，就算没有(1)，(2)的行为也是一样的，这就等价于(1)的操作是<a
+target="_blank" rel="noopener" href="http://preshing.com/20130702/the-happens-before-relation/">可见的</a>。</p>
+<p>因此(1)和(2)行为并不违背happens-before，happens-before并不意味着happening
+before。</p>
+<h2 id="happening-before并不意味着happens-before">Happening
+before并不意味着happens-before</h2>
+<p>假设下面对的int的store和load都是原子的，有两个线程分别执行两个函数。就program
+order而言，(1)和(2)，(3)和(4)之间有happens-before关系。再假设在运行时，(2)在(3)之前完成，(3)读到了1。</p>
 <p>但是并不意味着(2)和(3)之间有happens-before关系。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> isReady = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> answer = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">publishMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  answer = <span class="number">42</span>;                      <span class="comment">// (1)</span></span><br><span class="line">  isReady = <span class="number">1</span>;                      <span class="comment">// (2)</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">consumeMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (isReady)                      <span class="comment">// (3) &lt;-- Let&#x27;s suppose this line reads 1</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, answer);         <span class="comment">// (4)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>happens-before关系仅仅在标准指明的地方有。C++11中并未规定在普通的store和load之间有happens-before关系。进一步看，(1)和(4)之间也没有。因此(1)和(4)是可以被编译器或CPU reordered的。即使(3)读到了1，(4)可能打印0。</p>
-<h1 id="单线程中的happens-before关系"><a href="#单线程中的happens-before关系" class="headerlink" title="单线程中的happens-before关系"></a>单线程中的happens-before关系</h1><p>如果操作A和B是由同一个线程执行的，且就program order而言，A的语句位于B之前，那么A <strong>happens-before</strong> B。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> isReady = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> answer = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">publishMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  answer = <span class="number">42</span>;                      <span class="comment">// (1)</span></span><br><span class="line">  isReady = <span class="number">1</span>;                      <span class="comment">// (2)</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">consumeMessage</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (isReady)                      <span class="comment">// (3) &lt;-- Let&#x27;s suppose this line reads 1</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, answer);         <span class="comment">// (4)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>happens-before关系仅仅在标准指明的地方有。C++11中并未规定在普通的store和load之间有happens-before关系。进一步看，(1)和(4)之间也没有。因此(1)和(4)是可以被编译器或CPU
+reordered的。即使(3)读到了1，(4)可能打印0。</p>
+<h1 id="单线程中的happens-before关系">单线程中的happens-before关系</h1>
+<p>如果操作A和B是由同一个线程执行的，且就program
+order而言，A的语句位于B之前，那么A <strong>happens-before</strong>
+B。</p>
 <p>然而这并不是唯一实现happens-before关系的方法。</p>
-<h1 id="多线程中的happens-before关系"><a href="#多线程中的happens-before关系" class="headerlink" title="多线程中的happens-before关系"></a>多线程中的happens-before关系</h1><p>上面提到了单线程中的happens-before关系是如何产生的，下面来看多线程中的happens-before关系，C++11指出可以通过acquire和release语义，在不同线程的操作中实现happens-before。</p>
-<h2 id="Acquire和Release语义"><a href="#Acquire和Release语义" class="headerlink" title="Acquire和Release语义"></a>Acquire和Release语义</h2><p>Acquire语义：Acquire语义是一个属性，这个属性只能应用于从共享内存中的<strong>read操作</strong>，无论这些read是RMW还是普通的load。Acquire语义保证了在program order上位于read-acquire之后的read和write不会被编译器和CPU reordered到read-acquire之前。<br>Release语义：Release语义也是一个属性，这个属性只能应用于从共享内存中的<strong>write操作</strong>，无论这些read是RMW还是普通的store。Release语义保证了在program order上位于write-release之前的read和write不会被编译器和CPU reordered到write-release之后。</p>
-<p>Raymond Chen的另一个解释，<br>一个带有acquire语义的操作不允许后续的内存操作提前到该操作之前执行，相对的，一个带有release语义的操作不允许前面的内存操作被滞后到该操作之后执行。</p>
-<p>关于Acquire和Release语义，<a target="_blank" rel="noopener" href="http://hedengcheng.com/?p=725">这里</a>还有一个比较好的解释。</p>
-<h3 id="通过显式的CPU-fence指令实现acquire和release语义"><a href="#通过显式的CPU-fence指令实现acquire和release语义" class="headerlink" title="通过显式的CPU fence指令实现acquire和release语义"></a>通过显式的CPU fence指令实现acquire和release语义</h3><p>下面代码中有两个全局变量<code>A</code>和<code>Ready</code>，两个线程分别执行两段代码，<code>Ready</code>作为flag表示<code>A</code>的write是否完成。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> A = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> Ready = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 1</span></span><br><span class="line">A = <span class="number">42</span>;</span><br><span class="line">#StoreStore</span><br><span class="line">Ready = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 2</span></span><br><span class="line"><span class="keyword">int</span> r1 = Ready;</span><br><span class="line">#LoadLoad</span><br><span class="line"><span class="keyword">int</span> r2 = A;</span><br></pre></td></tr></table></figure>
-
+<h1 id="多线程中的happens-before关系">多线程中的happens-before关系</h1>
+<p>上面提到了单线程中的happens-before关系是如何产生的，下面来看多线程中的happens-before关系，C++11指出可以通过acquire和release语义，在不同线程的操作中实现happens-before。</p>
+<h2 id="acquire和release语义">Acquire和Release语义</h2>
+<p>Acquire语义：Acquire语义是一个属性，这个属性只能应用于从共享内存中的<strong>read操作</strong>，无论这些read是RMW还是普通的load。Acquire语义保证了在program
+order上位于read-acquire之后的read和write不会被编译器和CPU
+reordered到read-acquire之前。
+Release语义：Release语义也是一个属性，这个属性只能应用于从共享内存中的<strong>write操作</strong>，无论这些read是RMW还是普通的store。Release语义保证了在program
+order上位于write-release之前的read和write不会被编译器和CPU
+reordered到write-release之后。</p>
+<p>Raymond Chen的另一个解释，
+一个带有acquire语义的操作不允许后续的内存操作提前到该操作之前执行，相对的，一个带有release语义的操作不允许前面的内存操作被滞后到该操作之后执行。</p>
+<p>关于Acquire和Release语义，<a
+target="_blank" rel="noopener" href="http://hedengcheng.com/?p=725">这里</a>还有一个比较好的解释。</p>
+<h3 id="通过显式的cpu-fence指令实现acquire和release语义">通过显式的CPU
+fence指令实现acquire和release语义</h3>
+<p>下面代码中有两个全局变量<code>A</code>和<code>Ready</code>，两个线程分别执行两段代码，<code>Ready</code>作为flag表示<code>A</code>的write是否完成。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> A = <span class="number">0</span>;</span><br><span class="line"><span class="type">int</span> Ready = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 1</span></span><br><span class="line">A = <span class="number">42</span>;</span><br><span class="line">#StoreStore</span><br><span class="line">Ready = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// thread 2</span></span><br><span class="line"><span class="type">int</span> r1 = Ready;</span><br><span class="line">#LoadLoad</span><br><span class="line"><span class="type">int</span> r2 = A;</span><br></pre></td></tr></table></figure>
 <p>通过两个fence，可以保证当线程2发现<code>r1 == 1</code>时，<code>A</code>的值是1，进而保证<code>r2 == 1</code>。</p>
-<p>规范的来说就是，对<code>Ready</code>的write synchronizes-with对<code>Ready</code>的read。</p>
-<h2 id="Synchronizes-with关系"><a href="#Synchronizes-with关系" class="headerlink" title="Synchronizes-with关系"></a>Synchronizes-with关系</h2><p>Synchronizes-with用于描述源码级操作的内存影响（describe ways in which the memory effects of source-level operations），即使是非原子操作，也能够保证结果是对其他线程可见。一个较为常见的事情是，无论何时在两个线程间有<strong>synchronizes-with</strong>关系（一般是在不同的线程间）那么在这些操作之间都会有<strong>happens-before</strong>关系。</p>
-<h3 id="一个Write-Release能够Synchronize-with一个Read-Acquire的"><a href="#一个Write-Release能够Synchronize-with一个Read-Acquire的" class="headerlink" title="一个Write-Release能够Synchronize-with一个Read-Acquire的"></a>一个Write-Release能够Synchronize-with一个Read-Acquire的</h3><p>C++11标准规定了，一个对<strong>原子对象M</strong>执行<strong>release</strong>操作的<strong>原子操作A</strong> <em>synchronize-with</em>一个对<strong>M</strong>执行<strong>acquire</strong>操作的<strong>原子操作B</strong>，且能够得到以A为起始的release sequence操作的所有副作用。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Message</span> &#123;</span></span><br><span class="line">  <span class="keyword">clock_t</span>     tick;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">char</span>* str;</span><br><span class="line">  <span class="keyword">void</span>*       param;</span><br><span class="line">&#125;;</span><br><span class="line">Message g_payload;</span><br><span class="line"><span class="function"><span class="built_in">std</span>::atomic&lt;<span class="keyword">int</span>&gt; <span class="title">g_guard</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SendTestMessage</span><span class="params">(<span class="keyword">void</span>* param)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Copy to shared memory using non-atomic stores.</span></span><br><span class="line">  g_payload.tick  = clock();</span><br><span class="line">  g_payload.str   = <span class="string">&quot;TestMessage&quot;</span>;</span><br><span class="line">  g_payload.param = param;</span><br><span class="line">  <span class="comment">// Perform an atomic write-release to indicate that the message is ready.</span></span><br><span class="line">  g_guard.store(<span class="number">1</span>, <span class="built_in">std</span>::memory_order_release);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">TryReceiveMessage</span><span class="params">(Message&amp; result)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Perform an atomic read-acquire to check whether the message is ready.</span></span><br><span class="line">  <span class="keyword">int</span> ready = g_guard.load(<span class="built_in">std</span>::memory_order_acquire);</span><br><span class="line">  <span class="keyword">if</span> (ready != <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// Yes. Copy from shared memory using non-atomic loads.</span></span><br><span class="line">    result.tick  = g_payload.tick;</span><br><span class="line">    result.str   = g_payload.str;</span><br><span class="line">    result.param = g_payload.param;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// No.</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<p>规范的来说就是，对<code>Ready</code>的write
+synchronizes-with对<code>Ready</code>的read。</p>
+<h2 id="synchronizes-with关系">Synchronizes-with关系</h2>
+<p>Synchronizes-with用于描述源码级操作的内存影响（describe ways in which
+the memory effects of source-level
+operations），即使是非原子操作，也能够保证结果是对其他线程可见。一个较为常见的事情是，无论何时在两个线程间有<strong>synchronizes-with</strong>关系（一般是在不同的线程间）那么在这些操作之间都会有<strong>happens-before</strong>关系。</p>
+<h3
+id="一个write-release能够synchronize-with一个read-acquire的">一个Write-Release能够Synchronize-with一个Read-Acquire的</h3>
+<p>C++11标准规定了，一个对<strong>原子对象M</strong>执行<strong>release</strong>操作的<strong>原子操作A</strong>
+<em>synchronize-with</em>一个对<strong>M</strong>执行<strong>acquire</strong>操作的<strong>原子操作B</strong>，且能够得到以A为起始的release
+sequence操作的所有副作用。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Message</span> &#123;</span><br><span class="line">  <span class="type">clock_t</span>     tick;</span><br><span class="line">  <span class="type">const</span> <span class="type">char</span>* str;</span><br><span class="line">  <span class="type">void</span>*       param;</span><br><span class="line">&#125;;</span><br><span class="line">Message g_payload;</span><br><span class="line"><span class="function">std::atomic&lt;<span class="type">int</span>&gt; <span class="title">g_guard</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">SendTestMessage</span><span class="params">(<span class="type">void</span>* param)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Copy to shared memory using non-atomic stores.</span></span><br><span class="line">  g_payload.tick  = <span class="built_in">clock</span>();</span><br><span class="line">  g_payload.str   = <span class="string">&quot;TestMessage&quot;</span>;</span><br><span class="line">  g_payload.param = param;</span><br><span class="line">  <span class="comment">// Perform an atomic write-release to indicate that the message is ready.</span></span><br><span class="line">  g_guard.<span class="built_in">store</span>(<span class="number">1</span>, std::memory_order_release);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">bool</span> <span class="title">TryReceiveMessage</span><span class="params">(Message&amp; result)</span> </span>&#123;</span><br><span class="line">  <span class="comment">// Perform an atomic read-acquire to check whether the message is ready.</span></span><br><span class="line">  <span class="type">int</span> ready = g_guard.<span class="built_in">load</span>(std::memory_order_acquire);</span><br><span class="line">  <span class="keyword">if</span> (ready != <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// Yes. Copy from shared memory using non-atomic loads.</span></span><br><span class="line">    result.tick  = g_payload.tick;</span><br><span class="line">    result.str   = g_payload.str;</span><br><span class="line">    result.param = g_payload.param;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// No.</span></span><br><span class="line">  <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>上述代码中，为了能够把<code>g_payload</code>安全的在线程中传递，使用了acquire和release。当<code>TryReceiveMessage</code>中<code>g_guard</code>的read-acquire执行完后，<strong>如果<code>ready</code>是1</strong>，那么<code>g_payload</code>的三个成员一定被成功写入。</p>
 <p>与前面的标准对照，可以看到，</p>
 <ul>
@@ -322,13 +359,18 @@
 <li>原子对象M是<code>g_guard</code>；</li>
 <li>原子操作B是<code>TryReceiveMessage</code>中的read-acquire。</li>
 </ul>
-<p>前面所说的takes its value from any side effect in the release sequence headed by A，这里指read-acquire能够读取到write-release所写的值。<strong>如果读取到了</strong>，那么synchronize-with关系就出现了。此时，两个线程间就有了happens-before关系。有时这也叫做synchronize-with或happens-before“边”。</p>
-<p><img data-src="/images/2016/happens_before_two-cones.png"></p>
+<p>前面所说的takes its value from any side effect in the release
+sequence headed by
+A，这里指read-acquire能够读取到write-release所写的值。<strong>如果读取到了</strong>，那么synchronize-with关系就出现了。此时，两个线程间就有了happens-before关系。有时这也叫做synchronize-with或happens-before“边”。</p>
+<p><img data-src="/images/2016/happens_before_two-cones.png" /></p>
 <p>标准中还保证了只要有synchronize-with边存在，happens-before关系就能够<strong>扩展到临近的操作</strong>。对应到上例中就是，当其他线程读取<code>g_payload</code>时，保证能够读取到对<code>g_payload</code>写入的值。</p>
-<h3 id="运行时关系"><a href="#运行时关系" class="headerlink" title="运行时关系"></a>运行时关系</h3><p>想要通过静态的分析代码，来寻找代码中的synchronize-with关系是错误的。synchronize-with是<strong>运行时关系</strong>。</p>
-<p><img data-src="/images/2016/happens_before_no-cones.png"></p>
+<h3 id="运行时关系">运行时关系</h3>
+<p>想要通过静态的分析代码，来寻找代码中的synchronize-with关系是错误的。synchronize-with是<strong>运行时关系</strong>。</p>
+<p><img data-src="/images/2016/happens_before_no-cones.png" /></p>
 <p>如果<code>g_guard</code>读取的过早，线程1还没有写入<code>g_guard</code>，那么就没有synchronize-with关系。</p>
-<h3 id="其他实现Synchronize-with的方法"><a href="#其他实现Synchronize-with的方法" class="headerlink" title="其他实现Synchronize-with的方法"></a>其他实现Synchronize-with的方法</h3><p><img data-src="/images/2016/happens_before_org-chart.png"></p>
+<h3
+id="其他实现synchronize-with的方法">其他实现Synchronize-with的方法</h3>
+<p><img data-src="/images/2016/happens_before_org-chart.png" /></p>
 
     </div>
 
@@ -378,11 +420,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -401,6 +443,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   

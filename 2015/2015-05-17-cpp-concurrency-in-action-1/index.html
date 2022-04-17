@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
 
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
@@ -16,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css" integrity="sha256-2H3fkXt6FEmrReK448mDVGKb3WW2ZZw35gI7vqHOE4Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","version":"8.7.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Hello, world of concurrency in C++!的笔记。">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"chaomai.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Hello, world of concurrency in C++!的笔记。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="C++ Concurrency in Action (1) - Hello, world of concurrency in C++!">
 <meta property="og:url" content="https://chaomai.github.io/2015/2015-05-17-cpp-concurrency-in-action-1/index.html">
@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2015-05-17T11:35:23.000Z">
 <meta property="article:modified_time" content="2021-06-27T14:57:29.256Z">
-<meta property="article:author" content="Chao Mai">
+<meta property="article:author" content="chaomai">
 <meta property="article:tag" content="cpp">
 <meta property="article:tag" content="reading">
 <meta property="article:tag" content="cpp11">
@@ -49,6 +49,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-34179929-2"></script>
   <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-34179929-2","only_pageview":false}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
+
 
 
 
@@ -77,7 +78,7 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">chaomai's blog</h1>
+      <p class="site-title">chaomai's blog</p>
       <i class="logo-line"></i>
     </a>
   </div>
@@ -91,12 +92,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-        <li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>About</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-rss"><a href="/atom.xml" rel="section"><i class="fa fa-rss fa-fw"></i>Rss</a></li>
   </ul>
 </nav>
 
@@ -127,14 +123,14 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%AD%A4%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">关于此系列文章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8EC-Concurrency-in-Action"><span class="nav-number">2.</span> <span class="nav-text">关于C++ Concurrency in Action</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Hello-world-of-concurrency-in-C"><span class="nav-number">3.</span> <span class="nav-text">Hello, world of concurrency in C++</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Appraoches-to-concurrency"><span class="nav-number">3.0.1.</span> <span class="nav-text">Appraoches to concurrency</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">多进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">多线程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why-use-concurrency"><span class="nav-number">3.1.</span> <span class="nav-text">Why use concurrency</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ways-to-use-concurrency"><span class="nav-number">3.1.1.</span> <span class="nav-text">Ways to use concurrency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#When-not-to-use-concurrency"><span class="nav-number">3.1.2.</span> <span class="nav-text">When not to use concurrency</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%AD%A4%E7%B3%BB%E5%88%97%E6%96%87%E7%AB%A0"><span class="nav-number">1.</span> <span class="nav-text">关于此系列文章</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B3%E4%BA%8Ec-concurrency-in-action"><span class="nav-number">2.</span> <span class="nav-text">关于C++ Concurrency in Action</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#hello-world-of-concurrency-in-c"><span class="nav-number">3.</span> <span class="nav-text">Hello, world of concurrency in
+C++</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#appraoches-to-concurrency"><span class="nav-number">3.0.1.</span> <span class="nav-text">Appraoches to concurrency</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="nav-number">3.0.1.1.</span> <span class="nav-text">多进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="nav-number">3.0.1.2.</span> <span class="nav-text">多线程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#why-use-concurrency"><span class="nav-number">3.1.</span> <span class="nav-text">Why use concurrency</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ways-to-use-concurrency"><span class="nav-number">3.1.1.</span> <span class="nav-text">Ways to use concurrency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#when-not-to-use-concurrency"><span class="nav-number">3.1.2.</span> <span class="nav-text">When not to use concurrency</span></a></li></ol></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-overview">
-            <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Chao Mai</p>
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chaomai</p>
   <div class="site-description" itemprop="description"></div>
 </div>
 <div class="site-state-wrap site-overview-item animated">
@@ -187,7 +183,6 @@
     </ul>
   </div>
 
-          </div>
         </div>
       </div>
     </div>
@@ -223,12 +218,17 @@
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Chao Mai">
-      <meta itemprop="description" content="">
+      <meta itemprop="name" content="chaomai">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="chaomai's blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="C++ Concurrency in Action (1) - Hello, world of concurrency in C++! | chaomai's blog">
+      <meta itemprop="description" content="Hello, world of concurrency in C++!的笔记。">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -245,13 +245,13 @@
 
       <time title="Created: 2015-05-17 19:35:23" itemprop="dateCreated datePublished" datetime="2015-05-17T19:35:23+08:00">2015-05-17</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-06-27 22:57:29" itemprop="dateModified" datetime="2021-06-27T22:57:29+08:00">2021-06-27</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -287,34 +287,45 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="关于此系列文章"><a href="#关于此系列文章" class="headerlink" title="关于此系列文章"></a>关于此系列文章</h1><p>最近在看这本书，这个系列文章是我在看书过程中的笔记，记录了一些我觉得关键的地方和自己的思考。如果能帮助到你，I will be very happy :).</p>
-<h1 id="关于C-Concurrency-in-Action"><a href="#关于C-Concurrency-in-Action" class="headerlink" title="关于C++ Concurrency in Action"></a>关于C++ Concurrency in Action</h1><blockquote><p>本书是一本基于C++11新标准的并发和多线程编程深度指南。从std::thread、std::mutex、std::future和std::async等基础类的使用，到内存模型和原子操作、基于锁和无锁数据结构的构建，再扩展到并行算法、线程管理，最后还介绍了多线程代码的测试工作。本书的附录部分还对C++11新语言特性中与多线程相关的项目进行了简要的介绍，并提供了C++11线程库的完整参考。</p>
+        <h1 id="关于此系列文章">关于此系列文章</h1>
+<p>最近在看这本书，这个系列文章是我在看书过程中的笔记，记录了一些我觉得关键的地方和自己的思考。如果能帮助到你，I
+will be very happy :).</p>
+<h1 id="关于c-concurrency-in-action">关于C++ Concurrency in Action</h1>
+<blockquote><p>本书是一本基于C++11新标准的并发和多线程编程深度指南。从std::thread、std::mutex、std::future和std::async等基础类的使用，到内存模型和原子操作、基于锁和无锁数据结构的构建，再扩展到并行算法、线程管理，最后还介绍了多线程代码的测试工作。本书的附录部分还对C++11新语言特性中与多线程相关的项目进行了简要的介绍，并提供了C++11线程库的完整参考。</p>
 <footer><strong>并发编程网</strong><cite><a target="_blank" rel="noopener" href="http://ifeve.com/c-plus-plus-concurrency-in-action/">《C++ Concurrency in Action》中文版</a></cite></footer></blockquote>
-
 <p>2014年初要出的中文版，只是到现在还没有，看英文吧。</p>
-<h1 id="Hello-world-of-concurrency-in-C"><a href="#Hello-world-of-concurrency-in-C" class="headerlink" title="Hello, world of concurrency in C++"></a>Hello, world of concurrency in C++</h1><p>在C++中实现多线程，可以写出行为有保证的可移植的代码。</p>
-<h3 id="Appraoches-to-concurrency"><a href="#Appraoches-to-concurrency" class="headerlink" title="Appraoches to concurrency"></a>Appraoches to concurrency</h3><h4 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h4><p>消息传递由进程间通信实现，但是，</p>
+<h1 id="hello-world-of-concurrency-in-c">Hello, world of concurrency in
+C++</h1>
+<p>在C++中实现多线程，可以写出行为有保证的可移植的代码。</p>
+<h3 id="appraoches-to-concurrency">Appraoches to concurrency</h3>
+<h4 id="多进程">多进程</h4>
+<p>消息传递由进程间通信实现，但是，</p>
 <ul>
 <li>由于操作系统的有很多保护机制来避免一个进程难以修改另一个的数据，因此实现通讯的方式复杂或者慢；</li>
 <li>有固有的开销，启动进程需要时间（系统需要分配资源等）。</li>
 </ul>
-<h4 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h4><p>操作系统要做的更少，灵活的共享内存是有代价的。</p>
+<h4 id="多线程">多线程</h4>
+<p>操作系统要做的更少，灵活的共享内存是有代价的。</p>
 <ul>
 <li>内存一致性</li>
 </ul>
-<h2 id="Why-use-concurrency"><a href="#Why-use-concurrency" class="headerlink" title="Why use concurrency"></a>Why use concurrency</h2><ul>
+<h2 id="why-use-concurrency">Why use concurrency</h2>
+<ul>
 <li>separation of concerns</li>
 <li>performance</li>
 </ul>
-<h3 id="Ways-to-use-concurrency"><a href="#Ways-to-use-concurrency" class="headerlink" title="Ways to use concurrency"></a>Ways to use concurrency</h3><ul>
+<h3 id="ways-to-use-concurrency">Ways to use concurrency</h3>
+<ul>
 <li>task parallelism, data parallelism；</li>
 <li>使用现有的并行计算能力来解决更大的问题；</li>
 <li>（两种方式有着不同的关注点：一个是利用并行来缩短任务的时间；另一个是在任务处理时间一定的情况下，并行的运行多个任务来加大处理量。）</li>
 </ul>
-<h3 id="When-not-to-use-concurrency"><a href="#When-not-to-use-concurrency" class="headerlink" title="When not to use concurrency"></a>When not to use concurrency</h3><ul>
+<h3 id="when-not-to-use-concurrency">When not to use concurrency</h3>
+<ul>
 <li>实现并发的cost&gt;收益；</li>
 <li>线程的启动需要时间来给os分配相关的内核资源和栈空间，如果线程完成的时间很短，那可能启动的时间就占据了运行时间的大部分；</li>
-<li>由于系统的资源有限，线程是一种有限的资源,线程越多，os必须进行更多的context switching。</li>
+<li>由于系统的资源有限，线程是一种有限的资源,线程越多，os必须进行更多的context
+switching。</li>
 </ul>
 
     </div>
@@ -368,11 +379,11 @@
 
 <div class="copyright">
   &copy; 2014 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2022</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Chao Mai</span>
+  <span class="author" itemprop="copyrightHolder">chaomai</span>
 </div>
   <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a>
   </div>
@@ -391,6 +402,8 @@
   
 
 
+
+  <script src="/js/third-party/fancybox.js"></script>
 
 
   
