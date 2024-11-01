@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="\nThread Thread Model LinuxThreads Default thread implementation since Linux kernel 2.0 Obsolete Next Generation POSIX Thread （NGPT） IBM developed version of POSIX thread library Abandoned Native POSIX Thread Library（NPTL） Developed by RedHat Better performance and scalability than LinuxThreads Since Linux Kernel 2.6, glibc 2.3.5 ">
+<title>Thread</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2021/2021-05-21-thread/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="Thread">
+<meta property='og:description' content="\nThread Thread Model LinuxThreads Default thread implementation since Linux kernel 2.0 Obsolete Next Generation POSIX Thread （NGPT） IBM developed version of POSIX thread library Abandoned Native POSIX Thread Library（NPTL） Developed by RedHat Better performance and scalability than LinuxThreads Since Linux Kernel 2.6, glibc 2.3.5 ">
+<meta property='og:url' content='http://localhost:1313/posts/2021/2021-05-21-thread/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='thread' /><meta property='article:published_time' content='2021-05-21T00:27:00&#43;00:00'/><meta property='article:modified_time' content='2021-05-21T00:27:00&#43;00:00'/>
+<meta name="twitter:title" content="Thread">
+<meta name="twitter:description" content="\nThread Thread Model LinuxThreads Default thread implementation since Linux kernel 2.0 Obsolete Next Generation POSIX Thread （NGPT） IBM developed version of POSIX thread library Abandoned Native POSIX Thread Library（NPTL） Developed by RedHat Better performance and scalability than LinuxThreads Since Linux Kernel 2.6, glibc 2.3.5 ">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/linux/" >
+                Linux
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2021/2021-05-21-thread/">Thread</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">May 21, 2021</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    10 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="thread">Thread
+</h1><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="thread-model">Thread Model
+</h2><ol>
+<li>LinuxThreads
+<ul>
+<li>Default thread implementation since Linux kernel 2.0</li>
+<li>Obsolete</li>
+</ul>
+</li>
+<li>Next Generation POSIX Thread （NGPT）
+<ul>
+<li>IBM developed version of POSIX thread library</li>
+<li>Abandoned</li>
+</ul>
+</li>
+<li>Native POSIX Thread Library（NPTL）
+<ul>
+<li>Developed by RedHat</li>
+<li>Better performance and scalability than LinuxThreads</li>
+<li>Since Linux Kernel 2.6, glibc 2.3.5</li>
+</ul>
+</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="memory-layout">Memory Layout
+</h2><ul>
+<li>Heap：被所有线程共享。</li>
+<li>Stack：每个线程都有自己独立的 stack。</li>
+</ul>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="thread-stack">Thread Stack
+</h3><p><img src="/images/2021/05/20210526_230935Snipaste_2021-05-26_23-09-07.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="img"
+	
+	
+></p>
+<pre tabindex="0"><code>low  ┌──────────┐
+     │...       │ ─┐                  ─┐
+     ├──────────┤  │                   │
+     │list      │  │                   │
+     ├──────────┤  ├─►pthread struct   │
+     │tid       │  │                   │
+     ├──────────┤  │                   │
+     │...       │ ─┘                   │
+     ├──────────┤                      ├─►thread 1
+     │          │                      │
+     │stack     │                      │
+     │          │                     ─┘
+     ├──────────┤
+     │          │ ───►stack guard(4k)
+     ├──────────┤
+     │...       │ ─┐
+     ├──────────┤  │
+     │list      │  │
+     ├──────────┤  │
+     │tid       │  │
+     ├──────────┤  │
+     │...       │  │
+     ├──────────┤  ├─►thread 2
+     │          │  │
+     │stack     │  │
+     │          │ ─┘
+high └──────────┘
+</code></pre><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="allocate">Allocate
+</h3><ol>
+<li>
+<p>Implementation</p>
+<p>线程栈分配逻辑如下（基于 glibc 2.29.9000），</p>
+<ol>
+<li>
+<p><code>__pthread_create_2_1</code> 创建 thread 时，调用 <code>ALLOCATE_STACK</code> 宏创建 Thread stack。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">   <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">__pthread_create_2_1</span> <span class="p">(</span><span class="kt">pthread_t</span> <span class="o">*</span><span class="n">newthread</span><span class="p">,</span> <span class="k">const</span> <span class="kt">pthread_attr_t</span> <span class="o">*</span><span class="n">attr</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                         <span class="kt">void</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="n">start_routine</span><span class="p">)</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="k">struct</span> <span class="n">pthread</span> <span class="o">*</span><span class="n">pd</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     <span class="kt">int</span> <span class="n">err</span> <span class="o">=</span> <span class="nf">ALLOCATE_STACK</span> <span class="p">(</span><span class="n">iattr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">     <span class="kt">int</span> <span class="n">retval</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p><code>ALLOCATE_STACK</code> 宏调用 <code>allcate_stack</code> 来执行具体的创建逻辑。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">   <span class="k">static</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl">   <span class="nf">allocate_stack</span> <span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">pthread_attr</span> <span class="o">*</span><span class="n">attr</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pthread</span> <span class="o">**</span><span class="n">pdp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                   <span class="n">ALLOCATE_STACK_PARMS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">   <span class="p">{</span>
+</span></span><span class="line"><span class="cl">     <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="c1">// 从 cache 中查找空闲的栈内存
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="n">pd</span> <span class="o">=</span> <span class="nf">get_cached_stack</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">size</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mem</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">     <span class="c1">// 没有空闲的则 mmap 创建
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="k">if</span> <span class="p">(</span><span class="n">pd</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">       <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="n">mem</span> <span class="o">=</span> <span class="nf">__mmap</span> <span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="n">guardsize</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="nl">prot</span> <span class="p">:</span> <span class="n">PROT_NONE</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                       <span class="n">MAP_PRIVATE</span> <span class="o">|</span> <span class="n">MAP_ANONYMOUS</span> <span class="o">|</span> <span class="n">MAP_STACK</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">         <span class="cm">/* Allocate the DTV for this thread.  */</span>
+</span></span><span class="line"><span class="cl">         <span class="nf">_dl_allocate_tls</span> <span class="p">(</span><span class="nf">TLS_TPADJ</span> <span class="p">(</span><span class="n">pd</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">         <span class="cm">/* Prepare to modify global data.  */</span>
+</span></span><span class="line"><span class="cl">         <span class="nf">lll_lock</span> <span class="p">(</span><span class="n">stack_cache_lock</span><span class="p">,</span> <span class="n">LLL_PRIVATE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">         <span class="cm">/* And add to the list of stacks in use.  */</span>
+</span></span><span class="line"><span class="cl">         <span class="c1">// 将 stack 内存挂到 stack_used list 中
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>         <span class="nf">stack_list_add</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">pd</span><span class="o">-&gt;</span><span class="n">list</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">stack_used</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">         <span class="nf">lll_unlock</span> <span class="p">(</span><span class="n">stack_cache_lock</span><span class="p">,</span> <span class="n">LLL_PRIVATE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">         <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>       <span class="p">}</span>
+</span></span><span class="line"><span class="cl">     <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="c1">// 更新全局栈内存指针
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>     <span class="o">*</span><span class="n">stack</span> <span class="o">=</span> <span class="n">pd</span><span class="o">-&gt;</span><span class="n">stackblock</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     <span class="o">*</span><span class="n">stacksize</span> <span class="o">=</span> <span class="n">stacktop</span> <span class="o">-</span> <span class="o">*</span><span class="n">stack</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">     <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>   <span class="p">}</span>
+</span></span></code></pre></div></li>
+</ol>
+</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="thread-local-storage">Thread-Local Storage
+</h1><p>Thread-local storage（TLS）提供了一种机制，使得每个 thread 都拥有一份变量的实例，对 TLS 中变量进行的修改仅对当前 thread 可见。</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="common-implementation">Common Implementation
+</h2><ol>
+<li>pthread：thread-specific data （TSD）</li>
+<li>ELF（Executable and Linkable Format） TLS
+<ul>
+<li>gcc： <code>__thread</code></li>
+<li>c11： <code>_Thread_local</code></li>
+<li>c++11： <code>thread_local</code></li>
+</ul>
+</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="example-usages">Example Usages
+</h2><ol>
+<li>
+<p>adext <code>ThreadData</code> 主要用于存储 iconf ctx，确保每个 thread 使用自己的 ctx 来 merge cgi 下发的实验配置。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">   <span class="k">static</span> <span class="n">__thread</span> <span class="n">ThreadData</span><span class="o">*</span> <span class="n">s_td</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">   <span class="k">class</span> <span class="nc">ThreadData</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">       <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">           <span class="n">ThreadData</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">           <span class="o">~</span><span class="n">ThreadData</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">           <span class="kt">int</span> <span class="nf">init</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">           <span class="kt">void</span> <span class="nf">reset</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">           <span class="kt">int</span> <span class="nf">set_request_info</span><span class="p">(</span><span class="kt">int</span> <span class="n">bucketid</span><span class="p">,</span><span class="n">bs</span><span class="o">::</span><span class="n">RankFrontendResp</span> <span class="o">*</span><span class="n">admergeResult</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">           <span class="o">::</span><span class="n">iconf</span><span class="o">::</span><span class="n">Context</span><span class="o">*</span> <span class="n">get_context</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">               <span class="k">return</span> <span class="n">_ctx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">           <span class="p">}</span>
+</span></span><span class="line"><span class="cl">       <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">           <span class="o">::</span><span class="n">iconf</span><span class="o">::</span><span class="n">Context</span><span class="o">*</span> <span class="n">_ctx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">   <span class="p">};</span>
+</span></span></code></pre></div></li>
+<li>
+<p>jemalloc 使用 TLS 来保存每个线程特有的数据，避免锁竞争。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c++" data-lang="c++"><span class="line"><span class="cl">   <span class="cp">#define	malloc_tsd_data(a_attr, a_name, a_type, a_initializer)		\
+</span></span></span><span class="line"><span class="cl"><span class="cp">   a_attr __thread a_type JEMALLOC_TLS_MODEL				\
+</span></span></span><span class="line"><span class="cl"><span class="cp">       a_name##tsd_tls = a_initializer;					\
+</span></span></span><span class="line"><span class="cl"><span class="cp">   a_attr pthread_key_t	a_name##tsd_tsd;				\
+</span></span></span><span class="line"><span class="cl"><span class="cp">   a_attr bool		a_name##tsd_booted = false;
+</span></span></span></code></pre></div></li>
+<li>
+<p>POSIX <code>errno</code></p>
+<blockquote>
+<p>errno is thread-local; setting it in one thread does not affect its value in any other thread.</p>
+</blockquote>
+</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="implementation">Implementation
+</h1><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="pthreadthread-specific-data-tsd">pthread：thread-specific data （TSD）
+</h2><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="example">Example
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;cassert&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">pthread_key_t</span> <span class="n">tsd_key</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">free_memory</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">delete</span> <span class="n">p</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="o">*</span><span class="nf">run</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">d</span> <span class="o">=</span> <span class="n">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="nf">pthread_getspecific</span><span class="p">(</span><span class="n">tsd_key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">assert</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">nullptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">new</span> <span class="kt">int</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">pa</span> <span class="o">=</span> <span class="n">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">*</span><span class="n">pa</span> <span class="o">+=</span> <span class="mi">5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">err</span> <span class="o">=</span> <span class="nf">pthread_setspecific</span><span class="p">(</span><span class="n">tsd_key</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">assert</span><span class="p">(</span><span class="n">err</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">pthread_t</span> <span class="n">tid</span> <span class="o">=</span> <span class="nf">pthread_self</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="nf">pthread_getspecific</span><span class="p">(</span><span class="n">tsd_key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="o">*</span><span class="n">a</span> <span class="o">=</span> <span class="n">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; in thread &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">tid</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">err</span> <span class="o">=</span> <span class="nf">pthread_key_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tsd_key</span><span class="p">,</span> <span class="n">free_memory</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">assert</span><span class="p">(</span><span class="n">err</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">pthread_t</span> <span class="n">tid</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">data</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nullptr</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tid</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nullptr</span><span class="p">,</span> <span class="n">run</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">pthread_join</span><span class="p">(</span><span class="n">tid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">nullptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">pthread_join</span><span class="p">(</span><span class="n">tid</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">nullptr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">err</span> <span class="o">=</span> <span class="nf">pthread_key_delete</span><span class="p">(</span><span class="n">tsd_key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">assert</span><span class="p">(</span><span class="n">err</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// output
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 25 in thread 139672264689408
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 15 in thread 139672273082112
+</span></span></span></code></pre></div><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="memory-layout-1">Memory Layout
+</h3><pre tabindex="0"><code> low ┌─────────────────┐
+     │header           │ ───►tcbhead_t struct ─┐
+     ├─────────────────┤                       │
+     │list             │                       │                     ─┐
+     ├─────────────────┤                       │                      │
+     │tid              │                       │                      │
+     ├─────────────────┤                       ├─►pthread struct      │
+     │specific_1stblock│                       │                      │
+     ├─────────────────┤                       │                      │
+     │specific         │                       │                      │
+     ├─────────────────┤                       │                      ├─►thread 1
+     │...              │                      ─┘                      │
+     ├─────────────────┤                                              │
+     │                 │                                              │
+     │stack            │                                              │
+     │                 │                                             ─┘
+     ├─────────────────┤
+     │                 │ ───►stack guard(4k)
+     ├─────────────────┤
+     │header           │ ─┐
+     ├─────────────────┤  │
+     │list             │  │
+     ├─────────────────┤  │
+     │tid              │  │
+     ├─────────────────┤  │
+     │...              │  │
+     ├─────────────────┤  ├─►thread 2
+     │                 │  │
+     │stack            │  │
+     │                 │ ─┘
+high └─────────────────┘
+</code></pre><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="implementation-1">Implementation
+</h3><ol>
+<li>全局分配唯一 key</li>
+<li>各个 thread 存储自己的 key-value map</li>
+</ol>
+<p>以下分析基于 glibc 2.29.9000。</p>
+<ol>
+<li>
+<p>如何访问 Thread Stack</p>
+<p>TSD 是存储在各个线程的内存中，要访问 TSD，就需要一种方法来访问线程栈。</p>
+<p>glibc 通过调用 <code>clone</code> 实现创建线程。如果提供了 <code>CLONE_SETTLS</code> ，那么会将 <code>tls</code> 存入 fs 寄存器。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">clone</span><span class="p">(</span><span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">fn</span><span class="p">)(</span><span class="kt">void</span> <span class="o">*</span><span class="p">),</span> <span class="kt">void</span> <span class="o">*</span><span class="n">stack</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="p">...</span>
+</span></span><span class="line"><span class="cl">         <span class="cm">/* pid_t *parent_tid, void *tls, pid_t *child_tid */</span> <span class="p">);</span>
+</span></span></code></pre></div><p>在调用 <code>clone</code> 时， <code>tls</code> 是 <code>struct pthread</code> 的地址。从而可以通过 fs 寄存器来访问到线程栈。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="nf">TLS_DEFINE_INIT_TP</span> <span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">pd</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="nf">__glibc_unlikely</span> <span class="p">(</span><span class="nf">ARCH_CLONE</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">start_thread</span><span class="p">,</span> <span class="n">STACK_VARIABLES_ARGS</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                                  <span class="n">clone_flags</span><span class="p">,</span> <span class="n">pd</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pd</span><span class="o">-&gt;</span><span class="n">tid</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pd</span><span class="o">-&gt;</span><span class="n">tid</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                      <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+</span></span></code></pre></div><p>glibc，以及各种 TLS 实现中对线程栈的访问都是利用 fs 实现的。</p>
+<p>fs 寄存器可以通过如下方式获得：</p>
+<ol>
+<li>
+<p><code>arch_prctl</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">   <span class="nf">arch_prctl</span><span class="p">(</span><span class="n">ARCH_GET_FS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pthread_addr</span><span class="p">);</span>
+</span></span></code></pre></div></li>
+<li>
+<p>asm %fs</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">   <span class="cp"># define THREAD_SELF \
+</span></span></span><span class="line"><span class="cl"><span class="cp">     ({ struct pthread *__self;                                                      \
+</span></span></span><span class="line"><span class="cl"><span class="cp">        asm (&#34;mov %%fs:%c1,%0&#34; : &#34;=r&#34; (__self)                                      \
+</span></span></span><span class="line"><span class="cl"><span class="cp">             : &#34;i&#34; (offsetof (struct pthread, header.self)));                       \
+</span></span></span><span class="line"><span class="cl"><span class="cp">        __self;})
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl">   <span class="k">struct</span> <span class="n">pthread</span> <span class="o">*</span><span class="n">self</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">   <span class="n">self</span> <span class="o">=</span> <span class="n">THREAD_SELF</span><span class="p">;</span>
+</span></span></code></pre></div></li>
+</ol>
+</li>
+<li>
+<p>Create</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define PTHREAD_KEYS_MAX        1024
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="kt">pthread_key_t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Thread-local data handling.  */</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">pthread_key_struct</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Sequence numbers.  Even numbers indicated vacant entries.  Note
+</span></span></span><span class="line"><span class="cl"><span class="cm">     that zero is even.  We use uintptr_t to not require padding on
+</span></span></span><span class="line"><span class="cl"><span class="cm">     32- and 64-bit machines.  On 64-bit machines it helps to avoid
+</span></span></span><span class="line"><span class="cl"><span class="cm">     wrapping, too.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">uintptr_t</span> <span class="n">seq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Destructor for the data.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">destr</span><span class="p">)</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">pthread_key_struct</span> <span class="n">__pthread_keys</span><span class="p">[</span><span class="n">PTHREAD_KEYS_MAX</span><span class="p">]</span>
+</span></span></code></pre></div><p>在主线程中调用 <code>pthread_key_create</code> 完成 key 的创建。glibc 定义了全局数组 <code>__pthread_keys</code> 来管理 key，每个进程最多创建 1024 个 key。</p>
+<p>数组中每个元素的：</p>
+<ol>
+<li><code>seq</code> 用于判断 key 是否被使用，为奇数则被使用</li>
+<li><code>destr</code> 用于存储释放资源的函数指针</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define KEY_UNUSED(p) (((p) &amp; 1) == 0)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nf">__pthread_key_create</span> <span class="p">(</span><span class="kt">pthread_key_t</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">destr</span><span class="p">)</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Find a slot in __pthread_keys which is unused.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">cnt</span> <span class="o">&lt;</span> <span class="n">PTHREAD_KEYS_MAX</span><span class="p">;</span> <span class="o">++</span><span class="n">cnt</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="cm">/* Remember the destructor.  */</span>
+</span></span><span class="line"><span class="cl">          <span class="n">__pthread_keys</span><span class="p">[</span><span class="n">cnt</span><span class="p">].</span><span class="n">destr</span> <span class="o">=</span> <span class="n">destr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="cm">/* Return the key to the caller.  */</span>
+</span></span><span class="line"><span class="cl">          <span class="o">*</span><span class="n">key</span> <span class="o">=</span> <span class="n">cnt</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="cm">/* The call succeeded.  */</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Set</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#define PTHREAD_KEY_2NDLEVEL_SIZE       32
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 32
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cp">#define PTHREAD_KEY_1STLEVEL_SIZE \
+</span></span></span><span class="line"><span class="cl"><span class="cp">  ((PTHREAD_KEYS_MAX + PTHREAD_KEY_2NDLEVEL_SIZE - 1) \
+</span></span></span><span class="line"><span class="cl"><span class="cp">   / PTHREAD_KEY_2NDLEVEL_SIZE)
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">pthread_key_data</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Sequence number.  We use uintptr_t to not require padding on
+</span></span></span><span class="line"><span class="cl"><span class="cm">     32- and 64-bit machines.  On 64-bit machines it helps to avoid
+</span></span></span><span class="line"><span class="cl"><span class="cm">     wrapping, too.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">uintptr_t</span> <span class="n">seq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Data pointer.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">specific_1stblock</span><span class="p">[</span><span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="cm">/* Two-level array for the thread-specific data.  */</span>
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="n">pthread_key_data</span> <span class="o">*</span><span class="n">specific</span><span class="p">[</span><span class="n">PTHREAD_KEY_1STLEVEL_SIZE</span><span class="p">];</span>
+</span></span></code></pre></div><p>各个线程将 key-value 存储到线程栈中，</p>
+<ol>
+<li>如果 key &lt; 32，到存储到 <code>specific_1stblock</code></li>
+<li>如果 32 &lt;= key &lt; 1024，存储到二维数组 <code>specific</code></li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nf">__pthread_setspecific</span> <span class="p">(</span><span class="kt">pthread_key_t</span> <span class="n">key</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">value</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">struct</span> <span class="n">pthread</span> <span class="o">*</span><span class="n">self</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">self</span> <span class="o">=</span> <span class="n">THREAD_SELF</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Special case access to the first 2nd-level block.  This is the
+</span></span></span><span class="line"><span class="cl"><span class="cm">     usual case.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nf">__glibc_likely</span> <span class="p">(</span><span class="n">key</span> <span class="o">&lt;</span> <span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">level2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">self</span><span class="o">-&gt;</span><span class="n">specific_1stblock</span><span class="p">[</span><span class="n">key</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">idx1st</span> <span class="o">=</span> <span class="n">key</span> <span class="o">/</span> <span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">idx2nd</span> <span class="o">=</span> <span class="n">key</span> <span class="o">%</span> <span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="cm">/* This is the second level array.  Allocate it if necessary.  */</span>
+</span></span><span class="line"><span class="cl">      <span class="n">level2</span> <span class="o">=</span> <span class="nf">THREAD_GETMEM_NC</span> <span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">specific</span><span class="p">,</span> <span class="n">idx1st</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="n">level2</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 分配 specific 二维数组
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="cm">/* Pointer to the right array element.  */</span>
+</span></span><span class="line"><span class="cl">      <span class="n">level2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">level2</span><span class="p">[</span><span class="n">idx2nd</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="cm">/* Store the data and the sequence number so that we can recognize
+</span></span></span><span class="line"><span class="cl"><span class="cm">     stale data.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="n">level2</span><span class="o">-&gt;</span><span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">level2</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span> <span class="n">value</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Get</p>
+<p>根据 key 的取值范围，决定访问 <code>specific_1stblock</code> ，还是 <code>specific</code> 。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="nf">__pthread_getspecific</span> <span class="p">(</span><span class="kt">pthread_key_t</span> <span class="n">key</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span><span class="nf">__glibc_likely</span> <span class="p">(</span><span class="n">key</span> <span class="o">&lt;</span> <span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">THREAD_SELF</span><span class="o">-&gt;</span><span class="n">specific_1stblock</span><span class="p">[</span><span class="n">key</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="k">else</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">idx1st</span> <span class="o">=</span> <span class="n">key</span> <span class="o">/</span> <span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">idx2nd</span> <span class="o">=</span> <span class="n">key</span> <span class="o">%</span> <span class="n">PTHREAD_KEY_2NDLEVEL_SIZE</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">data</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">level2</span><span class="p">[</span><span class="n">idx2nd</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="o">*</span><span class="n">result</span> <span class="o">=</span> <span class="n">data</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Delete</p>
+<p><code>pthread_key_delete</code> 会把 seq++，置为偶数，表示 key 为被使用，并不会真正的调用 <code>destr</code> 来进行资源的释放。</p>
+<p>当线程执行完毕时， <code>__nptl_deallocate_tsd</code> 调用每个 key 的 <code>destr</code> 执行清理。</p>
+</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="elf-tls">ELF TLS
+</h2><p>pthread TSD 全局分配 key，需要调用 glibc API 在运行时完成 TSD 的构造和使用，比较复杂，影响效率。因此就有了 ELF TLS。</p>
+<p>ELF TLS 是编译器（gcc/clang）的扩展特性，其实现需要如下方面的支持：</p>
+<ol>
+<li>ELF 文件需要区分普通静态全局变量和 TLS 变量</li>
+<li>程序启动时，动态链接器需要初始化 TLS 变量的段</li>
+<li>线程运行时，需要为 TLS 分配专门的内存区域，以及动态计算 TLS 的地址</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="elf-tls-section">ELF TLS Section
+</h3><p>普通 <code>static</code> 全局变量，根据是否初始化分别存储在 <code>.data</code> （已初始化）和 <code>.bss</code> （未初始化，初始化为 0），类似的 TLS 变量存储在 <code>.tdata</code> 和 <code>.tbss</code> 段。</p>
+<p>由于 TLS 是各个线程私有的数据，因此线程是不能直接访问 <code>.tdata</code> 和 <code>.tbss</code> 段的。</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="运行时分配-tls">运行时分配 TLS
+</h3><ol>
+<li>
+<p>Memory Layout</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"> <span class="n">low</span> <span class="err">┌──────┬──────────┐</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>      <span class="err">│</span><span class="p">...</span>       <span class="err">│</span> <span class="err">─┐</span>                     <span class="err">─┐</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>      <span class="err">├──────────┤</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">header</span><span class="err">│</span><span class="n">dtv</span>       <span class="err">│</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>      <span class="err">├──────────┤</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>      <span class="err">│</span><span class="p">...</span>       <span class="err">│</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├──────┴──────────┤</span>  <span class="err">├─►</span><span class="n">pthread</span> <span class="k">struct</span>      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">list</span>             <span class="err">│</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">tid</span>              <span class="err">│</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">│</span>                      <span class="err">├─►</span><span class="kr">thread</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="p">...</span>              <span class="err">│</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">│</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="p">...</span>              <span class="err">│</span> <span class="err">─┘</span>                      <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>                         <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>                 <span class="err">│</span>                         <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">stack</span>            <span class="err">│</span>                         <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>                 <span class="err">│</span>                        <span class="err">─┘</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>                 <span class="err">│</span> <span class="err">───►</span><span class="n">stack</span> <span class="nf">guard</span><span class="p">(</span><span class="mi">4</span><span class="n">k</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">header</span>           <span class="err">│</span> <span class="err">─┐</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">list</span>             <span class="err">│</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">tid</span>              <span class="err">│</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="p">...</span>              <span class="err">│</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">├─────────────────┤</span>  <span class="err">├─►</span><span class="kr">thread</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>                 <span class="err">│</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span><span class="n">stack</span>            <span class="err">│</span>  <span class="err">│</span>
+</span></span><span class="line"><span class="cl">     <span class="err">│</span>                 <span class="err">│</span> <span class="err">─┘</span>
+</span></span><span class="line"><span class="cl"><span class="n">high</span> <span class="err">└─────────────────┘</span>
+</span></span></code></pre></div><p>TLS 的内存布局用两种，对于 x86-64 是如下布局，</p>
+<p><img src="/images/2021/05/Snipaste_2021-05-27_23-24-12.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="img"
+	
+	
+></p>
+<p>tp（thread pointer，也是前面提到的 fs 寄存器的值） 指向 TCB，也就是 pthread struct，TCB 包含了一个 dtv（dynamic thread vector）指针，指向线程的 dtv 数组。</p>
+<p>dtv 存储了 TLS block 地址，通过 module ID 和 TLS 变量的偏移量来实现 TLS 变量的寻址。对于 exec，module ID 是 1；动态库（ <code>dlopen</code> ）的 module ID 直到加载的时候才会分配。</p>
+<p>根据 TLS 变量在何处被定义，其存储分为，</p>
+<ol>
+<li>来自 exec、以及 shared object： <code>main</code> 函数之前加载的 TLS 变量存储在 TCB 前面的 TLS block。dtv[1] 指向这个 TLS block。</li>
+<li><code>dlopen</code> 加载的 shared object：TLS 变量在 TLS Blocks for Dynamically-Loaded Modules。</li>
+</ol>
+</li>
+<li>
+<p>Allocate</p>
+<p>程序启动时，动态链接器将 exec、shared object 映射到进程地址空间，并进行相关初始化，</p>
+<ol>
+<li>可能会对这两个段进行重定位，并把重定位后的段保存为 TLS 初始化镜像，之后便不再改动</li>
+<li>调用 <code>_dl_determine_tlsoffset</code> 获得每个 module 中 TLS 变量的 offset（在编译的时候决定），offset 表示变量在 TLS block 中的偏移量</li>
+<li>调用 <code>_dl_allocate_tls_storage</code> 分配 TLS 和 dtv 的内存</li>
+<li>调用 <code>_dl_allocate_tls_init</code> 完成 TLS 和 dtv 的初始化</li>
+</ol>
+</li>
+<li>
+<p>Implementation</p>
+<ol>
+<li>前面提到线程启动时， <code>ALLOCATE_STACK</code> 宏调用 <code>allcate_stack</code> 来执行创建线程栈的逻辑，其中调用 <code>_dl_allocate_tls</code> 是进行 TLS 和 dtv 的分配以及初始化。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="cl"><span class="nf">allocate_stack</span> <span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="n">pthread_attr</span> <span class="o">*</span><span class="n">attr</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pthread</span> <span class="o">**</span><span class="n">pdp</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                <span class="n">ALLOCATE_STACK_PARMS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="cm">/* Allocate the DTV for this thread.  */</span>
+</span></span><span class="line"><span class="cl">  <span class="nf">_dl_allocate_tls</span> <span class="p">(</span><span class="nf">TLS_TPADJ</span> <span class="p">(</span><span class="n">pd</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li><code>_dl_allocate_tls_init</code> 将每个 module 的 TLS 初始化镜像复制到 TLS block。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="nf">_dl_allocate_tls_init</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="n">result</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">while</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">dtv</span><span class="p">[</span><span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_modid</span><span class="p">].</span><span class="n">pointer</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">TLS_DTV_UNALLOCATED</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dtv</span><span class="p">[</span><span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_modid</span><span class="p">].</span><span class="n">pointer</span><span class="p">.</span><span class="n">to_free</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">dest</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">result</span> <span class="o">-</span> <span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">          <span class="cm">/* Set up the DTV entry.  The simplified __tls_get_addr that
+</span></span></span><span class="line"><span class="cl"><span class="cm">             some platforms use in static programs requires it.  */</span>
+</span></span><span class="line"><span class="cl">          <span class="n">dtv</span><span class="p">[</span><span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_modid</span><span class="p">].</span><span class="n">pointer</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">dest</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="cm">/* Copy the initialization image and clear the BSS part.  */</span>
+</span></span><span class="line"><span class="cl">          <span class="nf">memset</span> <span class="p">(</span><span class="nf">__mempcpy</span> <span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_initimage</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                             <span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_initimage_size</span><span class="p">),</span> <span class="sc">&#39;\0&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                  <span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_blocksize</span> <span class="o">-</span> <span class="n">map</span><span class="o">-&gt;</span><span class="n">l_tls_initimage_size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div></li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="example-1">Example
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;pthread.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;asm/prctl.h&gt;</span><span class="cp">
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="n">__thread</span> <span class="n">var_1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="n">__thread</span> <span class="n">var_2</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span><span class="o">*</span> <span class="nf">func</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">arg</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="n">pthread_addr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">arch_prctl</span><span class="p">(</span><span class="n">ARCH_GET_FS</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">pthread_addr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">var_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">var_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">printf</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s">&#34;&amp;pthread = %p, &amp;var_1 = %p, off_var_1 = %d,  &amp;var_2 = %p, off_var_2 = &#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pthread_addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">var_1</span><span class="p">,</span> <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="o">&amp;</span><span class="n">var_1</span> <span class="o">-</span> <span class="n">pthread_addr</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">var_2</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="o">&amp;</span><span class="n">var_2</span> <span class="o">-</span> <span class="n">pthread_addr</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">pthread_t</span> <span class="n">tids</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">pthread_create</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">pthread_join</span><span class="p">(</span><span class="n">tids</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nf">getchar</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// &amp;pthread = 0x7ff58904d700, &amp;var_1 = 0x7ff58904d6f8, off_var_1 = -8,  &amp;var_2 = 0x7ff58904d6fc, off_var_2 = -4
+</span></span></span><span class="line"><span class="cl"><span class="c1">// &amp;pthread = 0x7ff58804b700, &amp;var_1 = 0x7ff58804b6f8, off_var_1 = -8,  &amp;var_2 = 0x7ff58804b6fc, off_var_2 = -4
+</span></span></span><span class="line"><span class="cl"><span class="c1">// &amp;pthread = 0x7ff58884c700, &amp;var_1 = 0x7ff58884c6f8, off_var_1 = -8,  &amp;var_2 = 0x7ff58884c6fc, off_var_2 = -4
+</span></span></span></code></pre></div><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="tls-access-models">TLS Access Models
+</h3><p>根据 TLS 变量定义的位置，以及访问的位置不同，有以下 4 中使用 TLS 变量的模型。具体采用哪种模式由编译器和链接器共同决定。</p>
+<ol>
+<li>
+<p>General Dynamic</p>
+<p>最通用的访问模型，任何地方定义的 TLS 变量，在任何地方访问，都可以使用这个方式。其他模型都是加上各种限制条件以后的优化。</p>
+<p>可以用这个公式来表示 <code>dtv[ti_module].pointer + ti_offset</code> 。实际可以使用 <code>__tls_get_addr</code> 来获取 TLS 变量地址。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">void</span> <span class="o">*</span>
+</span></span><span class="line"><span class="cl"><span class="nf">__tls_get_addr</span> <span class="p">(</span><span class="n">GET_ADDR_ARGS</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">dtv_t</span> <span class="o">*</span><span class="n">dtv</span> <span class="o">=</span> <span class="nf">THREAD_DTV</span> <span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nf">__glibc_unlikely</span> <span class="p">(</span><span class="n">dtv</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">counter</span> <span class="o">!=</span> <span class="nf">GL</span><span class="p">(</span><span class="n">dl_tls_generation</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">update_get_addr</span> <span class="p">(</span><span class="n">GET_ADDR_PARAM</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="o">*</span><span class="n">p</span> <span class="o">=</span> <span class="n">dtv</span><span class="p">[</span><span class="n">GET_ADDR_MODULE</span><span class="p">].</span><span class="n">pointer</span><span class="p">.</span><span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nf">__glibc_unlikely</span> <span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="n">TLS_DTV_UNALLOCATED</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nf">tls_get_addr_tail</span> <span class="p">(</span><span class="n">GET_ADDR_PARAM</span><span class="p">,</span> <span class="n">dtv</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span> <span class="n">p</span> <span class="o">+</span> <span class="n">GET_ADDR_OFFSET</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>Local Dynamic</p>
+<p>Local Dynamic 是对 General Dynamic 的优化。如果 TLS 变量在同一个模块被定义和使用，则可以使用这个模型。</p>
+<p>TLS 变量的 offset 在编译时可以确定，因此可以减少 <code>__tls_get_addr</code> 的调用。</p>
+</li>
+<li>
+<p>Initial Exec</p>
+<p>如果可以 TLS 变量在程序启动时就已分配好，则采用此模型。</p>
+</li>
+<li>
+<p>Local Exec</p>
+<p>对 Local Dynamic 的优化，如果 TLS 变量在 exec 中定义，在 exec 中访问，则使用这个模型。</p>
+<p>通过 fs 寄存器 + 偏移量访问。这种是最简单，也是最高效的方式，和访问局部变量没有区别。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl">  <span class="n">var_1</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="mi">401194</span><span class="o">:</span>       <span class="mi">64</span> <span class="n">c7</span> <span class="mo">04</span> <span class="mi">25</span> <span class="n">fc</span> <span class="n">ff</span> <span class="n">ff</span>    <span class="n">movl</span>   <span class="err">$</span><span class="mh">0x1</span><span class="p">,</span><span class="o">%</span><span class="nl">fs</span><span class="p">:</span><span class="mh">0xfffffffffffffffc</span>
+</span></span><span class="line"><span class="cl"><span class="mi">40119</span><span class="nl">b</span><span class="p">:</span>       <span class="n">ff</span> <span class="mo">01</span> <span class="mo">00</span> <span class="mo">00</span> <span class="mo">00</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4011</span><span class="nl">a0</span><span class="p">:</span>       <span class="mi">64</span> <span class="mi">48</span> <span class="mi">8</span><span class="n">b</span> <span class="mi">0</span><span class="n">c</span> <span class="mi">25</span> <span class="mo">00</span> <span class="mo">00</span>    <span class="n">mov</span>    <span class="o">%</span><span class="nl">fs</span><span class="p">:</span><span class="mh">0x0</span><span class="p">,</span><span class="o">%</span><span class="n">rcx</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4011</span><span class="nl">a7</span><span class="p">:</span>       <span class="mo">00</span> <span class="mo">00</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4011</span><span class="nl">a9</span><span class="p">:</span>       <span class="mi">48</span> <span class="mi">8</span><span class="n">d</span> <span class="mi">91</span> <span class="n">fc</span> <span class="n">ff</span> <span class="n">ff</span> <span class="n">ff</span>    <span class="n">lea</span>    <span class="o">-</span><span class="mh">0x4</span><span class="p">(</span><span class="o">%</span><span class="n">rcx</span><span class="p">),</span><span class="o">%</span><span class="n">rdx</span>
+</span></span><span class="line"><span class="cl">  <span class="n">var_2</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4011</span><span class="nl">b0</span><span class="p">:</span>       <span class="mi">64</span> <span class="n">c7</span> <span class="mo">04</span> <span class="mi">25</span> <span class="n">f8</span> <span class="n">ff</span> <span class="n">ff</span>    <span class="n">movl</span>   <span class="err">$</span><span class="mh">0x2</span><span class="p">,</span><span class="o">%</span><span class="nl">fs</span><span class="p">:</span><span class="mh">0xfffffffffffffff8</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4011</span><span class="nl">b7</span><span class="p">:</span>       <span class="n">ff</span> <span class="mo">02</span> <span class="mo">00</span> <span class="mo">00</span> <span class="mo">00</span>
+</span></span><span class="line"><span class="cl"><span class="mi">4011</span><span class="nl">bc</span><span class="p">:</span>       <span class="mi">48</span> <span class="mi">8</span><span class="n">d</span> <span class="mi">89</span> <span class="n">f8</span> <span class="n">ff</span> <span class="n">ff</span> <span class="n">ff</span>    <span class="n">lea</span>    <span class="o">-</span><span class="mh">0x8</span><span class="p">(</span><span class="o">%</span><span class="n">rcx</span><span class="p">),</span><span class="o">%</span><span class="n">rcx</span>
+</span></span></code></pre></div></li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="gcc-__thread">gcc： <code>__thread</code>
+</h3><p>pass</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="c11-_thread_local">c11： <code>_Thread_local</code>
+</h3><p>同 gcc <code>__thread</code></p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h3 id="c11-thread_local">c++11： <code>thread_local</code>
+</h3><p>相对于 <code>__thread</code> ， <code>thread_local</code> 可以在首次使用时自动初始化，线程结束时自动析构。</p>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="summary">Summary
+</h2><ol>
+<li>pthread：thread-specific data （TSD）
+<ul>
+<li>全局分配 key</li>
+<li>线程栈中的 pthread struct 存储自己线程的 key-value</li>
+<li>每个进程的 TSD 个数有限， <code>PTHREAD_KEYS_MAX</code> 个</li>
+<li>需要调用 glibc API 完成 TSD 的构造和使用，逻辑复杂</li>
+</ul>
+</li>
+<li>ELF TLS
+<ul>
+<li>效率比 TSD 高</li>
+<li>使用方便</li>
+</ul>
+</li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h1 id="references">References
+</h1><p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="thread-1">Thread
+</h2><ol>
+<li><a class="link" href="https://gist.github.com/CMCDragonkai/10ab53654b2aa6ce55c11cfc5b2432a4"  target="_blank" rel="noopener"
+    >Understanding the Memory Layout of Linux Executables</a></li>
+<li><a class="link" href="https://stackoverflow.com/questions/1401359/understanding-linux-proc-id-maps"  target="_blank" rel="noopener"
+    >Understanding Linux /proc/id/maps</a></li>
+<li><a class="link" href="https://zhuanlan.zhihu.com/p/32542921"  target="_blank" rel="noopener"
+    >Glibc 线程资源分配与释放–—线程栈</a></li>
+<li><a class="link" href="https://durant35.github.io/2017/10/29/VM_Stacks/"  target="_blank" rel="noopener"
+    >虚拟内存[02] Linux 中的各种栈：进程栈 线程栈 内核栈 中断栈</a></li>
+<li><a class="link" href="https://aandds.com/blog/threads.html"  target="_blank" rel="noopener"
+    >Threads</a></li>
+<li><a class="link" href="https://code.woboq.org/userspace/glibc/nptl/"  target="_blank" rel="noopener"
+    >source code of userspace/glibc/nptl/</a></li>
+</ol>
+<p><!-- raw HTML omitted --><!-- raw HTML omitted --></p>
+<h2 id="tls">TLS
+</h2><ol>
+<li><a class="link" href="https://gcc.gnu.org/onlinedocs/gcc/Thread-Local.html"  target="_blank" rel="noopener"
+    >gcc Thread-Local Storage</a></li>
+<li><a class="link" href="https://www.akkadia.org/drepper/tls.pdf"  target="_blank" rel="noopener"
+    >ELF Handling For Thread-Local Storage</a></li>
+<li><a class="link" href="https://chao-tic.github.io/blog/2018/12/25/tls"  target="_blank" rel="noopener"
+    >A Deep dive into (implicit) Thread Local Storage</a></li>
+<li><a class="link" href="https://maskray.me/blog/2021-02-14-all-about-thread-local-storage"  target="_blank" rel="noopener"
+    >All about thread-local storage</a></li>
+<li><a class="link" href="https://fasterthanli.me/series/making-our-own-executable-packer/part-13"  target="_blank" rel="noopener"
+    >Thread-local storage</a></li>
+<li><a class="link" href="https://stackoverflow.com/questions/32245103/how-does-the-gcc-thread-work"  target="_blank" rel="noopener"
+    >stackoverflow How does the gcc `_<!-- raw HTML omitted -->thread<!-- raw HTML omitted -->` work?</a></li>
+<li><a class="link" href="https://spockwangs.github.io/blog/2017/12/01/thread-local-storage/"  target="_blank" rel="noopener"
+    >线程私有存储</a></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/thread/">Thread</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

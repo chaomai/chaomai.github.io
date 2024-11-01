@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: &ldquo;C++ Concurrency in Action (5) - The C++ memory model and operations on atomic types&rdquo; date: 2015-07-18 18:41:54 description: The C++ memory model and operations on atomic types的笔记。 categories: - concurrency tags: - atomic - reading - cpp - cpp11 - &lsquo;c++ concurrency in action&rsquo; Memory model basics two aspects:\nthe basic structural aspects; the concurrency aspects. Objects and memory location C++程序中所有的数据都是由object组成，object是&quot;a region of storage&quot;。一个对象存储在一个或多个memory location。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-07-18-cpp-concurrency-in-action-5/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: &ldquo;C++ Concurrency in Action (5) - The C++ memory model and operations on atomic types&rdquo; date: 2015-07-18 18:41:54 description: The C++ memory model and operations on atomic types的笔记。 categories: - concurrency tags: - atomic - reading - cpp - cpp11 - &lsquo;c++ concurrency in action&rsquo; Memory model basics two aspects:\nthe basic structural aspects; the concurrency aspects. Objects and memory location C++程序中所有的数据都是由object组成，object是&quot;a region of storage&quot;。一个对象存储在一个或多个memory location。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-07-18-cpp-concurrency-in-action-5/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: &ldquo;C++ Concurrency in Action (5) - The C++ memory model and operations on atomic types&rdquo; date: 2015-07-18 18:41:54 description: The C++ memory model and operations on atomic types的笔记。 categories: - concurrency tags: - atomic - reading - cpp - cpp11 - &lsquo;c++ concurrency in action&rsquo; Memory model basics two aspects:\nthe basic structural aspects; the concurrency aspects. Objects and memory location C++程序中所有的数据都是由object组成，object是&quot;a region of storage&quot;。一个对象存储在一个或多个memory location。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-07-18-cpp-concurrency-in-action-5/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--c-concurrency-in-action">title: &ldquo;C++ Concurrency in Action (5) - The C++ memory model and operations on atomic types&rdquo;
+date: 2015-07-18 18:41:54
+description: The C++ memory model and operations on atomic types的笔记。
+categories:
+- concurrency
+tags:
+- atomic
+- reading
+- cpp
+- cpp11
+- &lsquo;c++ concurrency in action&rsquo;
+</h2><h1 id="memory-model-basics">Memory model basics
+</h1><p>two aspects:</p>
+<ul>
+<li>the basic structural aspects;</li>
+<li>the concurrency aspects.</li>
+</ul>
+<h2 id="objects-and-memory-location">Objects and memory location
+</h2><p>C++程序中所有的数据都是由object组成，object是&quot;a region of storage&quot;。一个对象存储在一个或多个<strong>memory location</strong>。</p>
+<p>每个memory location，</p>
+<ul>
+<li>要么是，一个标量的一个对象（或子对象）；</li>
+<li>要么是，相邻bit fields的序列。（虽然相邻的bit fields是不同对象，它们仍然算作相同的memory location，除非用长度为0的bit fields隔开。）</li>
+</ul>
+<h2 id="modification-orders">Modification orders
+</h2><p>C++程序中的每个对象都定义了一个modification order，它由程序中的所有线程对这个对象的write组成， starting with the object&rsquo;s initialization。</p>
+<p>在绝大多数情况下，这个order在每次运行的时候都是不同的，但对于一个给定的执行，所有的线程都必须agree on the order。如果不使用原子类型，你就必须提供有效的同步来使得这些线程都agree on the modification order of each variable。但是线程并没有必要agree on the relative order of separate objects。</p>
+<h1 id="atomic-operations-and-types-in-c">Atomic Operations and types in C++
+</h1><p>一个atomic operation是<strong>indivisible operation</strong>，要么完成，要么不完成。</p>
+<h2 id="the-standard-atomic-types">The standard atomic types
+</h2><p><code>is_lock_free()</code>：给定类型的操作是直接由atomic instructions完成，还是由编译器和库提供的内部锁完成。</p>
+<p><code>std::atomic_flag</code>没有提供<code>is_lock_free()</code>成员函数。因为在这个类型上的操作required to be lock-free，一旦有了这个lock-free的类型，就能够以它为基础，进而实现所有其他的atomic类型。</p>
+<p>在大多数平台上，所有内置类型的atomic变种都<strong>应该</strong>是lock-free的，但这并不是必须的。</p>
+<p>要注意的是，由于历史的原因，在有的平台，atomic类型指的不一定是<code>std::atomic&lt;&gt;</code>的specialization（如：<code>atomic_bool</code>和<code>std::atomic&lt;bool&gt;</code>）。如果混用，就可能导致不兼容的情况出现。</p>
+<p><strong>The alternative names for the standard atomic types and their corresponding <code>std::atomic&lt;&gt;</code> specializations.</strong></p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>Atomic type</th>
+          <th>Corresponding specialization</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>atomic_bool</code></td>
+          <td><code>std::atomic&lt;bool&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_char</code></td>
+          <td><code>std::atomic&lt;char&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_schar</code></td>
+          <td><code>std::atomic&lt;signed char&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uchar</code></td>
+          <td><code>std::atomic&lt;unsigned char&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int</code></td>
+          <td><code>std::atomic&lt;int&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint</code></td>
+          <td><code>std::atomic&lt;unsigned&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_short</code></td>
+          <td><code>std::atomic&lt;short&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_ushort</code></td>
+          <td><code>std::atomic&lt;unsigned short&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_long</code></td>
+          <td><code>std::atomic&lt;long&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_ulong</code></td>
+          <td><code>std::atomic&lt;unsigned long&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_llong</code></td>
+          <td><code>std::atomic&lt;long long&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_ullong</code></td>
+          <td><code>std::atomic&lt;unsigned long long&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_char16_t</code></td>
+          <td><code>std::atomic&lt;char16_t&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_char32_t</code></td>
+          <td><code>std::atomic&lt;char32_t&gt;</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_wchar_t</code></td>
+          <td><code>std::atomic&lt;wchar_t&gt;</code></td>
+      </tr>
+  </tbody>
+</table></div>
+<p><strong>The standard atomic <code>typedefs</code> and their corresponding built-in <code>typedefs</code></strong></p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>Atomic <code>typedef</code></th>
+          <th>Corresponding Standard Library <code>typedef</code></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>atomic_int_least8_t</code></td>
+          <td><code>int_least8_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_least8_t</code></td>
+          <td><code>uint_least8_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_least16_t</code></td>
+          <td><code>int_least16_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_least16_t</code></td>
+          <td><code>uint_least16_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_least32_t</code></td>
+          <td><code>int_least32_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_least32_t</code></td>
+          <td><code>uint_least32_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_least64_t</code></td>
+          <td><code>int_least64_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_least64_t</code></td>
+          <td><code>uint_least64_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_fast8_t</code></td>
+          <td><code>int_fast8_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_fast8_t</code></td>
+          <td><code>uint_fast8_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_fast16_t</code></td>
+          <td><code>int_fast16_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_fast16_t</code></td>
+          <td><code>uint_fast16_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_fast32_t</code></td>
+          <td><code>int_fast32_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_fast32_t</code></td>
+          <td><code>uint_fast32_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_int_fast64_t</code></td>
+          <td><code>int_fast64_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uint_fast64_t</code></td>
+          <td><code>uint_fast64_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_intptr_t</code></td>
+          <td><code>intptr_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uintptr_t</code></td>
+          <td><code>uintptr_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_size_t</code></td>
+          <td><code>size_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_ptrdiff_t</code></td>
+          <td><code>ptrdiff_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_intmax_t</code></td>
+          <td><code>intmax_t</code></td>
+      </tr>
+      <tr>
+          <td><code>atomic_uintmax_t</code></td>
+          <td><code>uintmax_t</code></td>
+      </tr>
+  </tbody>
+</table></div>
+<p>要注意的是：</p>
+<ol>
+<li>
+<p>标准的atomic类型<strong>不是copyable和assignable</strong>的；</p>
+<blockquote>
+<p>因为这些操作总是涉及到两个对象，必须从一个中read，然后write到另一个，这是两个单独的操作，合起来不可能是atomic。因此就不被允许。</p>
+</blockquote>
+</li>
+<li>
+<p>支持assignment from和implicit conversion to对应的内置类型；</p>
+</li>
+<li>
+<p>赋值操作返回的并不是reference  to  the  object  it&rsquo;s
+assigned to，而是the value assigned。</p>
+<blockquote>
+<p>因为如果返回了reference  to atomic variable，那些使用这个变量的代码需要显示的<code>load()</code>，实际使用到值的可能是其他线程已经修改过的。</p>
+</blockquote>
+</li>
+</ol>
+<p><strong>Memory-ordering</strong></p>
+<p>每个在atomic类型上的操作都有memory-ordering参数，来指定memory-ordering语义。不同的操作可传入不同的参数，操作分为三类：</p>
+<ol>
+<li>Store</li>
+<li>Load</li>
+<li>Read-modify-write</li>
+</ol>
+<p>默认是<code>memory_order_seq_cst</code>。</p>
+<h2 id="operations-on-stdatomic_flag">Operations on <code>std::atomic_flag</code>
+</h2><p>代表一个boolean flag，只能是两种状态：set或clear，并且总是starts clear。</p>
+<p>必须用<code>ATOMIC_FLAG_INIT</code>来初始化，<code>std::atomic_flag guard = ATOMIC_FLAG_INIT</code>。这是唯一需要使用这样的特殊方式来初始化的类型，也是<strong>唯一一个</strong>保证lock-free的。</p>
+<p>如果是<code>static</code>，那么在首次操作flag的时候初始化。</p>
+<p>用于实现spinlock，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">spinlock_mutex</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="n">atomic_flag</span> <span class="n">flag</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">spinlock_mutex</span><span class="p">()</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">flag</span><span class="p">(</span><span class="n">ATOMIC_FLAG_INIT</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">lock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">(</span><span class="n">flag</span><span class="p">.</span><span class="n">test_and_set</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_acquire</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">unlock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">flag</span><span class="p">.</span><span class="n">clear</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_release</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h2 id="operations-on-stdatomicbool">Operations on <code>std::atomic&lt;bool&gt;</code>
+</h2><p>可用nonatomic bool来初始化，还可以向实例赋nonatomic bool值，<strong><code>std::atomic&lt;bool&gt;</code>可能不是lock-free的！</strong></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+</span></span></code></pre></div><ul>
+<li>write：<code>store()</code>；</li>
+<li>read-modify-write：<code>exchange()</code>；</li>
+<li>nonmodifying query：<code>load()</code>。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">bool</span> <span class="n">x</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_acquire</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">b</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span><span class="o">=</span><span class="n">b</span><span class="p">.</span><span class="n">exchange</span><span class="p">(</span><span class="nb">false</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_acq_rel</span><span class="p">);</span>
+</span></span></code></pre></div><p><strong>compare/exchange</strong></p>
+<ul>
+<li><code>compare_exchange_weak()</code></li>
+<li><code>compare_exchange_strong()</code></li>
+</ul>
+<p>如果失败，expected value或被更新为original value，都接受两个memory-ordering参数。</p>
+<p>有这么几个要注意的地方：</p>
+<ol>
+<li>一个failed compare/exchange是不会进行保存的，因此某些memory-ordering语义是不可用的（<code>memory_order_release</code>和<code>memory_order_acq_rel</code>）。</li>
+<li>can&rsquo;t supply stricter memory ordering for failure than for success。</li>
+<li>如果不为failure提供memory-ordering参数，则<strong>在满足1的情况下</strong>，与success一致。</li>
+<li>如果都不提供，则使用默认的<code>memory_order_seq_cst</code>。</li>
+<li>它们是read-modify-write operation。</li>
+</ol>
+<p><em>蛋疼的作者啊，很多地方扯到memory-ordering语义，但是总是说“leave to section 5.3&hellip;”</em></p>
+<h2 id="operations-on-stdatomict">Operations on <code>std::atomic&lt;T*&gt;</code>
+</h2><p><code>std::atomic&lt;bool&gt;</code>有的成员函数，这个也有。</p>
+<p><code>std::atomic&lt;T*&gt;</code>还提供了pointer arithmetic operations，由<code>fetch_add()</code>和<code>fetch_sub()</code>实现。</p>
+<p><strong><code>fetch_add()</code>和<code>fetch_sub()</code></strong></p>
+<ol>
+<li>
+<p>也叫做<em>exchange-and-add</em>，它们是atomic read-modify-write operation。</p>
+</li>
+<li>
+<p>返回的是原始的值，而不是add或sub后的值。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Foo</span><span class="p">{};</span>
+</span></span><span class="line"><span class="cl"><span class="n">Foo</span> <span class="n">some_array</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">*&gt;</span> <span class="n">p</span><span class="p">(</span><span class="n">some_array</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">Foo</span><span class="o">*</span> <span class="n">x</span><span class="o">=</span><span class="n">p</span><span class="p">.</span><span class="n">fetch_add</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="o">==</span><span class="n">some_array</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">assert</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">load</span><span class="p">()</span><span class="o">==&amp;</span><span class="n">some_array</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">x</span><span class="o">=</span><span class="p">(</span><span class="n">p</span><span class="o">-=</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">assert</span><span class="p">(</span><span class="n">x</span><span class="o">==&amp;</span><span class="n">some_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">assert</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">load</span><span class="p">()</span><span class="o">==&amp;</span><span class="n">some_array</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span></code></pre></div></li>
+</ol>
+<h2 id="operations-on-standard-atomic-integral-types">Operations on standard atomic integral types
+</h2><p>Only division, multiplication, and shift operators are missing。因为atomic integral types通常作为计数器或位域来使用，如果需要额外的操作，可以在loop中用<code>compare_exchange_weak()</code>来实现。</p>
+<h2 id="the-stdatomic-primary-class-template">The <code>std::atomic&lt;&gt;</code> primary class template
+</h2><p>要将user-defined type用于<code>std::atomic&lt;&gt;</code>，UDT必须满足：</p>
+<ol>
+<li>
+<p>必须有trivial copy-assignment operator；</p>
+<blockquote>
+<ul>
+<li>不能有任何的virtual函数或者virtual基类；</li>
+<li>必须使用编译器生成的copy-assignment operator。</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>每个基类和非static数据成员必须有trivial copy-assignment operator；</p>
+<blockquote>
+<ul>
+<li>这可以使得编译器将<code>memcpy()</code>或等价的操作用于assignment operation。</li>
+</ul>
+</blockquote>
+</li>
+<li>
+<p>这个类型必须是bitwise equality comparable。</p>
+<blockquote>
+<ul>
+<li>这里接着2，不仅要能够使用<code>memcpy()</code>来copy，还要能使用<code>memcmp()</code>来比较（以便compare/exchange能工作）。</li>
+</ul>
+</blockquote>
+</li>
+</ol>
+<p><strong>为什么要满足？</strong></p>
+<ol>
+<li>If <strong>user-supplied</strong> copy-assignment or comparison operators were permitted, this would <strong>require passing a reference to the protected data</strong> as an argument <strong>to a user-supplied function</strong>, thus violating the guideline.</li>
+<li>增大了编译器对<code>std::atomic&lt;UDT&gt;</code>直接使用atomic instruction的可能，因为编译器可以把UDT看作a set of raw bytes。</li>
+</ol>
+<p><strong><code>std::atomic&lt;float&gt; and std::atomic&lt;double&gt;</code>？</strong></p>
+<p>因为表示的不同，即使相等<code>compare_exchange_strong()</code>也会fail。</p>
+<h2 id="free-functions-for-atomic-operations">Free functions for atomic operations
+</h2><p>与原子类型的成员函数相对应，也有相应的非成员函数，大多数前面都会加上<code>atomic_</code>。</p>
+<p>要注意的地方有：</p>
+<ol>
+<li>
+<p>用含有<code>_explict</code>的版本来指定memory ordering；</p>
+</li>
+<li>
+<p>所有free functions的第一个参数类型都是pointer to atomic objcet(为了C-compatible)；</p>
+<blockquote>
+<p>对于CAS，要么不指定failure memory ordering，要么两个都要指定。</p>
+</blockquote>
+</li>
+<li>
+<p>对于<code>std::atomic_flag</code>只能，</p>
+<ul>
+<li><code>std::atomic_flag_test_and_set()</code></li>
+<li><code>std::atomic_flag_clear()</code></li>
+<li><code>std::atomic_flag_test_and_set_explicit()</code></li>
+<li><code>std::atomic_flag_clear_explicit()</code></li>
+</ul>
+</li>
+<li>
+<p><code>std::shared_ptr&lt;&gt;</code>算是特殊，它非atomic type，但支持load, store, exchange and compare/exchange。这些free functions第一个参数接受<code>std::shared_ptr&lt;&gt;*</code>。</p>
+</li>
+</ol>
+<h1 id="reference">Reference
+</h1><ol>
+<li><a class="link" href="http://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable"  target="_blank" rel="noopener"
+    >std::atomic_flag as member variable</a></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

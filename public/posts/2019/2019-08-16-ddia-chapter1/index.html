@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="数据密集型应用 现在的很多应用是数据密集型的，数据是这些应用的主要挑战-数据的总量、数据的复杂度和数据变化的速度。\n很多数据密集型的应用都是基于已有的数据系统提供的常用功能来构建的。例如：\n">
+<title>DDIA 第一章 可靠、可扩展、可维护的应用</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2019/2019-08-16-ddia-chapter1/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="DDIA 第一章 可靠、可扩展、可维护的应用">
+<meta property='og:description' content="数据密集型应用 现在的很多应用是数据密集型的，数据是这些应用的主要挑战-数据的总量、数据的复杂度和数据变化的速度。\n很多数据密集型的应用都是基于已有的数据系统提供的常用功能来构建的。例如：\n">
+<meta property='og:url' content='http://localhost:1313/posts/2019/2019-08-16-ddia-chapter1/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='ddia' /><meta property='article:published_time' content='2019-08-16T00:22:53&#43;00:00'/><meta property='article:modified_time' content='2019-08-16T00:22:53&#43;00:00'/>
+<meta name="twitter:title" content="DDIA 第一章 可靠、可扩展、可维护的应用">
+<meta name="twitter:description" content="数据密集型应用 现在的很多应用是数据密集型的，数据是这些应用的主要挑战-数据的总量、数据的复杂度和数据变化的速度。\n很多数据密集型的应用都是基于已有的数据系统提供的常用功能来构建的。例如：\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/distritubed-system/" >
+                Distritubed System
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2019/2019-08-16-ddia-chapter1/">DDIA 第一章 可靠、可扩展、可维护的应用</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Aug 16, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="数据密集型应用">数据密集型应用
+</h1><p>现在的很多应用是<em>数据密集型</em>的，数据是这些应用的主要挑战-数据的总量、数据的复杂度和数据变化的速度。</p>
+<p>很多数据密集型的应用都是基于已有的数据系统提供的常用功能来构建的。例如：</p>
+<ul>
+<li>存储数据，以便自己或其他应用能够找到（基于数据库实现此功能）</li>
+<li>记住一个昂贵操作的结果，来加速读取（缓存）</li>
+<li>允许用户通过关键词搜索数据，或多种方式过滤数据（搜索索引）</li>
+<li>发送消息到另一个进程进行异步处理（流式处理）</li>
+<li>定时处理大量累积的数据（批处理）</li>
+</ul>
+<p>由于数据系统的抽象，这些功能都看似很简单。但是，数据系统在逐渐变得相似，不同的数据系统可能同时具有多种特性，例如：Redis的cache和消息队列功能；应用程序越来越宽泛的需求使得单一数据系统无法完成，需要使用程序代码来组合不同的数据系统；同一需求，可能有多种方式和数据系统来实现。因此选择合适的数据系统和权衡架构的设计是一个值得思考的问题。</p>
+<h1 id="设计数据系统的原则">设计数据系统的原则
+</h1><ul>
+<li>可靠性（Reliability）
+就算出现问题的时候（硬件或软件错误，人为错误），系统都应该应该持续的正确工作（在期望的水平上提供正确的功能）。</li>
+<li>可扩展性（Scalability）
+随着系统的增长（数据量、流量或数据复杂度），应该有合理的方法来应对这些增长。</li>
+<li>可维护性（Maintainability）
+随着时间的推移，许多人都会参与系统相关的工作（开发和运维，他们保证系统现有行为正常、并使系统能够应对新的情况），他们应该高效的工作。</li>
+</ul>
+<h2 id="可靠性">可靠性
+</h2><p>系统具有容错性（fault-tolerant或resilient）。系统在遇到<strong>特定错误的时候</strong>，也能按预期正常工作。</p>
+<blockquote>
+<p>这里原文特别区别了fault和failure。fault指的是系统组件的运作偏离了预期，而failure指的是系统整体无法提供服务。设计一个完全没有fault的系统是不可能的，但是可以通过设计fault-tolerant机制来避免fault导致failure。
+下面，failure会写为系统故障。</p>
+</blockquote>
+<p><strong>硬件故障</strong>
+每个硬件都有预期的寿命，系统使用的硬件规模够大、运行时间够长时，硬件总会出故障。</p>
+<p>通过软件和硬件层面冗余的方式，可以避免出现硬件故障时无法提供服务。</p>
+<p><strong>软件错误</strong>
+硬件错误的发生相对独立，但是软件错误更加难以预期，往往会导致很多的系统错误。</p>
+<p>通过完善的考虑系统的假设和交互、测试、进程隔离、监控、允许进程挂了后重启等方式来避免软件错误。</p>
+<p><strong>人为错误</strong>
+系统的设计、构建和运维是由人来进行的，但人是不可靠的。</p>
+<p>通过如下方式来减少人为错误：</p>
+<ul>
+<li>以最小化错误机会的方式来设计系统。例如：设计良好的抽象、API和管理界面来避免“做错误的事”。</li>
+<li>解耦人们最容易犯的错和犯错的地方。例如：提供完整功能的非生产环境sanbox。</li>
+<li>完善的测试。例如：从单元测试到整个系统集成测试。</li>
+<li>提供快速和简单的错误恢复机制。例如：快速的回滚配置，上线新代码应逐步从小范围内到大范围，提供重新计算数据的工具来修复老数据错误。</li>
+<li>详尽和清晰的监控。例如：性能计数和错误率。</li>
+</ul>
+<h2 id="可扩展性">可扩展性
+</h2><p>即便一个系统现在能够可靠的工作，这不意味着未来也能。一个常见的原因就是负载的增加。当讨论可扩展性时，常常需要考虑，“如果系统以一个特定的方式增长，应该怎么办？”，“如何增加计算资源来应对额外的负载？”。</p>
+<p><strong>描述负载</strong>
+首先需要简洁的描述负载，负载可以使用几个数字来描述，叫做负载参数（load parameters），参数的选择依赖于系统的架构，例如：</p>
+<ul>
+<li>web服务器每秒的请求个数。</li>
+<li>数据库的读写比例。</li>
+<li>聊天室同时活跃的用户数。</li>
+<li>cache命中率。</li>
+</ul>
+<p><strong>描述性能</strong>
+一旦有了系统负载的描述，那么可以讨论负载增加时会发生什么，可以有两个角度：</p>
+<ul>
+<li>负载增加时，如果保持系统资源不变，系统的性能会怎样？</li>
+<li>负载增加时，为了保持系统性能不变，需要增加多少资源？</li>
+</ul>
+<p>讨论这两个问题需要描述性能，</p>
+<ol>
+<li>吞吐量（批处理系统）</li>
+<li>响应时间（在线系统）
+<ul>
+<li>平均响应时间。</li>
+<li>百分比响应时间。
+例如：p50，取time的中位数，如果是200ms，那么代表50%的响应时间小于200ms。类似的还有p90，p99。</li>
+<li>高百分比响应时间，又叫做尾部延迟（tail latencies）。</li>
+</ul>
+</li>
+</ol>
+<p>性能与可用性一起被用在SLOs（service level objectives）和SLAs（service level agreements）中，规约定义了服务期望的性能和可用性。</p>
+<p>高百分比响应时间常常受队列延迟（queueing delay）的影响，少量慢请求会阻塞后续请求的处理，这个现象又叫做head-of-line blocking。</p>
+<p>如果一个请求需要进一步使用更多的后端调用来完成，那么一个较慢的调用就会拖慢整个请求，这叫做尾部延迟放大（tail latency amplification）。</p>
+<p><strong>应对负载的方法</strong></p>
+<ol>
+<li>scaling up
+垂直缩放，迁移到性能更强的机器。</li>
+<li>scaling out
+水平缩放，把负载分布到多个小机器上。也叫做share-nothing architecture。</li>
+</ol>
+<p>实际工程上可能会混用两种方法，几个性能较强的机器可能比非常多的小机器来的划算。把无状态的服务分布到多个机器较为容易，但是把一个有状态的数据系统分布式化会引入很多额外的复杂性。</p>
+<p>大规模分布式系统架构往往是针对应用高度定制化的，并不存在一个通用的分布式架构。因为要解决的问题可能是读为主、写为主、大量数据的存储为主、数据的复杂度、响应时间、访问方式，或者是前面各种因素的混合。</p>
+<h2 id="可维护性">可维护性
+</h2><p>软件开发的主要成本并不在最初的开发，而是持续的维护-修bug、运维、排错、兼容性的平台等。主要关注以下方面，</p>
+<ol>
+<li>可操作性，便于运维团队的维护。
+需要提供：
+<ul>
+<li>完善的监控</li>
+<li>自动化和集成工具</li>
+<li>避免依赖特定的机器</li>
+<li>文档</li>
+<li>良好的默认行为，并提供修改默认行为的方法</li>
+<li>自我恢复，并提供手动操作的方法</li>
+<li>可预测的行为</li>
+</ul>
+</li>
+<li>简单，管理复杂性，便于其他开发者理解系统。
+好的抽象可以隐藏复杂的细节。</li>
+<li>可进化，便于修改和增加系统功能，又叫做可扩展性（extensibility）、可修改性（modifiability）、可塑性（plasticity）。
+增加数据系统的敏捷性。</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/ddia/">Ddia</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

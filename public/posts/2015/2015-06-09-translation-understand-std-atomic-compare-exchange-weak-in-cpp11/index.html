@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: &ldquo;译 - Understand std::atomic::compare_exchange_weak() in C++11&rdquo; date: 2015-06-09 00:00:49 description: 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案，我做了简单的翻译和整理。 categories: - concurrency tags: - atomic - reading - cpp - cpp11 - cas 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-06-09-translation-understand-std-atomic-compare-exchange-weak-in-cpp11/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: &ldquo;译 - Understand std::atomic::compare_exchange_weak() in C++11&rdquo; date: 2015-06-09 00:00:49 description: 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案，我做了简单的翻译和整理。 categories: - concurrency tags: - atomic - reading - cpp - cpp11 - cas 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-06-09-translation-understand-std-atomic-compare-exchange-weak-in-cpp11/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: &ldquo;译 - Understand std::atomic::compare_exchange_weak() in C++11&rdquo; date: 2015-06-09 00:00:49 description: 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案，我做了简单的翻译和整理。 categories: - concurrency tags: - atomic - reading - cpp - cpp11 - cas 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-06-09-translation-understand-std-atomic-compare-exchange-weak-in-cpp11/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    6 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--cas">title: &ldquo;译 - Understand <code>std::atomic::compare_exchange_weak()</code> in C++11&rdquo;
+date: 2015-06-09 00:00:49
+description: 原文是stackoverflow上的一个关于compare_exchange_weak()问题和相应的答案，我做了简单的翻译和整理。
+categories:
+- concurrency
+tags:
+- atomic
+- reading
+- cpp
+- cpp11
+- cas
+</h2><!-- raw HTML omitted -->
+<p>原文是stackoverflow上的<a class="link" href="http://stackoverflow.com/questions/25199838/understanding-stdatomiccompare-exchange-weak-in-c11"  target="_blank" rel="noopener"
+    >一个关于<code>compare_exchange_weak()</code>问题和相应的答案</a>。</p>
+<!-- raw HTML omitted -->
+<h2 id="question">Question
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">compare_exchange_weak</span> <span class="p">(</span><span class="n">T</span><span class="o">&amp;</span> <span class="n">expected</span><span class="p">,</span> <span class="n">T</span> <span class="n">val</span><span class="p">,</span> <span class="p">..);</span>
+</span></span></code></pre></div><p><code>compare_exchange_weak()</code>是C++11中提供的compare-exchange原语之一。之所以是<strong>weak</strong>，是因为即使在对象的值等于<code>expected</code>的情况下，也返回false。这是因为在某些平台上的<strong>spurious failure</strong>，这些平台使用了一系列的指令（而不是像在x86上一样，使用单条的指令）来实现CAS。在这种平台上，context switch, reloading of the same address (or cache line) by another thread等，将会导致这条原语失败。由于不是因为对象的值（不等于<code>expected</code>）导致的操作失败，因此是<code>spurious</code>。相反的，it&rsquo;s kind of timing issues。</p>
+<p>但是困扰我的是C++11标准（ISO/IEC 14882）里的，</p>
+<blockquote>
+<p>29.6.5 .. A consequence of spurious failure is that nearly all uses of weak compare-and-exchange will be in a loop.</p>
+</blockquote>
+<p>为什么in <strong>nearly all uses</strong>都必须在一个loop中？这是不是意味着因为有spurious failures，当它失败的时候，我们将会loop？如果这是原因，那么为什么我们还要那么麻烦的使用<code>compare_exchange_weak()</code>，并且自己写loop？我们可以直接使用<code>compare_exchange_strong()</code>，我认为这样可以让我们摆脱spurious failures。<code>compare_exchange_weak()</code>通常在什么情况下使用？</p>
+<p>另一个相关的问题是，在Anthony的&quot;C++ Concurrency In Action&quot;一书中写到，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">//Because compare_exchange_weak() can fail spuriously, it must typically
+</span></span></span><span class="line"><span class="cl"><span class="c1">//be used in a loop:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="kt">bool</span> <span class="n">expected</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">extern</span> <span class="n">atomic</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span> <span class="n">b</span><span class="p">;</span> <span class="c1">// set somewhere else
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">b</span><span class="p">.</span><span class="n">compare_exchange_weak</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span><span class="nb">true</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">expected</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">//In this case, you keep looping as long as expected is still false,
+</span></span></span><span class="line"><span class="cl"><span class="c1">//indicating that the compare_exchange_weak() call failed spuriously.
+</span></span></span></code></pre></div><p>为什么在loop的条件中有!expected？它是不是防止了所有线程可能会starve，并且在一段时间里make no progress？</p>
+<p><strong>Edit：(最后一个问题)</strong></p>
+<p>在那些没有单条硬件CAS指令的平台上，weak和strong版本都是使用LL/SC来实现的（像ARM，PowerPC等）。那么下面的两种loop之间是否有区别？如果有的话，为什么？（对我来说，我觉得它们应该有相似的性能）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// use LL/SC (or CAS on x86) and ignore/loop on spurious failures
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">compare_exchange_weak</span><span class="p">(..))</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span> <span class="p">..</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// use LL/SC (or CAS on x86) and ignore/loop on spurious failures
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">compare_exchange_strong</span><span class="p">(..))</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span> <span class="p">..</span> <span class="p">}</span>
+</span></span></code></pre></div><p>你们都提到，在loop在可能会存在性能上的区别。这也在C++11（ISO/IEC 14882）标准中提到，</p>
+<blockquote>
+<p>When a compare-and-exchange is in a loop, the weak version will yield better performance on some platforms.</p>
+</blockquote>
+<p>但是根据上面的分析，两个版本的loop应该有相同或类似的性能。我遗漏了什么吗？</p>
+<h2 id="answer-1">Answer 1
+</h2><h3 id="why-doing-exchange-in-a-loop">Why doing exchange in a loop?
+</h3><p>通常来说，你想要在进行下一步的工作前完成当前的工作，因此，你把<code>compare_exchange_weak</code>放入了一个loop，以便一直尝试exchange直到成功（也就是说，返回<code>true</code>）。</p>
+<p>要注意的是，<code>compare_exchange_strong</code>也常常用在loop中。它不会因为spurious failure而失败，但会因为concurrent writes而失败。</p>
+<h3 id="why-to-use-weak-instead-of-strong">Why to use <code>weak</code> instead of <code>strong</code>?
+</h3><p>很简单：spurious failure并不会经常发生，因此这不会有大的性能损失。相反，tolerate这种failure允许在某些平台上有更高效的<code>weak</code>版本的实现（与<code>strong</code>相比较）。<code>strong</code>必须每次都检查spurious failure，并处理它，这是有代价的。</p>
+<p>因此，<code>weak</code>在某些平台上比<code>strong</code>更快使得<code>weak</code>被使用。</p>
+<h3 id="when-should-you-use-weak-and-when-strong">When should you use <code>weak</code> and when <code>strong</code>?
+</h3><p>这个<a class="link" href="http://en.cppreference.com/w/cpp/atomic/atomic/compare_exchange"  target="_blank" rel="noopener"
+    >参考文献</a>指明了什么时候用<code>weak</code>，什么时候用<code>strong</code>：</p>
+<blockquote>
+<p>When a compare-and-exchange is in a loop, the weak version will yield better performance on some platforms. When a weak compare-and-exchange would require a loop and a strong one would not, the strong one is preferable.</p>
+</blockquote>
+<blockquote>
+<p>当compare-and-exchange在loop中，weak版本在某些平台上会有更高的性能。当一个weak的compare-and-exchange需要一个loop，而strong的不需要，那么用strong的更合适。</p>
+</blockquote>
+<p>因此这个答案很容易记住：如果你使用loop仅仅是由于spurious failure，那么不要使用loop；用<code>strong</code>。如果你无法避免的要使用loop，那么就是用<code>weak</code>。</p>
+<h3 id="why-is-expected-in-the-example">Why is <code>!expected</code> in the example?
+</h3><p>这视实际情况和期望的语义而定，但是通常it is not needed for correctness。忽略它会产生一个非常相似的语义。仅仅在另一个线程可能会把值reset为<code>false</code>的情况下，这个语义才会有细微的差别（但是我没有找到一个比较meaningful的例子），Tony D的评论有更详细的解释。</p>
+<p><strong>Tony D：</strong></p>
+<p>&ldquo;Why is !expected in the example? It is not needed for correctness. Omitting it would yield the same semantics.&rdquo;</p>
+<p>并非如此。假设第一个exchange由于b已经是<code>true</code>而失败，此时<code>expected</code>变为<code>true</code>。如果没有<code>&amp;&amp; !expected</code>的话，它只会再次loop，并且（傻傻的）将<code>true</code>与<code>true</code>交换。这可能会成功并且退出<code>while</code> loop。But could exhibit meaningfully different behavior if b had meanwhile changed back to false, in which case the loop would continue and may ultimately set b true yet again before breaking.</p>
+<p>当其他线程写入<code>true</code>时，这是个简单快捷的方法：我们只需要终止，而不是再次尝试写入<code>true</code>。</p>
+<h3 id="about-your-last-question">About your last question
+</h3><blockquote>
+<p>但是根据上面的分析，两个版本的loop应该有相同或类似的性能。我遗漏了什么吗？</p>
+</blockquote>
+<p>在<a class="link" href="http://en.wikipedia.org/wiki/Load-link/store-conditional"  target="_blank" rel="noopener"
+    >Wikipedia</a>：</p>
+<blockquote>
+<p>Real implementations of LL/SC do not always succeed if there are no concurrent updates to the memory location in question. Any exceptional events between the two operations, such as a context switch, another load-link, or even (on many platforms) another load or store operation, will cause the store-conditional to spuriously fail. Older implementations will fail if there are any updates broadcast over the memory bus.</p>
+</blockquote>
+<p>因此，LL/SC在发生context switch的时候将会fail spuriously。现在，<code>strong</code>版本的会使用它“自己的小loop”来检测spurious failure，并且通过重试来处理它。要注意的是，它自己的loop要比一个普通的CAS loop要复杂，因为它必须区分spurious failure（并处理它）和由于并发访问导致的失败（这会导致返回值为<code>false</code>）。<code>weak</code>版的并没有这样自己的loop。</p>
+<p>既然你在两个例子中都显式的使用了loop，在<code>strong</code>版本中是完全没有必要使用loop的。结果是，在<code>strong</code>版本中，做了两次failure的检查；一次是<code>compare_exchange_strong</code>做的（由于它要区分spurious failure和并发访问，这要更复杂），另一是你自己的loop做的。这样代价高昂的检查时没有必要的，<code>weak</code>快的原因就在这里。</p>
+<p>Also note that your argument (LL/SC) is just one possibility to implement this. There are more platforms that have even different instruction sets. In addition (and more importantly), note that std::atomic must support all operations for all possible data types, 因此即使你声明了一个一千万字节的结构体，你还是可以用compare_exchange来做这个。即使当CPU有CAS指令，你也不用能够CAS一千万字节，因此编译器会生成其他的指令（可能是acquire lock，然后进行non-atomic compare and swap，接着release lock）。现在，想想当swap一千万字节的时候会发生什么。因此尽管spurious error对于8 byte的exchanges可能是非常罕见的，在这种情况下，它可能更常见。</p>
+<h2 id="answer-2">Answer 2
+</h2><p><strong>To be continued&hellip;</strong></p>
+<h2 id="references">References
+</h2><ol>
+<li><a class="link" href="http://stackoverflow.com/questions/25199838/understanding-stdatomiccompare-exchange-weak-in-c11"  target="_blank" rel="noopener"
+    >Understanding std::atomic::compare_exchange_weak() in C++11</a></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

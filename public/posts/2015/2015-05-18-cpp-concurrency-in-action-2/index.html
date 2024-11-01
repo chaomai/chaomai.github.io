@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: &ldquo;C++ Concurrency in Action (2) - Managing threads&rdquo; date: 2015-05-18 19:35:23 description: Managing threads的笔记。 categories: - concurrency tags: - threads - reading - cpp - cpp11 - &lsquo;c++ concurrency in action&rsquo; Managing threads std::thread：线程管理的相关类和函数。\n对于那些不是那么简单的任务，库提供了可以让你从基本的代码来构建你需要的东西的灵活性。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-05-18-cpp-concurrency-in-action-2/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: &ldquo;C++ Concurrency in Action (2) - Managing threads&rdquo; date: 2015-05-18 19:35:23 description: Managing threads的笔记。 categories: - concurrency tags: - threads - reading - cpp - cpp11 - &lsquo;c++ concurrency in action&rsquo; Managing threads std::thread：线程管理的相关类和函数。\n对于那些不是那么简单的任务，库提供了可以让你从基本的代码来构建你需要的东西的灵活性。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-05-18-cpp-concurrency-in-action-2/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: &ldquo;C++ Concurrency in Action (2) - Managing threads&rdquo; date: 2015-05-18 19:35:23 description: Managing threads的笔记。 categories: - concurrency tags: - threads - reading - cpp - cpp11 - &lsquo;c++ concurrency in action&rsquo; Managing threads std::thread：线程管理的相关类和函数。\n对于那些不是那么简单的任务，库提供了可以让你从基本的代码来构建你需要的东西的灵活性。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-05-18-cpp-concurrency-in-action-2/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    9 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--c-concurrency-in-action">title: &ldquo;C++ Concurrency in Action (2) - Managing threads&rdquo;
+date: 2015-05-18 19:35:23
+description: Managing threads的笔记。
+categories:
+- concurrency
+tags:
+- threads
+- reading
+- cpp
+- cpp11
+- &lsquo;c++ concurrency in action&rsquo;
+</h2><h1 id="managing-threads">Managing threads
+</h1><p><code>std::thread</code>：线程管理的相关类和函数。</p>
+<p>对于那些不是那么简单的任务，库提供了可以让你从基本的代码来构建你需要的东西的灵活性。</p>
+<h2 id="basic-thread-management">Basic thread management
+</h2><p>每个C++程序都至少有一个线程，这个线程是由C++运行时启动的：运行<code>main()</code>的那个线程。</p>
+<h3 id="launching-a-thread">Launching a thread
+</h3><p>启动一个线程需要构造<code>std::thread</code>对象：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">do_some_work</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">(</span><span class="n">do_some_work</span><span class="p">);</span> <span class="c1">//此时新线程已经启动
+</span></span></span></code></pre></div><p>在C++标准库中，<code>std::thread</code>可以适用于任何callable类型。如果是一个带有函数调用操作符的类的实例，那么对象会被copy到新线程的存储空间。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">background_task</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="k">operator</span><span class="p">()()</span> <span class="k">const</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">do_something</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">do_something_else</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">background_task</span> <span class="n">f</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+</span></span></code></pre></div><p>但要注意的是，如果传入的是一个临时对象，而不是已经命名的对象，那么这样的语法就和函数调用没有区别，编译器也不会把它看作是callable对象。
+例如：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">(</span><span class="n">background_task</span><span class="p">());</span>
+</span></span></code></pre></div><p>这里声明了一个my_thread函数，接受一个参数，参数是一个函数指针（这个函数不接受任何参数，返回的是background_task对象），返回一个<code>std::thread</code>对象。</p>
+<p>避免这样问题的方法：</p>
+<ol>
+<li>命名函数对象</li>
+<li>使用额外的括号</li>
+<li>使用新的统一的初始化语法</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">((</span><span class="n">background_task</span><span class="p">()));</span>    <span class="c1">//prevent interpretation as a function
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">{</span><span class="n">background_task</span><span class="p">()};</span>
+</span></span></code></pre></div><h4 id="lambda表达式">lambda表达式
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">([](</span>
+</span></span><span class="line"><span class="cl">    <span class="n">do_something</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">do_something_else</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><p>在线程启动以后，需要决定是等待线程结束，还是任其运行。这个决定只需要在线程destroy之前完成即可，因为有可能在你join或detach前，线程就运行完成了。</p>
+<p>如果不想等待线程结束，那么必须保证线程所访问的数据，直到该线程结束时都是合法的。下面就是一个反例：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">func</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span><span class="o">&amp;</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">func</span><span class="p">(</span><span class="kt">int</span><span class="o">&amp;</span> <span class="n">i_</span><span class="p">)</span><span class="o">:</span><span class="n">i</span><span class="p">(</span><span class="n">i_</span><span class="p">){}</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">operator</span><span class="p">()()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="mi">1000000</span><span class="p">;</span><span class="o">++</span><span class="n">j</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">do_something</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">oops</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">some_local_state</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">func</span> <span class="n">my_func</span><span class="p">(</span><span class="n">some_local_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">my_thread</span><span class="p">(</span><span class="n">my_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">my_thread</span><span class="p">.</span><span class="n">detach</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>上面的代码中，因为调用了<code>detach()</code>，所以<code>oops()</code>结束时，新线程仍然有可能还在运行。如果仍然在运行，那么<code>do_something(i)</code>将会访问一个已经destroyed的变量。</p>
+<p>一种常用的方式是，使得thread function self-contained，并且是copy数据到线程，（这里指的应该是function object），而不是共享数据（指针或引用）。除非可以保证线程在函数结束前运行完，否则不要创建一个可以访问所在函数局部变量的线程。当然，也可以join。</p>
+<h3 id="waiting-for-a-thread-to-complete">Waiting for a thread to complete
+</h3><p>对与线程相关联的<code>std::thread</code>对象调用<code>join()</code>。</p>
+<p>在上例中，可以换成<code>join()</code>。但是换了以后就失去了多线程的意义，因为原始线程除了wait，什么都没法做。</p>
+<p><code>join()</code>是一种简单粗暴的方法。如果需要细粒度的控制wait，那么就需要其他的机制。</p>
+<p>调用<code>join()</code>还会清除与线程相关的任何storage，因此<code>std::thread</code>对象不再和任何已结束的线程关联，换句话说就是，对于给定线程，<code>join()</code>只能调用一次。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">func</span> <span class="n">my_func</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">my_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+</span></span></code></pre></div><p>这里加断点可以验证，t在join前，thread id的值不为0，join后变为0。</p>
+<h3 id="waiting-in-exceptinal-circumstances">Waiting in exceptinal circumstances
+</h3><p><code>detach()</code>可以在线程开始后马上调用，但是<code>join()</code>意味着wait。如果想要在wait前做些其他事情，那么就必须考虑<code>join()</code>放置的位置。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">func</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">some_local_state</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">func</span> <span class="n">my_func</span><span class="p">(</span><span class="n">some_local_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">my_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">do_something_in_current_thread</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">catch</span><span class="p">(...)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>上述代码保证了在异常或者无异常的情况下，都能够<code>join()</code>。无论是什么原因导致要<code>join()</code>，都必须保证在所有exit可能的情况里，都有<code>join()</code>，而上面的代码太复杂，容易出错。</p>
+<h4 id="raii">RAII
+</h4><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">thread_guard</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="o">&amp;</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="k">explicit</span> <span class="n">thread_guard</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="o">&amp;</span> <span class="n">t_</span><span class="p">)</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">        <span class="n">t</span><span class="p">(</span><span class="n">t_</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">~</span><span class="n">thread_guard</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">joinable</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thread_guard</span><span class="p">(</span><span class="n">thread_guard</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span><span class="o">=</span><span class="k">delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thread_guard</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">thread_guard</span> <span class="k">const</span><span class="o">&amp;</span><span class="p">)</span><span class="o">=</span><span class="k">delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">func</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">some_local_state</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">func</span> <span class="n">my_func</span><span class="p">(</span><span class="n">some_local_state</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">my_func</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">thread_guard</span> <span class="n">g</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">do_something_in_current_thread</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>但f exit时，局部对象的销毁顺序是与构造顺序相反的。因此无论是什么情况导致f exit，只要t是joinable的，就可以保证join。</p>
+<p>之所以要disable copy和assign，是因为如果enalbe，那么对象的生命周期可能会超过thread应该join的作用域。</p>
+<h3 id="runing-threads-in-the-background">Runing threads in the background
+</h3><p>在一个<code>std::thread</code>对象上调用<code>detach()</code>。</p>
+<p>一旦调用<code>detach()</code>，就再也无法wait for that thread（不能获得reference到that thread的<code>std::thread</code>对象，也不能<code>join()</code>）。</p>
+<p>被<code>detach()</code>的线程（也被叫做demon thread）会在后台运行，拥有权和控制权会交给C++ Runtime library，它能保证当线程结束时，相关的资源会被回收。这样的线程可能会是long-running的线程，执行监视、清理和优化的工作。</p>
+<p>为了从一个<code>std::thread</code>对象上<code>detach()</code>线程，必须要有线程来detach。调用<code>detach()</code>的要求和<code>join()</code>一样，joinable的<code>std::thread</code>对象才可以detach()。</p>
+<h2 id="passing-arguments-to-a-thread-function">Passing arguments to a thread function
+</h2><p>可以用前面的方法，用一个带有data成员的函数对象，但更简便的是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="err">”</span><span class="n">hello</span><span class="err">”</span><span class="p">);</span>
+</span></span></code></pre></div><p>在上例中，要注意的是，std::string是以char const*的形式传入的，只有在新线程的context中才会被转为<code>std::string</code>。</p>
+<p>在默认情况下，参数是被copy的。我猜这样设计的原因也是出于之前提到过的原因，如果线程point to或reference to的local variable所在的scope结束，local variable就会被销毁，那么线程将会访问一个已经destroyed的变量。除非使用额外的<code>join()</code>，但这无疑增加了用户编码的复杂度。</p>
+<h3 id="just-want-reference">Just want reference
+</h3><p>如果我就是要修改原始数据，怎么办？对于pointer，这个倒是好说，直接传pointer即可，地址会被copy，但是reference就不一样了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">update_data_for_widget</span><span class="p">(</span><span class="n">widget_id</span> <span class="n">w</span><span class="p">,</span><span class="n">widget_data</span><span class="o">&amp;</span> <span class="n">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">oops_again</span><span class="p">(</span><span class="n">widget_id</span> <span class="n">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">widget_data</span> <span class="n">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">update_data_for_widget</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">display_status</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">process_widget_data</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>上例中，虽然<code>update_data_for_widget()</code>期望的是第二个参数传入引用，但是<code>std::thread</code>并不知道。<code>update_data_for_widget()</code>被调用时，data实际上是reference to线程内部的copy过来的data，而不是原始的data。线程结束时，这些对data的操作都会随着线程内部copy的销毁而丢失，<code>process_widget_data()</code>接受的还是没有修改的data。</p>
+<p>但是我在clang++-3.6，libstdc++的环境下编译的时候，以上代码是无法通过编译的，错误如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="nl">error</span><span class="p">:</span> <span class="n">no</span> <span class="n">type</span> <span class="n">named</span> <span class="err">&#39;</span><span class="n">type</span><span class="err">&#39;</span> <span class="n">in</span> <span class="err">&#39;</span><span class="n">std</span><span class="o">::</span><span class="n">result_of</span><span class="o">&lt;</span><span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">double</span><span class="p">))(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">double</span> <span class="o">&amp;</span><span class="p">)</span><span class="o">&gt;</span><span class="err">&#39;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">typedef</span> <span class="k">typename</span> <span class="n">result_of</span><span class="o">&lt;</span><span class="n">_Callable</span><span class="p">(</span><span class="n">_Args</span><span class="p">...)</span><span class="o">&gt;::</span><span class="n">type</span> <span class="n">result_type</span><span class="p">;</span>
+</span></span></code></pre></div><p>加入std::ref后编译通过，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">update_data_for_widget</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">ref</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+</span></span></code></pre></div><h3 id="stdthread-and-stdbind"><code>std::thread</code> and <code>std::bind</code>
+</h3><p><code>std::thread</code>的构造函数和<code>std::bind</code>的操作有相同的机制，可以这样构造<code>std::thread</code>对象。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">X</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="n">do_lengthy_work</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="n">my_x</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="o">&amp;</span><span class="n">X</span><span class="o">::</span><span class="n">do_lengthy_work</span><span class="p">,</span><span class="o">&amp;</span><span class="n">my_x</span><span class="p">);</span>
+</span></span></code></pre></div><p>如果成员函数有参数，那么可以作为构造函数的第三个参数，以此类推。</p>
+<h3 id="objects-cannot-be-copied">objects cannot be copied
+</h3><p>有的对象不能够被copy，比如<code>std::unique_ptr</code>对象。这时需要用<code>std::move()</code>来transfer ownership到另一个<code>std::unique_ptr</code>对象。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">process_big_object</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">big_object</span><span class="o">&gt;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">big_object</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="n">big_object</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">-&gt;</span><span class="n">prepare_data</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">process_big_object</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p</span><span class="p">));</span>
+</span></span></code></pre></div><h2 id="transferring-ownership-of-a-thread">Transferring ownership of a thread
+</h2><p>虽然<code>std::thread</code>不像<code>std::unique_ptr</code>动态的拥有一个对象，但是<code>std::thread</code>的确是拥有资源：每个<code>std::thread</code>实例负责管理一个线程的执行。由于<code>std::thread</code>对象不是copyable，而是moveable，因此对象的ownership可以在对象间transfer。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">some_function</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">some_other_function</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t1</span><span class="p">(</span><span class="n">some_function</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t2</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t1</span><span class="p">);</span>    <span class="c1">//t1不再与运行some_function()的线程关联
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">t1</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="p">(</span><span class="n">some_other_function</span><span class="p">);</span>    <span class="c1">//如果是临时对象，move自动并且隐式的发生
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t3</span><span class="err">；</span>    <span class="c1">//默认构造，没有和任何执行线程关联
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">t3</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">t1</span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t3</span><span class="p">);</span>
+</span></span></code></pre></div><p>在上例中的最后一个move，t1原本是和运行<code>some_other_function()</code>的线程关联的，但是运行着<code>some_function()</code>的线程的ownership被transfer给了t1，这将导致程序终止。
+因为在线程运行结束并销毁前，要么<code>join()</code>，要么<code>detach()</code>，但是绝对不能够简单的通过向管理它的<code>std::thread</code>对象赋值(move)而丢掉它。“野线程”不允许存在。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">some_function</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="p">(</span><span class="n">some_function</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">g</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="nf">some_other_function</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">(</span><span class="n">some_other_function</span><span class="p">,</span><span class="mi">42</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>上例中，实际上是在transfer ownership。</p>
+<p>在这里，<code>std::move</code>的另一个作用可以简化<code>thread_gurad</code>。在原来的<code>thread_gurad</code>中，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">thread_gurad</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="p">(</span><span class="n">do_work</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+</span></span></code></pre></div><p>这样是不允许的，因为<code>thread_gurad</code>构造函数接受的参数是引用，因此传入的必须是左值，而unnamed <code>std::thread</code> object并不是左值对象。</p>
+<p>使用<code>std::move</code>后，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">scoped_thread</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">explicit</span> <span class="n">scoped_thread</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="n">t_</span><span class="p">)</span> <span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="n">t</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t_</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">t</span><span class="p">.</span><span class="n">joinable</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="n">std</span><span class="o">::</span><span class="n">logic_error</span><span class="p">(</span><span class="s">&#34;No thread&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">scoped_thread</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t</span><span class="p">.</span><span class="n">join</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">scoped_thread</span><span class="p">(</span><span class="n">scoped_thread</span> <span class="k">const</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">scoped_thread</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">scoped_thread</span> <span class="k">const</span> <span class="o">&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">scoped_thread</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kr">thread</span><span class="p">(</span><span class="n">do_work</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+</span></span></code></pre></div><p>上述操作就可以了。这样做还避免了<code>thread_gurad</code>对象的生命周期可能超过它引用的线程所在的scope，并且transfer以后，没有其他关联的<code>std::thread</code>对象可以join或detach。</p>
+<h2 id="choosing-the-number-of-threads-at-runtime">Choosing the number of threads at runtime
+</h2><p><code>std::thread::hardware_concurrency()</code>，这个函数返回可以真正并行执行的线程数目。但这只是个hint，换句话说，就算可以并发多个线程，如果没有可用的信息，它可能会返回0。</p>
+<p>C++ Concurrency in Action书中，在并行累加例子的后面有并行算法要求的共性的总结：</p>
+<ul>
+<li>at least forward iterators</li>
+<li>single-pass input iterators</li>
+<li>T must be default constructiable</li>
+</ul>
+<p>到目前位置，由于不能够直接从线程中返回值，因此必须传入reference。</p>
+<h2 id="identifying-threads">Identifying threads
+</h2><p>线程识别符是<code>std::thread::id</code>类型的，获得方式有：</p>
+<ul>
+<li>通过成员函数<code>get_id()</code>，从关联该线程的<code>std::thread</code>对象获得（如果对象没有关联任何线程，则会返回默认构造函数生成的<code>std::thread::id</code>对象，表示not any thread）</li>
+<li>对于当前线程，使用<code>std::thread::get_id()</code></li>
+</ul>
+<p><code>std::thread::id</code>对象可以被copy，并且该类型提供了完整的比较操作（全序的）。如果一致，那么他们代表同一线程，或者<em>not any thread</em>。该类型对象还可以作为key用于关联容器、排序，同时标准库还提供了<code>std::hash&lt;std::thread::id&gt;</code>，因此还能用于无序关联容器。</p>
+<p><code>std::thread::id</code>对象常用于检查线程是否需要做某些操作。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

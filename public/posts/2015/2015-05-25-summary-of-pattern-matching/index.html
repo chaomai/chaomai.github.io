@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: &ldquo;Pattern matching相关算法小结&rdquo; date: 2015-05-25 11:33:43 description: Pattern matching的算法有很多，这里做一个简单的总结。 categories: - algorithms tags: - &lsquo;pattern matching&rsquo; Pattern matching Pattern matching的算法有很多，这里做一个简单的总结。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-05-25-summary-of-pattern-matching/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: &ldquo;Pattern matching相关算法小结&rdquo; date: 2015-05-25 11:33:43 description: Pattern matching的算法有很多，这里做一个简单的总结。 categories: - algorithms tags: - &lsquo;pattern matching&rsquo; Pattern matching Pattern matching的算法有很多，这里做一个简单的总结。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-05-25-summary-of-pattern-matching/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: &ldquo;Pattern matching相关算法小结&rdquo; date: 2015-05-25 11:33:43 description: Pattern matching的算法有很多，这里做一个简单的总结。 categories: - algorithms tags: - &lsquo;pattern matching&rsquo; Pattern matching Pattern matching的算法有很多，这里做一个简单的总结。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-05-25-summary-of-pattern-matching/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--pattern-matching">title: &ldquo;Pattern matching相关算法小结&rdquo;
+date: 2015-05-25 11:33:43
+description: Pattern matching的算法有很多，这里做一个简单的总结。
+categories:
+- algorithms
+tags:
+- &lsquo;pattern matching&rsquo;
+</h2><h1 id="pattern-matching">Pattern matching
+</h1><p>Pattern matching的算法有很多，这里做一个简单的总结。</p>
+<p>问题：给定一个字符串<code>txt[0...n-1]</code>和另一个字符串<code>pat[0...m-1]</code>，假设n &gt; m，实现一个函数<code>search(char pat[], char txt[])</code>，完成在<code>txt</code>中找到所有<code>pat</code>出现的位置。</p>
+<p>例子：</p>
+<ul>
+<li>Input:</li>
+</ul>
+<pre tabindex="0"><code>txt[] = &#34;THIS IS A TEST TEXT&#34;
+pat[] = &#34;TEST&#34;
+</code></pre><p>Output:</p>
+<pre tabindex="0"><code>Pattern found at index 10
+</code></pre><ul>
+<li>Input:</li>
+</ul>
+<pre tabindex="0"><code>txt[] = &#34;AABAACAADAABAAABAA&#34;
+pat[] = &#34;AABA&#34;
+</code></pre><p>Output:</p>
+<pre tabindex="0"><code>Pattern found at index 0
+Pattern found at index 9
+Pattern found at index 13
+</code></pre><h1 id="naive-pattern-searching">Naive Pattern Searching
+</h1><p>也叫Bruce Force。</p>
+<p>方法很简单，对于<code>txt</code>中的每个index i，检查<code>pat</code>的每个字符是否匹配。如果有匹配不上的字符，或者匹配成功，都move到下一个index。</p>
+<p>最坏时间复杂度，$O(mn)$。</p>
+<h2 id="references">References
+</h2><ul>
+<li><a class="link" href="http://www.geeksforgeeks.org/searching-for-patterns-set-1-naive-pattern-searching/"  target="_blank" rel="noopener"
+    >Naive Pattern Searching</a></li>
+</ul>
+<h1 id="a-better-naive-pattern-searching">A Better Naive Pattern Searching
+</h1><p>这个方法需要有一个前提条件：<code>pat</code>里所有字符都不相同。</p>
+<p>在这个前提下，如果在匹配了j个字符之后出现了mismatch，那么<code>pat</code>就不是后移一个位置，而是后移j个位置。当然如果是首字符就不匹配，那么仍然是后移一个位置。</p>
+<h2 id="references-1">References
+</h2><ul>
+<li><a class="link" href="http://www.geeksforgeeks.org/pattern-searching-set-4-a-naive-string-matching-algo-question/"  target="_blank" rel="noopener"
+    >A Naive Pattern Searching Question</a></li>
+</ul>
+<h1 id="kmp-algorithm">KMP Algorithm
+</h1><p>Naive Pattern Searching在这样的情况下，效率是很低的：</p>
+<pre tabindex="0"><code>txt[] = &#34;AAAAAAAAAAAAAAAAAB&#34;
+pat[] = &#34;AAAAB&#34;
+</code></pre><p>因为<code>pat</code>每次在比较到不同的字符B的时候，仅仅向后移动一位，搜索位置又要退回，重新比较已经比较过的字符。</p>
+<p>同时这也是Naive Pattern Searching的改进方法无法处理的，因为里面出现了重复的字符。如果再回去看Naive Pattern Searching的改进方法，其实本质上就是为了避免搜索位置的退回。</p>
+<p>KMP可以利用已经比较过的字符这一信息来避免搜索位置退回。至于怎么利用，就是部分匹配表。</p>
+<p>部分匹配表是KMP的关键，生成的方式是对pat的每个前缀，计算该前缀的前缀和后缀的最长的共有元素的长度。例如：</p>
+<pre tabindex="0"><code>pat                 A B C D A B D
+partial match value 0 0 0 0 1 2 0
+</code></pre><p>有了部分匹配表，在发现不同的字符的时候，就不直接把<code>pat</code>后移一位，而是根据下面的公式，</p>
+<p>$$
+移动位数 = 已匹配的字符数 - 对应的部分匹配值
+$$</p>
+<p>这里对应的部分匹配值指的是，在<code>pat</code>中，最后已匹配字符对应的部分匹配值。</p>
+<p>如果是首字符就不匹配，那么仍然是后移一个位置。</p>
+<p>&ldquo;部分匹配&quot;的实质是，有时候，字符串头部和尾部会有重复。比如，<code>&quot;ABCDAB&quot;</code>之中有两个<code>&quot;AB&quot;</code>，那么它的&quot;部分匹配值&quot;就是2（&ldquo;AB&quot;的长度）。搜索词移动的时候，第一个<code>&quot;AB&quot;</code>向后移动4位（$字符串长度-部分匹配值$），就可以来到第二个<code>&quot;AB&quot;</code>的位置。</p>
+<p>最坏时间复杂度，$O(n)$。</p>
+<p>看完KMP，可以发现Naive Pattern Searching的改进方法实际上是KMP的特例，由于pat中所有字符都不相同，因此部分匹配表中所有的对应的部分匹配值都是0，</p>
+<p>$$
+移动位数 = 已匹配的字符数
+$$</p>
+<h2 id="references-2">References
+</h2><ul>
+<li><a class="link" href="http://www.geeksforgeeks.org/searching-for-patterns-set-2-kmp-algorithm/"  target="_blank" rel="noopener"
+    >KMP Algorithm</a></li>
+<li><a class="link" href="http://www.ruanyifeng.com/blog/2013/05/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm.html"  target="_blank" rel="noopener"
+    >字符串匹配的KMP算法</a></li>
+</ul>
+<h1 id="rabin-karp-algorithm">Rabin-Karp Algorithm
+</h1><p>Bruce Force在<code>txt</code>上每次把<code>pat</code>后移一位，每次移动之后，检查<code>pat</code>的每个字符是否匹配。Rabin-Karp也是类似的，每次把pat后移一位，不同的是Rabin-Karp比较的是<code>pat</code>的hash值和当前对应的<code>txt</code>子串的hash值。如果hash值相等，然后再去逐个检查子串的字符。</p>
+<p>最直接的方法莫过于计算<code>h(pat)</code>和<code>txt</code>中所有子串的hash，然后一一比较。但光是计算<code>txt</code>中所有子串的hash就需要O(mn)的时间，这样一来，相比起Naive Pattern Searching，这个方法就毫无优势了。</p>
+<p>如何计算hash值是Rabin-Karp的关键，最好是能够利用当前<code>txt</code>子串的hash值，计算后移一位以后的，以减少计算的开销。Rabin-Karp使用的hash叫做Rolling hash，基本实现是刚刚的方法实际上重复计算了很多重叠的部分，而Rolling hash就要利用当前子串的hash值，来计算后移一个位置之后子串的hash值。</p>
+<p>Intro to Algorithms的Lecture Note举了一个很形象的例子来说明Rolling hash。</p>
+<p>在最坏情况下，每次移动后hash值都相等（因为子串相同或hash冲突），因此移动后都要逐个检查子串的字符。</p>
+<p>最坏时间复杂度，$O(mn)$。</p>
+<h2 id="references-3">References
+</h2><ul>
+<li><a class="link" href="http://en.wikipedia.org/wiki/Rolling_hash"  target="_blank" rel="noopener"
+    >Rolling hash</a></li>
+<li><a class="link" href="http://courses.csail.mit.edu/6.006/spring11/rec/rec06.pdf"  target="_blank" rel="noopener"
+    >Rolling Hash (Rabin-Karp Algorithm)</a></li>
+<li><a class="link" href="http://stellar.mit.edu/S/course/6/fa13/6.006/courseMaterial/topics/topic6/lectureNotes/L09-Hashing-II/L09-Hashing-II.pdf"  target="_blank" rel="noopener"
+    >Hashing-II</a></li>
+<li><a class="link" href="http://www.geeksforgeeks.org/searching-for-patterns-set-3-rabin-karp-algorithm/"  target="_blank" rel="noopener"
+    >Rabin-Karp Algorithm</a></li>
+</ul>
+<h1 id="finite-automata">Finite Automata
+</h1><p>基于有限状态机实现pattern searching，就是用pattern来构建一个状态表，构建完成以后就可以根据txt的每个字符，来在有限状态机的各个状态之间转移，如果到达终态，那就是匹配到了。</p>
+<p>这个算法的关键就是基于pattern构建状态表。</p>
+<h2 id="references-4">References
+</h2><p><a class="link" href="http://www.geeksforgeeks.org/searching-for-patterns-set-5-finite-automata/"  target="_blank" rel="noopener"
+    >http://www.geeksforgeeks.org/searching-for-patterns-set-5-finite-automata/</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="symbol table symbol table（符号表）是用于编译器或解释器中的一个数据结构，存储了源码中每个符号以及关联的信息。不同的作用域可能会有各自的符号表。在静态语言中，符号表尤为重要。\n">
+<title>python符号表、module和package</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2019/2019-03-05-python-symtable-module-package/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="python符号表、module和package">
+<meta property='og:description' content="symbol table symbol table（符号表）是用于编译器或解释器中的一个数据结构，存储了源码中每个符号以及关联的信息。不同的作用域可能会有各自的符号表。在静态语言中，符号表尤为重要。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2019/2019-03-05-python-symtable-module-package/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='symtable' /><meta property='article:published_time' content='2019-03-05T22:12:40&#43;00:00'/><meta property='article:modified_time' content='2019-03-05T22:12:40&#43;00:00'/>
+<meta name="twitter:title" content="python符号表、module和package">
+<meta name="twitter:description" content="symbol table symbol table（符号表）是用于编译器或解释器中的一个数据结构，存储了源码中每个符号以及关联的信息。不同的作用域可能会有各自的符号表。在静态语言中，符号表尤为重要。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/python/" >
+                Python
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2019/2019-03-05-python-symtable-module-package/">python符号表、module和package</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Mar 05, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="symbol-table">symbol table
+</h1><p>symbol table（符号表）是用于编译器或解释器中的一个数据结构，存储了源码中每个符号以及关联的信息。不同的作用域可能会有各自的符号表。在静态语言中，符号表尤为重要。</p>
+<h2 id="python-variable">python variable
+</h2><p>python中的变量与c/c++的不一样，是绑定到对象的symbolic name。<code>aa</code>，<code>bb</code>都是绑定到一个list对象的名字。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">aa</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">bb</span> <span class="o">=</span> <span class="n">aa</span>
+</span></span><span class="line"><span class="cl"><span class="n">aa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">666</span>
+</span></span></code></pre></div><h2 id="python-symbol-table">python symbol table
+</h2><p>虽然python是动态语言，没有编译时类型检查，但python也有符号表。python的符号表通过编译器由AST生成，用于计算每个标识符的作用域，最终符号表和AST会被共同用于生成字节码。<code>symtable</code>模块提供了关于标识符的作用域等信息，还能够输出在这些作用域中引用到的变量是哪个。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># add.py</span>
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">outer</span><span class="p">(</span><span class="n">aa</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">def</span> <span class="nf">inner</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">        <span class="n">bb</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">bb</span> <span class="o">+</span> <span class="n">cc</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">inner</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">src</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;add.py&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">symtable</span>
+</span></span><span class="line"><span class="cl"><span class="n">table</span> <span class="o">=</span> <span class="n">symtable</span><span class="o">.</span><span class="n">symtable</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s1">&#39;src.py&#39;</span><span class="p">,</span> <span class="s1">&#39;exec&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">describe_symbol</span><span class="p">(</span><span class="n">sym</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span> <span class="o">==</span> <span class="n">symtable</span><span class="o">.</span><span class="n">Symbol</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s2">&#34;Symbol:&#34;</span><span class="p">,</span> <span class="n">sym</span><span class="o">.</span><span class="n">get_name</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;referenced&#39;</span><span class="p">,</span> <span class="s1">&#39;imported&#39;</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;global&#39;</span><span class="p">,</span> <span class="s1">&#39;declared_global&#39;</span><span class="p">,</span> <span class="s1">&#39;local&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="s1">&#39;free&#39;</span><span class="p">,</span> <span class="s1">&#39;assigned&#39;</span><span class="p">,</span> <span class="s1">&#39;namespace&#39;</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="s1">&#39;is_&#39;</span> <span class="o">+</span> <span class="n">prop</span><span class="p">)():</span>
+</span></span><span class="line"><span class="cl">            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    is&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_symbols</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="n">describe_symbol</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Symbol</span><span class="p">:</span> <span class="n">bb</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">referenced</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">local</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">assigned</span>
+</span></span><span class="line"><span class="cl"><span class="n">Symbol</span><span class="p">:</span> <span class="n">aa</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">referenced</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">free</span>
+</span></span><span class="line"><span class="cl"><span class="n">Symbol</span><span class="p">:</span> <span class="n">cc</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">referenced</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="k">global</span>
+</span></span></code></pre></div><p>free variable：如果变量在一个代码块内使用（在代码内被绑定），但是并没有在其中定义，那么这个变量是自由变量。顺便提一句，使用了自由变量的函数就是闭包（closure）。
+global variable：如果变量代码在模块级别被绑定，这个变量是全局变量。
+local variable：如果变量在代码块内被绑定，这个变量是局部变量。</p>
+<h1 id="python-module">python module
+</h1><p>module（模块）是一个包含python定义和语句的文件，文件名由module名和<code>.py</code>后缀构成。module名可由全局变量<code>__name__</code>获取。这个文件可被作为脚本使用或用于repl中，module中的定义可以被其他module或mainmodule导入。</p>
+<p>例如：<code>p.py</code>，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</span></span></code></pre></div><p>在repl中，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 把module名p加入当前的符号表</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">p</span>
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Symbol</span><span class="p">:</span> <span class="n">p</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">imported</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">local</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 把p中的add导入当前符号表</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">p</span> <span class="kn">import</span> <span class="n">add</span>
+</span></span><span class="line"><span class="cl"><span class="n">add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Symbol</span><span class="p">:</span> <span class="n">add</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">imported</span>
+</span></span><span class="line"><span class="cl">    <span class="ow">is</span> <span class="n">local</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 把p中的除_开头的所有名字导入当前符号表</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">p</span> <span class="kn">import</span> <span class="o">*</span>
+</span></span></code></pre></div><p>一个module，可以包含可执行语句和函数定义，这些语句是用于初始化module的，仅仅在第一次导入这个模块的时候执行，作为脚本运行的时候也会执行。module作为脚本执行的时候，<code>__name__</code>会被设置为<code>&quot;__main__&quot;</code>，很常见的一个语句是<code>if __name__ == &quot;__main__&quot;:</code>，作为脚本执行的时候，运行<code>if</code>内的语句。</p>
+<p>每个module有自己私有的符号表。module内部的全局变量不会与外部的产生冲突，另一个角度看，如果知道模块内的全局变量名称，可以通过<code>modname.itemname</code>的方式访问到。通过<code>dir()</code>函数可以得到module内定义的名字。</p>
+<p>导入module时，module名字的search path为，</p>
+<ol>
+<li>
+<p>内置的module</p>
+</li>
+<li>
+<p><code>sys.path</code>
+这个变量的值由下列几项初始化得到，</p>
+<ul>
+<li>脚本当前目录</li>
+<li><code>PYTHONPATH</code>环境变量</li>
+<li>the installation-dependent default</li>
+</ul>
+<p><code>sys.path</code>初始化以后，可以在程序中修改。</p>
+</li>
+</ol>
+<h2 id="python-package">python package
+</h2><p>package是一种通过<code>modnameA.submodnameB</code>来组织module的方式。python会把包含<code>__init__.py</code>文件的文件夹当做package。<code>__init__.py</code>文件可以直接留空，也可以加入初始化package的代码或设置<code>__all__</code>变量（用于控制<code>from package imrpot *</code>的时候，导入哪些）。</p>
+<p>导入的方式为，</p>
+<ul>
+<li><code>from package import item</code>。import语句首先测试item是否在package中定义，如果没有，那么假设item是一个module并尝试load。最终如果没有找到，那么会抛出<code>ImportError</code>异常。</li>
+<li><code>import item.subitem.subsubitem</code>，最后一个item可以是module或package，但不能是类、函数或变量，其他必须是package。</li>
+</ul>
+<h1 id="class和module">class和module
+</h1><p>在使用的时候，class和module有一些相似的地方，但是二者完全不同。</p>
+<ul>
+<li>class是创建带有属性和方法的实例的蓝图，支持继承等。这些module都不能做。</li>
+<li>module仅仅只是组织代码的方式。</li>
+</ul>
+<h1 id="references">References
+</h1><ol>
+<li><a class="link" href="https://eli.thegreenplace.net/2010/09/18/python-internals-symbol-tables-part-1"  target="_blank" rel="noopener"
+    >Python internals: Symbol tables, part 1</a></li>
+<li><a class="link" href="https://docs.python.org/2/library/symtable.html"  target="_blank" rel="noopener"
+    >symtable — Access to the compiler’s symbol tables¶</a></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/symtable/">Symtable</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

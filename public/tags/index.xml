@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Tags on chaomai&#39;s-blog</title>
+        <link>http://localhost:1313/tags/</link>
+        <description>Recent content in Tags on chaomai&#39;s-blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Tue, 17 Aug 2021 21:31:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Motocycle</title>
+        <link>http://localhost:1313/tags/motocycle/</link>
+        <pubDate>Tue, 17 Aug 2021 21:31:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/motocycle/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Piaggio X7</title>
+        <link>http://localhost:1313/tags/piaggio-x7/</link>
+        <pubDate>Tue, 17 Aug 2021 21:31:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/piaggio-x7/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Thread</title>
+        <link>http://localhost:1313/tags/thread/</link>
+        <pubDate>Fri, 21 May 2021 00:27:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/thread/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Gdt</title>
+        <link>http://localhost:1313/tags/gdt/</link>
+        <pubDate>Sat, 13 Mar 2021 22:40:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/gdt/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Org-Mode</title>
+        <link>http://localhost:1313/tags/org-mode/</link>
+        <pubDate>Sat, 13 Mar 2021 22:40:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/org-mode/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Work</title>
+        <link>http://localhost:1313/tags/work/</link>
+        <pubDate>Wed, 08 Apr 2020 22:36:02 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/work/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Redis</title>
+        <link>http://localhost:1313/tags/redis/</link>
+        <pubDate>Sun, 08 Dec 2019 00:00:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/redis/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Golang</title>
+        <link>http://localhost:1313/tags/golang/</link>
+        <pubDate>Fri, 20 Sep 2019 17:07:39 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/golang/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Concurrency</title>
+        <link>http://localhost:1313/tags/concurrency/</link>
+        <pubDate>Tue, 10 Sep 2019 12:35:20 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/concurrency/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Raft</title>
+        <link>http://localhost:1313/tags/raft/</link>
+        <pubDate>Wed, 28 Aug 2019 16:32:52 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/raft/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Replication</title>
+        <link>http://localhost:1313/tags/replication/</link>
+        <pubDate>Wed, 28 Aug 2019 16:32:52 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/replication/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>6.824</title>
+        <link>http://localhost:1313/tags/6.824/</link>
+        <pubDate>Mon, 19 Aug 2019 19:56:05 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/6.824/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Ddia</title>
+        <link>http://localhost:1313/tags/ddia/</link>
+        <pubDate>Fri, 16 Aug 2019 00:22:53 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/ddia/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Gfs</title>
+        <link>http://localhost:1313/tags/gfs/</link>
+        <pubDate>Sun, 26 May 2019 08:38:33 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/gfs/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Hadoop</title>
+        <link>http://localhost:1313/tags/hadoop/</link>
+        <pubDate>Thu, 23 May 2019 21:49:24 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/hadoop/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Yarn</title>
+        <link>http://localhost:1313/tags/yarn/</link>
+        <pubDate>Thu, 23 May 2019 21:49:24 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/yarn/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Pycon</title>
+        <link>http://localhost:1313/tags/pycon/</link>
+        <pubDate>Mon, 13 May 2019 00:17:47 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/pycon/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Python</title>
+        <link>http://localhost:1313/tags/python/</link>
+        <pubDate>Mon, 13 May 2019 00:17:47 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/python/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Starry Sky</title>
+        <link>http://localhost:1313/tags/starry-sky/</link>
+        <pubDate>Sun, 12 May 2019 13:55:23 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/starry-sky/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Symtable</title>
+        <link>http://localhost:1313/tags/symtable/</link>
+        <pubDate>Tue, 05 Mar 2019 22:12:40 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/symtable/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Docker</title>
+        <link>http://localhost:1313/tags/docker/</link>
+        <pubDate>Fri, 15 Jun 2018 22:09:50 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/docker/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Scala</title>
+        <link>http://localhost:1313/tags/scala/</link>
+        <pubDate>Fri, 12 May 2017 09:10:55 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/scala/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>ScanRight</title>
+        <link>http://localhost:1313/tags/scanright/</link>
+        <pubDate>Sun, 23 Apr 2017 14:16:51 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/scanright/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Rpc</title>
+        <link>http://localhost:1313/tags/rpc/</link>
+        <pubDate>Thu, 20 Apr 2017 15:27:54 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/rpc/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Awk</title>
+        <link>http://localhost:1313/tags/awk/</link>
+        <pubDate>Wed, 12 Apr 2017 13:54:34 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/awk/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Hive</title>
+        <link>http://localhost:1313/tags/hive/</link>
+        <pubDate>Mon, 10 Apr 2017 17:39:19 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/hive/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Mapreduce</title>
+        <link>http://localhost:1313/tags/mapreduce/</link>
+        <pubDate>Sun, 02 Apr 2017 15:18:30 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/mapreduce/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Coroutine</title>
+        <link>http://localhost:1313/tags/coroutine/</link>
+        <pubDate>Mon, 16 Jan 2017 15:29:30 +0000</pubDate>
+        
+        <guid>http://localhost:1313/tags/coroutine/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

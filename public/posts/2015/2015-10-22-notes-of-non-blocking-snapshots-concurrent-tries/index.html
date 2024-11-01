@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Notes of Non-Blocking Snapshots Concurrent Tries date: 2015-10-22 22:15:12 description: Hash trie的并发会存在操作丢失的情况，类似Non-blocking Binary Search Trees里的情况，这里引入了中间结点来解决。同时文章还提出了一种snapshot的方法，这种方法对于tree很有用。 categories: - concurrency tags: - &lsquo;concurrent tries&rsquo; - snapshot - reading Hash tries Hash tries (Hash array mapped tries) are trees composed of internal nodes and leaves. Leaves store key-value bindings.\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-10-22-notes-of-non-blocking-snapshots-concurrent-tries/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Notes of Non-Blocking Snapshots Concurrent Tries date: 2015-10-22 22:15:12 description: Hash trie的并发会存在操作丢失的情况，类似Non-blocking Binary Search Trees里的情况，这里引入了中间结点来解决。同时文章还提出了一种snapshot的方法，这种方法对于tree很有用。 categories: - concurrency tags: - &lsquo;concurrent tries&rsquo; - snapshot - reading Hash tries Hash tries (Hash array mapped tries) are trees composed of internal nodes and leaves. Leaves store key-value bindings.\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-10-22-notes-of-non-blocking-snapshots-concurrent-tries/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Notes of Non-Blocking Snapshots Concurrent Tries date: 2015-10-22 22:15:12 description: Hash trie的并发会存在操作丢失的情况，类似Non-blocking Binary Search Trees里的情况，这里引入了中间结点来解决。同时文章还提出了一种snapshot的方法，这种方法对于tree很有用。 categories: - concurrency tags: - &lsquo;concurrent tries&rsquo; - snapshot - reading Hash tries Hash tries (Hash array mapped tries) are trees composed of internal nodes and leaves. Leaves store key-value bindings.\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-10-22-notes-of-non-blocking-snapshots-concurrent-tries/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--reading">title: Notes of Non-Blocking Snapshots Concurrent Tries
+date: 2015-10-22 22:15:12
+description: Hash trie的并发会存在操作丢失的情况，类似Non-blocking Binary Search Trees里的情况，这里引入了中间结点来解决。同时文章还提出了一种snapshot的方法，这种方法对于tree很有用。
+categories:
+- concurrency
+tags:
+- &lsquo;concurrent tries&rsquo;
+- snapshot
+- reading
+</h2><h1 id="hash-tries">Hash tries
+</h1><p>Hash tries (Hash array mapped tries) are trees composed of internal nodes and leaves. Leaves store key-value bindings.</p>
+<h1 id="race">Race
+</h1><p><img src="/images/2015/ctrie_conflict.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>T1要插入k5到C2，与此同时T2要插入k4到C1。T1成功的进行了CAS，但是T2进行的CAS操作是在老的C2上，最后导致k4丢失。</p>
+<p>这里的race类似于Non-blocking Binary Search Trees的情况，两个线程各自进行操作，就线程自己来看，所做的操作是正确的，但是相互不知道有race。</p>
+<p><em>这个结构能否使用Non-blocking Binary Search Trees的方法（mark和flag）？</em></p>
+<h2 id="解决">解决
+</h2><p>引入各种中间结点。。。</p>
+<h1 id="snapshot">Snapshot
+</h1><p><code>size</code>、<code>iterator</code>和<code>clear</code>不能简单的以lock-free的方式来实现，因为需要某一时刻的全局信息。基于atomic snapshot，这些操作可以高效和正确的得到结果。</p>
+<p>当一个snapshot被创建时，root I-node被复制，并被设置为新的generation。这个generation count可以由每个I-node保存。当某些update操作检测到它gen比root老，它就创建带有最新gen的那个I-node的copy，并根据需要update parent。snapshot创建后最终的效果就是，当首次访问（update）那个leaf的时候，从root到leaf，整个path都被update。</p>
+<p>这里用到的snapshot方法，我觉得本质上还是copy on write。</p>
+<h2 id="race-1">Race
+</h2><p>创建snapshot的线程、读取了老的root且正在遍历并update的线程之间（插入操作的linearization point可能会先于snapshot的创建）。</p>
+<h2 id="gcas-generation-compare-and-swap">GCAS (generation-compare-and-swap)
+</h2><p>直接用CAS在这里并不可行，因为有gen，就需要同时比较新老数据，还有I-node和root的gen。</p>
+<p>GCAS类似CAS，不同的地方是加入了I-node和root结点gen的比较。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="nc">GCAS</span><span class="o">(</span><span class="n">in</span><span class="o">,</span> <span class="n">old</span><span class="o">,</span> <span class="n">n</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span> <span class="k">=</span> <span class="nc">READ</span><span class="o">(</span><span class="n">in</span><span class="o">.</span><span class="n">main</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">r</span> <span class="k">=</span> <span class="n">old</span> <span class="o">&amp;&amp;</span> <span class="n">in</span><span class="o">.</span><span class="n">gen</span> <span class="k">=</span> <span class="nc">READ</span><span class="o">(</span><span class="n">root</span><span class="o">).</span><span class="n">gen</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nc">WRITE</span><span class="o">(</span><span class="n">in</span><span class="o">.</span><span class="n">main</span><span class="o">.</span> <span class="n">n</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span> <span class="k">else</span> <span class="k">return</span> <span class="kc">false</span>
+</span></span></code></pre></div><p>具体的操作是先不管gen的情况，把old Main node挂到new Main node的prev上，接着把new Main node挂到I-node，最后处理I-node下Main node的情况。</p>
+<p><img src="/images/2015/ctrie_gcas.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p><em>现在的问题是怎么update从root到leaf的path？</em></p>
+<p>当遍历时遇到一个I-node，如果gen &lt; startgen，那么就创建它的C-node和这个C-node下面所有I-node的copy，这个C-node下面其他类型的node（S-node）不copy。这样就update了从root到leaf的path。</p>
+<h2 id="rdcss">RDCSS
+</h2><p><em>问题又来了，其他I-node可以被创建copy，但是第一个I-node，即root，它并没有在C-node下面，如何创建新gen的root？</em></p>
+<p>直接创建新gen root的copy，然后cas挂上去，这个方法并不好完成。因为只有当root和old I-node一致，且old I-node的main和old main一致（因为原文代码165行的地方，需要old main来构建新的I-node）时才行。</p>
+<p>这里使用的RDCSS源自Harris提出的方法，类似GCAS。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="nc">RDCSS</span><span class="o">(</span><span class="n">ov</span><span class="o">,</span> <span class="n">ovmain</span><span class="o">,</span> <span class="n">nv</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span> <span class="k">=</span> <span class="nc">READ</span><span class="o">(</span><span class="n">root</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="n">r</span> <span class="k">=</span> <span class="n">ov</span> <span class="o">&amp;&amp;</span> <span class="nc">GCAS_READ</span><span class="o">(</span><span class="n">ov</span><span class="o">.</span><span class="n">main</span><span class="o">)</span> <span class="k">=</span> <span class="n">ovmain</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nc">WRITE</span><span class="o">(</span><span class="n">root</span><span class="o">,</span> <span class="n">nv</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">	<span class="o">}</span> <span class="k">else</span> <span class="k">return</span> <span class="kc">false</span>
+</span></span></code></pre></div><p>要注意的是：如果两个线程，一个GCAS对root I-node进行操作，另一个RDCSS对Ctrie的root成员进行操作，那么回导致死锁（<strong>为什么？与RDCSS中</strong>（<em>C2的if进行比较以后，会不会有其他thread改变o1？</em>）<strong>这个问题有关？</strong>)。</p>
+<p>因此引入了ABORTABLE_READ。</p>
+<h3 id="a-detail-in-rdcss_complete">A detail in <code>RDCSS_Complete</code>
+</h3><p>在阅读源码的时候，想到这么一个问题，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">val</span> <span class="n">oldmain</span> <span class="k">=</span> <span class="n">ov</span><span class="o">.</span><span class="n">gcasRead</span><span class="o">(</span><span class="k">this</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl"> <span class="k">if</span> <span class="o">(</span><span class="n">oldmain</span> <span class="n">eq</span> <span class="n">exp</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">   <span class="k">if</span> <span class="o">(</span><span class="nc">CAS_ROOT</span><span class="o">(</span><span class="n">desc</span><span class="o">,</span> <span class="n">nv</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">     <span class="o">...</span>
+</span></span></code></pre></div><blockquote>
+<p>My previous doubt lies in line 711. The <code>oldmain</code> is compared with <code>expectedmain</code>. If they are reference to same main node, then do <code>CAS_ROOT</code>.
+Suppose thread A is executing <code>RDCSS_Complete</code> and just finished line 710. Thread B is inserting a key value pair at the mainnode of root. What if thread B changes the <code>MainNode</code> reference in the root into a new mainnode before thread A execute <code>CAS_ROOT</code>?</p>
+</blockquote>
+<blockquote>
+<p>The doubt is unnecessary. Since thread A is executing <code>RDCSS_Complete</code>, the root must be <code>RDCSS_Descriptor</code>. If Thread B want to insert at the <code>MainNode</code> of root, it will read root first, find it&rsquo;s <code>RDCSS_Descriptor</code> and call <code>RDCSS_Complete</code> to help thread A first. So Thread B can&rsquo;t change the <code>MainNode</code> reference in the root directly.</p>
+</blockquote>
+<p>（与Aleksandar Prokopec邮件的内容，就是问题和自己的理解，这里只是做个整理，不翻译了，其实是懒。。。）</p>
+<h2 id="snashot">Snashot
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">snapshot</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span> <span class="k">=</span> <span class="nc">RDCSS_READ</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">expmain</span> <span class="k">=</span> <span class="nc">GCAS_READ</span><span class="o">(</span><span class="n">r</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nc">RDCSS</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">expmain</span><span class="o">,</span> <span class="k">new</span> <span class="nc">INode</span><span class="o">(</span><span class="n">expmain</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Gen</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="k">new</span> <span class="nc">Ctrie</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">root</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">INode</span><span class="o">(</span><span class="n">expmain</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Gen</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">			<span class="n">readonly</span> <span class="k">=</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="k">return</span> <span class="n">snapshot</span><span class="o">()</span>
+</span></span></code></pre></div><p><code>snapshot()</code>以后，实际上是产生了两个新的root I-node，其中一个替换Ctrie自己的root，另一个用于构成返回Ctrie，这个返回的Ctrie就是所需的snapshot。</p>
+<p>从上面伪代码来看，可能会产生怀疑的是，<code>snapshot()</code>刚刚完成时，两个root I-node都是reference到同一个C-node。<em>如果某个线程更改了root下的C-node，那snapshot中root下的C-node也被改，snapshot还有什么意思？</em></p>
+<p>snapshot的中的东西不会被更改，具体的原因如下，注意看版本号，</p>
+<p><img src="/images/2015/ctrie_snapshot.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>换句话说，就是当没有update或access时，Ctrie和snapshot共享结点；但是如果Ctrie发生update或access，从root到访问位置的path就被copy和update了，snapshot里的不变。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">snapshot</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">r</span> <span class="k">=</span> <span class="nc">RDCSS_READ</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">	<span class="n">expmain</span> <span class="k">=</span> <span class="nc">GCAS_READ</span><span class="o">(</span><span class="n">r</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nc">RDCSS</span><span class="o">(</span><span class="n">r</span><span class="o">,</span> <span class="n">expmain</span><span class="o">,</span> <span class="k">new</span> <span class="nc">INode</span><span class="o">(</span><span class="n">expmain</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Gen</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">		<span class="k">return</span> <span class="k">new</span> <span class="nc">Ctrie</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">			<span class="n">root</span> <span class="k">=</span> <span class="n">r</span>
+</span></span><span class="line"><span class="cl">			<span class="n">readonly</span> <span class="k">=</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="cl">		<span class="o">}</span>
+</span></span><span class="line"><span class="cl">	<span class="k">else</span> <span class="k">return</span> <span class="n">snapshot</span><span class="o">()</span>
+</span></span></code></pre></div><p>由于当计算snapshot的size或进行iterate时，snapshot是不变的，因此update涉及到的node是不必要的开销，因此使用旧的root，且把readonly设为true来构造snapshot。</p>
+<h1 id="references">References
+</h1><ol>
+<li>Concurrent Tries with Efficient Non-Blocking Snapshots, Aleksandar Prokopec, Nathan G. Bronson, Phil Bagwell, Martin Odersky</li>
+<li>Non-blocking Binary Search Trees, Faith Ellen, Panagiota Fatourou, Eric Ruppert, Franck van Breugel</li>
+<li>A Practical Multi-Word Compare-and-Swap Operation, Timothy L. Harris, Keir Fraser, Ian A. Pratt</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

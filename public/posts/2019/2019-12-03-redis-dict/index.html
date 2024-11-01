@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="结构 dict使用链地址法解决冲突，size为$2^n$，sizemask = size - 1，用于计算key所属的bucket上，避免了mod，还便于处理scan时发生rehash的情况。每个dict有两个dictht，多个出来的一个用于rehash。\n">
+<title>redis dict</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2019/2019-12-03-redis-dict/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="redis dict">
+<meta property='og:description' content="结构 dict使用链地址法解决冲突，size为$2^n$，sizemask = size - 1，用于计算key所属的bucket上，避免了mod，还便于处理scan时发生rehash的情况。每个dict有两个dictht，多个出来的一个用于rehash。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2019/2019-12-03-redis-dict/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='redis' /><meta property='article:published_time' content='2019-12-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2019-12-03T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="redis dict">
+<meta name="twitter:description" content="结构 dict使用链地址法解决冲突，size为$2^n$，sizemask = size - 1，用于计算key所属的bucket上，避免了mod，还便于处理scan时发生rehash的情况。每个dict有两个dictht，多个出来的一个用于rehash。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" >
+                Redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2019/2019-12-03-redis-dict/">redis dict</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 03, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="结构">结构
+</h1><p>dict使用链地址法解决冲突，<code>size</code>为$2^n$，<code>sizemask = size - 1</code>，用于计算key所属的bucket上，避免了mod，还便于处理scan时发生rehash的情况。每个dict有两个dictht，多个出来的一个用于rehash。</p>
+<p>使用了类似list中的方式来保存key和value，并提供了<code>hashFunction</code>，<code>keyDup</code>等函数操作key和value。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">dictEntry</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">union</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">void</span> <span class="o">*</span><span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">uint64_t</span> <span class="n">u64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">int64_t</span> <span class="n">s64</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">double</span> <span class="n">d</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="n">v</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">struct</span> <span class="n">dictEntry</span> <span class="o">*</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">dictEntry</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* This is our hash table structure. Every dictionary has two of this as we
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * implement incremental rehashing, for the old to the new table. */</span>
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">dictht</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dictEntry</span> <span class="o">**</span><span class="n">table</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">size</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">used</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">dictht</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">dict</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dictType</span> <span class="o">*</span><span class="n">type</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">void</span> <span class="o">*</span><span class="n">privdata</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dictht</span> <span class="n">ht</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="n">rehashidx</span><span class="p">;</span> <span class="cm">/* rehashing not in progress if rehashidx == -1 */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">iterators</span><span class="p">;</span> <span class="cm">/* number of iterators currently running */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="n">dict</span><span class="p">;</span>
+</span></span></code></pre></div><h1 id="添加元素">添加元素
+</h1><p>添加元素的过程，</p>
+<ol>
+<li>
+<p><code>dictAdd()</code></p>
+</li>
+<li>
+<p><code>dictAddRaw()</code></p>
+<ul>
+<li>如果需要rehash，<code>_dictRehashStep()</code>。</li>
+<li><code>_dictKeyIndex()</code>查找entry。</li>
+<li>如果找不到，创建新的entry，并插入链表的头部（这里假设了最近创建的会被更频繁的使用）。当rehash时，选择新的hash table，<code>d-&gt;ht[1]</code>进行操作。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">ht</span> <span class="o">=</span> <span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">?</span> <span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">:</span> <span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">entry</span> <span class="o">=</span> <span class="nf">zmalloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">entry</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">entry</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">ht</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">ht</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">entry</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">ht</span><span class="o">-&gt;</span><span class="n">used</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Set the hash entry fields. */</span>
+</span></span><span class="line"><span class="cl"><span class="nf">dictSetKey</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">entry</span><span class="p">,</span> <span class="n">key</span><span class="p">);</span>
+</span></span></code></pre></div></li>
+<li>
+<p><code>_dictKeyIndex()</code></p>
+<ul>
+<li>检查是否需要扩张hash table（扩张或为<code>d-&gt;ht[0]</code>进行初始化），<code>_dictExpandIfNeeded()</code>。</li>
+<li>使用<code>hash &amp; d-&gt;ht[table].sizemask</code>计算所属bucket。</li>
+<li>查找entry。在rehash的时候，会在两个hash table中进行查找。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="n">table</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">table</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">table</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">idx</span> <span class="o">=</span> <span class="n">hash</span> <span class="o">&amp;</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="n">table</span><span class="p">].</span><span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Search if this slot does not already contain the given key */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">he</span> <span class="o">=</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="n">table</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="n">he</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="o">==</span><span class="n">he</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">||</span> <span class="nf">dictCompareKeys</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">he</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">existing</span><span class="p">)</span> <span class="o">*</span><span class="n">existing</span> <span class="o">=</span> <span class="n">he</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">he</span> <span class="o">=</span> <span class="n">he</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+</ol>
+<h1 id="扩张hash-table">扩张hash table
+</h1><p>每次add都会调用<code>_dictExpandIfNeeded()</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="kt">int</span> <span class="nf">_dictExpandIfNeeded</span><span class="p">(</span><span class="n">dict</span> <span class="o">*</span><span class="n">d</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Incremental rehashing already in progress. Return. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">return</span> <span class="n">DICT_OK</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* If the hash table is empty expand it to the initial size. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nf">dictExpand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">DICT_HT_INITIAL_SIZE</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* If we reached the 1:1 ratio, and we are allowed to resize the hash
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * table (global setting) or we should avoid it but the ratio between
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * elements/buckets is over the &#34;safe&#34; threshold, we resize doubling
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * the number of buckets. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span> <span class="o">&gt;=</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span> <span class="o">&amp;&amp;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">(</span><span class="n">dict_can_resize</span> <span class="o">||</span>
+</span></span><span class="line"><span class="cl">         <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span><span class="o">/</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">dict_force_resize_ratio</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="nf">dictExpand</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span><span class="o">*</span><span class="mi">2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">DICT_OK</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li>
+<p>如果<code>d-&gt;ht[0]</code>为空，那么<code>dictExpand()</code>中为<code>d-&gt;ht[0]</code>初始化，初始大小为4。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>如果load factor达到了1，还需要看dict当前是否可以resize，如果不可以，那么会提高load factor到5（有子进程时，为了避免COW内存复制），然后才会在<code>dictExpand()</code>中分配新的hash table。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span></code></pre></div></li>
+</ul>
+<p><code>dictExpand()</code>中，如果分配了新的hash table，那么会set <code>d-&gt;rehashidx = 0;</code>，标识开始rehash。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="cm">/* Expand or create the hash table */</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">dictExpand</span><span class="p">(</span><span class="n">dict</span> <span class="o">*</span><span class="n">d</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* the size is invalid if it is smaller than the number of
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * elements already inside the hash table */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">||</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span> <span class="o">&gt;</span> <span class="n">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">DICT_ERR</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">dictht</span> <span class="n">n</span><span class="p">;</span> <span class="cm">/* the new hash table */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">realsize</span> <span class="o">=</span> <span class="nf">_dictNextPower</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Rehashing to the same table size is not useful. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">realsize</span> <span class="o">==</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span><span class="p">)</span> <span class="k">return</span> <span class="n">DICT_ERR</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Allocate the new hash table and initialize all pointers to NULL */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span><span class="p">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">realsize</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span><span class="p">.</span><span class="n">sizemask</span> <span class="o">=</span> <span class="n">realsize</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span><span class="p">.</span><span class="n">table</span> <span class="o">=</span> <span class="nf">zcalloc</span><span class="p">(</span><span class="n">realsize</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="n">dictEntry</span><span class="o">*</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span><span class="p">.</span><span class="n">used</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Is this the first initialization? If so it&#39;s not really a rehashing
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * we just set the first hash table so that it can accept keys. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">table</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">DICT_OK</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Prepare a second hash table for incremental rehashing */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">DICT_OK</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="删除key">删除key
+</h1><p>删除分为两种，</p>
+<ul>
+<li>
+<p><code>dictDelete()</code>：会把key，value和entry都真正的进行删除。最终是调用<code>dictGenericDelete()</code>进行删除。</p>
+</li>
+<li>
+<p><code>dictUnlink()</code>：只会把entry从链表中移除，并返回entry。最终是调用<code>dictGenericDelete()</code>进行删除。
+这个函数主要用于，想把entry从hash table中移除，但同时又想使用这个entry的情况。如果没有这个函数，则需要进行两次查找。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">entry</span> <span class="o">=</span> <span class="nf">dictFind</span><span class="p">(...);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Do something with entry
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nf">dictDelete</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span><span class="n">entry</span><span class="p">);</span>
+</span></span></code></pre></div></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">static</span> <span class="n">dictEntry</span> <span class="o">*</span><span class="nf">dictGenericDelete</span><span class="p">(</span><span class="n">dict</span> <span class="o">*</span><span class="n">d</span><span class="p">,</span> <span class="k">const</span> <span class="kt">void</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nofree</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">uint64_t</span> <span class="n">h</span><span class="p">,</span> <span class="n">idx</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">dictEntry</span> <span class="o">*</span><span class="n">he</span><span class="p">,</span> <span class="o">*</span><span class="n">prevHe</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">table</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">used</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="nf">_dictRehashStep</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">h</span> <span class="o">=</span> <span class="nf">dictHashKey</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="n">table</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">table</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">table</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">idx</span> <span class="o">=</span> <span class="n">h</span> <span class="o">&amp;</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="n">table</span><span class="p">].</span><span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">he</span> <span class="o">=</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="n">table</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">idx</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="n">prevHe</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">(</span><span class="n">he</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="n">key</span><span class="o">==</span><span class="n">he</span><span class="o">-&gt;</span><span class="n">key</span> <span class="o">||</span> <span class="nf">dictCompareKeys</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">he</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="cm">/* Unlink the element from the list */</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="n">prevHe</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">prevHe</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">he</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">else</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="n">table</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">he</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">nofree</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="nf">dictFreeKey</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">he</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="nf">dictFreeVal</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">he</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                    <span class="nf">zfree</span><span class="p">(</span><span class="n">he</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="n">table</span><span class="p">].</span><span class="n">used</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="n">he</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="n">prevHe</span> <span class="o">=</span> <span class="n">he</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">he</span> <span class="o">=</span> <span class="n">he</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span> <span class="cm">/* not found */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="rehash">rehash
+</h1><p>为了避免集中的rehash操作对性能的影响，redis使用的是渐进式rehash。<code>dict.rehashidx</code>初始化为-1，在rehash时，<code>[0, rehashidnex)</code>代表老的hash table已经迁移的bucket。</p>
+<p>rehash会两种情况下发生，</p>
+<ol>
+<li>
+<p>每次查询或更新操作时，都会调用<code>dictRehash()</code>执行一步rehash，一般来说这个函数只会移动一个bucket，也有可能一个都不移动，因为rehash时，每次检查至多10个bucket。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="nf">_dictRehashStep</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nf">dictRehash</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span></span></code></pre></div></li>
+<li>
+<p>如果server比较空闲，上述rehash的过程就会很慢，dict将会占用两个hash table较长的时间。在初始化redis时，<code>serverCron()</code>会作为计时器的回调函数定时执行。</p>
+<p>如果启用了<code>server.activerehashing</code>，执行过程中，会分配1ms的时间来执行<code>dictRehash()</code>。</p>
+<ul>
+<li><code>serverCron()</code></li>
+<li><code>databasesCron()</code></li>
+<li><code>incrementallyRehash()</code></li>
+<li><code>dictRehashMilliseconds(server.db[dbid].dict,1)</code>，1ms</li>
+<li><code>dictRehash(d,100)</code></li>
+</ul>
+</li>
+</ol>
+<p><code>int dictRehash(dict *d, int n)</code>中，最多移动100个bucket，在移动每个bucket时，至多会检查<code>n*10</code>个bucket，因为有的bucket可能是空的，因此需要多看几个。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">dictRehash</span><span class="p">(</span><span class="n">dict</span> <span class="o">*</span><span class="n">d</span><span class="p">,</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">empty_visits</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="mi">10</span><span class="p">;</span> <span class="cm">/* Max number of empty buckets to visit. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nf">dictIsRehashing</span><span class="p">(</span><span class="n">d</span><span class="p">))</span> <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">while</span><span class="p">(</span><span class="n">n</span><span class="o">--</span> <span class="o">&amp;&amp;</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">dictEntry</span> <span class="o">*</span><span class="n">de</span><span class="p">,</span> <span class="o">*</span><span class="n">nextde</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="cm">/* Note that rehashidx can&#39;t overflow as we are sure there are more
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * elements because ht[0].used != 0 */</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">assert</span><span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">size</span> <span class="o">&gt;</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span><span class="p">)</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span><span class="p">]</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="k">if</span> <span class="p">(</span><span class="o">--</span><span class="n">empty_visits</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">de</span> <span class="o">=</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/* Move all the keys in this bucket from the old to the new hash HT */</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span><span class="p">(</span><span class="n">de</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kt">uint64_t</span> <span class="n">h</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">            <span class="n">nextde</span> <span class="o">=</span> <span class="n">de</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="cm">/* Get the index in the new hash table */</span>
+</span></span><span class="line"><span class="cl">            <span class="n">h</span> <span class="o">=</span> <span class="nf">dictHashKey</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">de</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">de</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">h</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">=</span> <span class="n">de</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span><span class="o">--</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">].</span><span class="n">used</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">            <span class="n">de</span> <span class="o">=</span> <span class="n">nextde</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">table</span><span class="p">[</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span><span class="p">]</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Check if we already rehashed the whole table... */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">used</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">zfree</span><span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">table</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">_dictReset</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">d</span><span class="o">-&gt;</span><span class="n">rehashidx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* More to rehash... */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="scan">scan
+</h1><p>scan可以用于遍历dict中的元素，初始提供一个<code>cursor = 0</code>，每次迭代返回一个新的<code>cursor</code>，当<code>cursor</code>再次为0的时候，遍历结束。</p>
+<p>遍历每个bucket时，调用<code>fn</code>对每个元素<code>de</code>进行处理，这个处理可能是，复制<code>de</code>到其他地方，例如：<code>void scanCallback(void *privdata, const dictEntry *de)</code>。</p>
+<p>scan需要考虑是否正在rehash的情况，</p>
+<ol>
+<li>
+<p>scan过程中，dict没有变化</p>
+<p>由于hash table的大小总是$2^n$，因此每个bucket的index总是<code>key &amp; 2^n - 1</code>后的一个值，即<code>idx = hash &amp; d-&gt;ht[table].sizemask</code>。</p>
+<p>每次调用<code>scan</code>时，处理完毕一个bucket中的元素后，<code>v |= ~m0</code>保留cursor的低n个bit（在遍历结束前，<code>v == v | ~m0</code>），并加1。如果遍历结束，那么cursor值为<code>2^n - 1</code>，加1，并<code>v |= ~m0</code>后，<code>v</code>为0。则停止调用<code>dictScan</code>。</p>
+<p>这里还看不出<code>reverse cursor</code>的特殊作用。无论高位加1并<code>rev()</code>，还是低位加1，都可以完成上述过程。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">t0</span> <span class="o">=</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">m0</span> <span class="o">=</span> <span class="n">t0</span><span class="o">-&gt;</span><span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Emit entries at cursor */</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">bucketfn</span><span class="p">)</span> <span class="nf">bucketfn</span><span class="p">(</span><span class="n">privdata</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">t0</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">v</span> <span class="o">&amp;</span> <span class="n">m0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">de</span> <span class="o">=</span> <span class="n">t0</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">v</span> <span class="o">&amp;</span> <span class="n">m0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="n">de</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">next</span> <span class="o">=</span> <span class="n">de</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">fn</span><span class="p">(</span><span class="n">privdata</span><span class="p">,</span> <span class="n">de</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">de</span> <span class="o">=</span> <span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Set unmasked bits so incrementing the reversed cursor
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * operates on the masked bits */</span>
+</span></span><span class="line"><span class="cl"><span class="n">v</span> <span class="o">|=</span> <span class="o">~</span><span class="n">m0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Increment the reverse cursor */</span>
+</span></span><span class="line"><span class="cl"><span class="n">v</span> <span class="o">=</span> <span class="nf">rev</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">v</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">v</span> <span class="o">=</span> <span class="nf">rev</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+</span></span></code></pre></div></li>
+<li>
+<p>如果正在rehash
+如果正在rehash，scan是通过高位掩码的方式来完成扫描的。</p>
+<p>先来看bucket的计算方式，<code>idx = hash &amp; d-&gt;ht[table].sizemask</code>。如果发生rehash，假设小表a大小为<code>2^n</code>，大表b为<code>2^m</code>。某个key，在两个表中的bucket分别为<code>hash &amp; d-&gt;ht[a].sizemask</code>，<code>hash &amp; d-&gt;ht[b].sizemask</code>。hash是一致的，这就意味着，两个bucket的低n位也是一致的。这是rehash时能保证元素一定会被扫描到的关键。</p>
+<p>scan时，t0（小表）索引为<code>v &amp; m0</code>的bucket，然后扫描t1中索引低<code>n</code>为<code>v &amp; m0</code>的bucket。由于大表中低<code>n</code>为<code>v &amp; m0</code>的bucket是多个，因此需要在高<code>m - n</code>位不断递增。由于需要在高位不断递增，因此需要先<code>rev()</code>，然后再加1。</p>
+<p>总结来说，rehash时的扫描过程，其实就是通过一个函数，将一个bucket值<code>xxxxx</code>，映射到集合<code>aa...axxxxx</code>的过程。</p>
+<p>scan大表时的停止条件就是高<code>m - n</code>位都被扫描一遍，<code>v &amp; (m0 ^ m1)</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">t0</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="n">t1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Make sure t0 is the smaller and t1 is the bigger table */</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">t0</span><span class="o">-&gt;</span><span class="n">size</span> <span class="o">&gt;</span> <span class="n">t1</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t0</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="n">t1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ht</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">m0</span> <span class="o">=</span> <span class="n">t0</span><span class="o">-&gt;</span><span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">m1</span> <span class="o">=</span> <span class="n">t1</span><span class="o">-&gt;</span><span class="n">sizemask</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Emit entries at cursor */</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">bucketfn</span><span class="p">)</span> <span class="nf">bucketfn</span><span class="p">(</span><span class="n">privdata</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">t0</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">v</span> <span class="o">&amp;</span> <span class="n">m0</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="n">de</span> <span class="o">=</span> <span class="n">t0</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">v</span> <span class="o">&amp;</span> <span class="n">m0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="p">(</span><span class="n">de</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">next</span> <span class="o">=</span> <span class="n">de</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">fn</span><span class="p">(</span><span class="n">privdata</span><span class="p">,</span> <span class="n">de</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">de</span> <span class="o">=</span> <span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Iterate over indices in larger table that are the expansion
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * of the index pointed to by the cursor in the smaller table */</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Emit entries at cursor */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">bucketfn</span><span class="p">)</span> <span class="nf">bucketfn</span><span class="p">(</span><span class="n">privdata</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">t1</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">v</span> <span class="o">&amp;</span> <span class="n">m1</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">de</span> <span class="o">=</span> <span class="n">t1</span><span class="o">-&gt;</span><span class="n">table</span><span class="p">[</span><span class="n">v</span> <span class="o">&amp;</span> <span class="n">m1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">while</span> <span class="p">(</span><span class="n">de</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">next</span> <span class="o">=</span> <span class="n">de</span><span class="o">-&gt;</span><span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">fn</span><span class="p">(</span><span class="n">privdata</span><span class="p">,</span> <span class="n">de</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">de</span> <span class="o">=</span> <span class="n">next</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Increment the reverse cursor not covered by the smaller mask.*/</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span> <span class="o">|=</span> <span class="o">~</span><span class="n">m1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span> <span class="o">=</span> <span class="nf">rev</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">v</span> <span class="o">=</span> <span class="nf">rev</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Continue while bits covered by mask difference is non-zero */</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">v</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">m0</span> <span class="o">^</span> <span class="n">m1</span><span class="p">));</span>
+</span></span></code></pre></div></li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/redis/">Redis</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-12-02-redis-list/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis list</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-11-26-redis-sds/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis sds</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

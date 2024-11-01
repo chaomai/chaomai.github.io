@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Tmux date: 2015-06-22 20:36:57 description: tmux的简单操作。 categories: - linux tags: - tmux Basic Creating Named Sessions tmux new-session -s basic or\ntmux new -s basic Detaching Sessions CTRL-b, then d\nReattaching to Existing Sessions tmux new-session -s basic or\ntmux ls If there is only session, then tmux attach. If there are multiple sessions, then tmux attach -t second_session. BTY, you can also use this when you only have one session. Killing Sessions In sesssion, use exit. Kill specific session when not in session, tmux kill-session -t basic BTY, if there is no sessions, after typing tmux ls, you will get\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-06-22-tmux/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Tmux date: 2015-06-22 20:36:57 description: tmux的简单操作。 categories: - linux tags: - tmux Basic Creating Named Sessions tmux new-session -s basic or\ntmux new -s basic Detaching Sessions CTRL-b, then d\nReattaching to Existing Sessions tmux new-session -s basic or\ntmux ls If there is only session, then tmux attach. If there are multiple sessions, then tmux attach -t second_session. BTY, you can also use this when you only have one session. Killing Sessions In sesssion, use exit. Kill specific session when not in session, tmux kill-session -t basic BTY, if there is no sessions, after typing tmux ls, you will get\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-06-22-tmux/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Tmux date: 2015-06-22 20:36:57 description: tmux的简单操作。 categories: - linux tags: - tmux Basic Creating Named Sessions tmux new-session -s basic or\ntmux new -s basic Detaching Sessions CTRL-b, then d\nReattaching to Existing Sessions tmux new-session -s basic or\ntmux ls If there is only session, then tmux attach. If there are multiple sessions, then tmux attach -t second_session. BTY, you can also use this when you only have one session. Killing Sessions In sesssion, use exit. Kill specific session when not in session, tmux kill-session -t basic BTY, if there is no sessions, after typing tmux ls, you will get\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-06-22-tmux/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--tmux">title: Tmux
+date: 2015-06-22 20:36:57
+description: tmux的简单操作。
+categories:
+- linux
+tags:
+- tmux
+</h2><h2 id="basic">Basic
+</h2><h3 id="creating-named-sessions">Creating Named Sessions
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tmux new-session -s basic
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tmux new -s basic
+</span></span></code></pre></div><h3 id="detaching-sessions">Detaching Sessions
+</h3><p><code>CTRL-b</code>, then <code>d</code></p>
+<h3 id="reattaching-to-existing-sessions">Reattaching to Existing Sessions
+</h3><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tmux new-session -s basic
+</span></span></code></pre></div><p>or</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tmux ls
+</span></span></code></pre></div><blockquote>
+<ol>
+<li>If there is only session, then <code>tmux attach</code>.</li>
+<li>If there are multiple sessions, then <code>tmux attach -t second_session</code>. BTY, you can also use this when you only have one session.</li>
+</ol>
+</blockquote>
+<h3 id="killing-sessions">Killing Sessions
+</h3><ul>
+<li>In sesssion, use <code>exit</code>.</li>
+<li>Kill specific session when not in session,</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tmux kill-session -t basic
+</span></span></code></pre></div><p>BTY, if there is no sessions, after typing <code>tmux ls</code>, you will get</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">failed to connect to server: Connection refused
+</span></span></code></pre></div><h3 id="creating-and-naming-windows">Creating and Naming Windows
+</h3><ul>
+<li>
+<p>In terminal</p>
+<p><code>-n</code>: the name of new window.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tmux new -s windows -n shell
+</span></span></code></pre></div></li>
+<li>
+<p>In session</p>
+<p><code>PREFIX c</code></p>
+<p><code>PREFIX ,</code> will rename the new window.</p>
+</li>
+</ul>
+<h3 id="moving-between-windows">Moving Between Windows
+</h3><ul>
+<li>
+<p>next and previous window</p>
+<p><code>PREFIX n</code> and <code>PREFIX p</code></p>
+</li>
+<li>
+<p>default id of window</p>
+<p><code>PREFIX 0</code> to <code>PREFIX 9</code></p>
+</li>
+<li>
+<p>find a window</p>
+<p><code>PREFIX f</code></p>
+</li>
+<li>
+<p>window list</p>
+<p><code>PREFIX w</code></p>
+</li>
+</ul>
+<h3 id="close-a-window">Close a Window
+</h3><ul>
+<li>type <code>exit</code> after command finish executed.</li>
+<li><code>PREFIX &amp;</code></li>
+</ul>
+<p>If you want to quit a tmux session, you&rsquo;ll have to close all windows.</p>
+<h3 id="panes">Panes
+</h3><ul>
+<li>vertically: <code>PREFIX %</code></li>
+<li>horizontally: <code>PREFIX &quot;</code></li>
+<li>switch between them:
+<ul>
+<li>cycle through: <code>PREFIX o</code></li>
+<li><code>PREFIX UP</code>, <code>PREFIX DOWN</code>, <code>PREFIX LEFT</code>, or <code>PREFIX RIGHT</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="pane-layouts">Pane Layouts
+</h3><p>types:</p>
+<ul>
+<li>even-horizontal</li>
+<li>even-vertical</li>
+<li>main-horizontal</li>
+<li>main-vertical</li>
+<li>tiled</li>
+</ul>
+<p>cycle through these types by pressing <code>PREFIX SPACEBAR</code>.</p>
+<h3 id="closing-panes">Closing Panes
+</h3><ul>
+<li><code>exit</code></li>
+<li><code>PREFIX X</code>. If there is only one pane in current window, it will close this window at the same time.</li>
+</ul>
+<h3 id="command-mode">Command Mode
+</h3><p>press <code>PREFIX :</code> to enter command mode.</p>
+<ul>
+<li>create new window with a name,</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">new-window -n console
+</span></span></code></pre></div><ul>
+<li>create new window with a name and a command,</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">new-window -n processes <span class="s2">&#34;top&#34;</span>
+</span></span></code></pre></div><p><code>top</code> will execute immediately after new window created. What&rsquo;s really cool is that <strong>this window close instantly when you press <code>q</code> to close top.</strong></p>
+<h3 id="quick-reference">Quick Reference
+</h3><p><strong>创建会话</strong></p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>命令</th>
+          <th>描述</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>tmux new-session</code></td>
+          <td>创建一个未命名的会话。可以简写为 <code>tmux new</code> 或者就一个简单的 <code>tmux</code></td>
+      </tr>
+      <tr>
+          <td><code>tmux new -s development</code></td>
+          <td>创建一个名为“development”的会话</td>
+      </tr>
+      <tr>
+          <td><code>tmux new -s development -n editor</code></td>
+          <td>创建一个名为“development”的会话并把该会话的第一个窗口命名为“editor”</td>
+      </tr>
+      <tr>
+          <td><code>tmux attach -t development</code></td>
+          <td>连接到一个名为“development”的会话</td>
+      </tr>
+  </tbody>
+</table></div>
+<p><strong>会话、窗口和面板的默认快捷键</strong></p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>快捷键</th>
+          <th>功能</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>PREFIX d</code></td>
+          <td>从一个会话中分离，让该会话在后台运行。</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX :</code></td>
+          <td>进入命令模式</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX c</code></td>
+          <td>在当前tmux会话创建一个新的窗口，是 new-window 命令的简写</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX 0...9</code></td>
+          <td>根据窗口的编号选择窗口</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX w</code></td>
+          <td>显示当前会话中所有窗口的可选择列表</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX ,</code></td>
+          <td>显示一个提示符来重命名一个窗口</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX &amp;</code></td>
+          <td>关闭当前窗口，带有确认提示</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX %</code></td>
+          <td>把当前窗口垂直地一分为二，分割后的两个面板各占50%大小</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX &quot;</code></td>
+          <td>把当前窗口水平地一分为二，分割后的两个面板各占50%大小</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX o</code></td>
+          <td>在已打开的面板之间循环移动当前焦点</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX q</code></td>
+          <td>短暂地显示每个面板的编号</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX x</code></td>
+          <td>关闭当前面板，带有确认提示</td>
+      </tr>
+      <tr>
+          <td><code>PREFIX SPACE</code></td>
+          <td>循环地使用tmux的几个默认面板布局</td>
+      </tr>
+  </tbody>
+</table></div>
+<h2 id="references">References
+</h2><ol>
+<li>[tmux-Productive-Mouse-Free-Development_zh(https://github.com/aqua7regia/tmux-Productive-Mouse-Free-Development_zh)</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

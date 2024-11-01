@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: C++重载运算与类型转换 date: 2014-03-20 20:01:13 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 运算符重载 重载的运算符是具有特殊名字的函数，除函数调用运算符外，其他重载运算符不能含有默认实参。\n一个运算符函数，或者类的成员，或者至少含有一个类类型的参数。也就是说不能为内置类型重载运算符。 只能重载已有的运算符。 一个重载的运算符，其优先级和结合律与对应的内置运算符保持一致。 由于使用重载的运算符本质上是函数调用，因此对象求值顺序的规则无法应用到重载的运算符上。尤其是&amp;&amp;，||和,，两个运算对象总是会被求值。 通常情况下，不应该重载&amp;&amp;，||，&amp;和,，运算符。 一般来说，提供了某个重载运算符，也应该提供与此运算符相关的一系列运算符，如：算术运算符-&gt;对应的复合赋值运算符。 成员或者非成员 =，[]，()和-&gt;运算符**必须是成员。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2014/2014-03-20-cpp-overload-operator-and-type-conversion/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: C++重载运算与类型转换 date: 2014-03-20 20:01:13 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 运算符重载 重载的运算符是具有特殊名字的函数，除函数调用运算符外，其他重载运算符不能含有默认实参。\n一个运算符函数，或者类的成员，或者至少含有一个类类型的参数。也就是说不能为内置类型重载运算符。 只能重载已有的运算符。 一个重载的运算符，其优先级和结合律与对应的内置运算符保持一致。 由于使用重载的运算符本质上是函数调用，因此对象求值顺序的规则无法应用到重载的运算符上。尤其是&amp;&amp;，||和,，两个运算对象总是会被求值。 通常情况下，不应该重载&amp;&amp;，||，&amp;和,，运算符。 一般来说，提供了某个重载运算符，也应该提供与此运算符相关的一系列运算符，如：算术运算符-&gt;对应的复合赋值运算符。 成员或者非成员 =，[]，()和-&gt;运算符**必须是成员。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2014/2014-03-20-cpp-overload-operator-and-type-conversion/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: C++重载运算与类型转换 date: 2014-03-20 20:01:13 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 运算符重载 重载的运算符是具有特殊名字的函数，除函数调用运算符外，其他重载运算符不能含有默认实参。\n一个运算符函数，或者类的成员，或者至少含有一个类类型的参数。也就是说不能为内置类型重载运算符。 只能重载已有的运算符。 一个重载的运算符，其优先级和结合律与对应的内置运算符保持一致。 由于使用重载的运算符本质上是函数调用，因此对象求值顺序的规则无法应用到重载的运算符上。尤其是&amp;&amp;，||和,，两个运算对象总是会被求值。 通常情况下，不应该重载&amp;&amp;，||，&amp;和,，运算符。 一般来说，提供了某个重载运算符，也应该提供与此运算符相关的一系列运算符，如：算术运算符-&gt;对应的复合赋值运算符。 成员或者非成员 =，[]，()和-&gt;运算符**必须是成员。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2014/2014-03-20-cpp-overload-operator-and-type-conversion/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    7 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>title: C++重载运算与类型转换
+date: 2014-03-20 20:01:13
+categories:</p>
+<ul>
+<li>cpp
+tags:</li>
+<li>&lsquo;c++ primer&rsquo;</li>
+</ul>
+<hr>
+<h1 id="运算符重载">运算符重载
+</h1><p>重载的运算符是具有<strong>特殊名字的函数</strong>，除函数调用运算符外，其他重载运算符<strong>不能含有默认实参</strong>。</p>
+<ul>
+<li>一个运算符函数，或者<strong>类的成员</strong>，或者<strong>至少含有一个类类型的参数</strong>。也就是说不能为内置类型重载运算符。</li>
+<li>只能重载<strong>已有的</strong>运算符。</li>
+<li>一个重载的运算符，其优先级和结合律与对应的内置运算符<strong>保持一致</strong>。</li>
+<li>由于使用重载的运算符本质上是<strong>函数调用</strong>，因此对象求值顺序的规则<strong>无法应用</strong>到重载的运算符上。尤其是<code>&amp;&amp;</code>，<code>||</code>和<code>,</code>，两个运算对象<strong>总是会</strong>被求值。</li>
+<li>通常情况下，不应该重载<code>&amp;&amp;</code>，<code>||</code>，<code>&amp;</code>和<code>,</code>，运算符。</li>
+<li>一般来说，提供了某个重载运算符，也应该提供<strong>与此运算符相关的</strong>一系列运算符，如：算术运算符-&gt;对应的复合赋值运算符。</li>
+</ul>
+<h2 id="成员或者非成员">成员或者非成员
+</h2><ul>
+<li>
+<p><code>=</code>，<code>[]</code>，<code>()</code>和<code>-&gt;</code>运算符**必须是成员。</p>
+</li>
+<li>
+<p>复合赋值运算符<strong>一般来说应该是</strong>成员，但非必须。</p>
+</li>
+<li>
+<p>改变对象状态或与给定类型密切相关的运算符，应该是成员。如：递增、解引用。</p>
+</li>
+<li>
+<p>具有对称性的运算符可能转换任意一端的运算对象，通常应该是非成员。如：算术、相等性、关系和位运算符。如果想提供<strong>含有类对象的混合类型表达式</strong>，运算符必须是非成员函数。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&#34;world&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">string</span> <span class="n">u</span> <span class="o">=</span> <span class="s">&#34;hi&#34;</span> <span class="o">+</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// 如果是成员函数，则&#34;hi&#34;.operator+(s)，错误
+</span></span></span></code></pre></div></li>
+</ul>
+<p>对于友元要注意，在类内部虽然有友元声明，但这<strong>并非真正意义上的函数声明</strong>，因此在类外部还需要有函数声明。</p>
+<h1 id="输入输出运算符">输入输出运算符
+</h1><h2 id="heading">&laquo;
+</h2><ul>
+<li><code>ostream &amp;operator&lt;&lt;(ostream &amp;os, const Sales_data &amp;item);</code></li>
+<li>必须是<strong>非成员函数</strong>，否则左侧运算对象将是类的一个对象
+就算要是某个类的成员，也只能是istream或ostream的，然而并不能为标准库中的类添加成员，因此只能是非成员函数</li>
+<li>不应该打印换行符</li>
+</ul>
+<h2 id="heading-1">&raquo;
+</h2><ul>
+<li>
+<p><code>istream &amp;operator&gt;&gt;(istream &amp;is, Sales_data &amp;item);</code></p>
+</li>
+<li>
+<p>必须处理输入可能失败的情况</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">istream</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">istream</span> <span class="o">&amp;</span><span class="n">is</span><span class="p">,</span> <span class="n">Sales_data</span> <span class="o">&amp;</span><span class="n">item</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">double</span> <span class="n">price</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">is</span> <span class="o">&gt;&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">bookNo</span> <span class="o">&gt;&gt;</span> <span class="n">item</span><span class="p">.</span><span class="n">units_sold</span> <span class="o">&gt;&gt;</span> <span class="n">price</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">is</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">item</span><span class="p">.</span><span class="n">revenue</span> <span class="o">=</span> <span class="n">price</span> <span class="o">*</span> <span class="n">item</span><span class="p">.</span><span class="n">units_sold</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">item</span> <span class="o">=</span> <span class="n">Sales_data</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">is</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>有时需要标识<strong>流的条件状态</strong></p>
+</li>
+</ul>
+<h1 id="算术和关系运算符">算术和关系运算符
+</h1><ul>
+<li>
+<p>通常把算术和关系运算符定义为非成员函数，使得左侧或右侧的运算对象可以转换</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">string</span> <span class="n">s</span> <span class="o">=</span> <span class="s">&#34;world&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">string</span> <span class="n">u</span> <span class="o">=</span> <span class="s">&#34;hi&#34;</span> <span class="o">+</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// 如果是成员函数，则&#34;hi&#34;.operator+(s)，错误
+</span></span></span></code></pre></div></li>
+<li>
+<p>这些运算符一般不需要改变运算对象的状态，所以形参是常量引用</p>
+</li>
+<li>
+<p>一般使用<strong>复合赋值来实现</strong>算术运算符</p>
+</li>
+</ul>
+<h2 id="heading-2">==
+</h2><ul>
+<li>相等运算符应该具有<strong>传递性</strong></li>
+<li>定义了<code>==</code>，也应该定义<code>!=</code></li>
+</ul>
+<h2 id="关系运算符">关系运算符
+</h2><p>关系运算符应该，</p>
+<ol>
+<li>定义顺序关系，且与关联容器中对关键字的要求一致</li>
+<li>Define a relation that is consistent with <code>==</code> if the class has both operators. In particular, if two objects are <code>!=</code>, then one object should be <code>&lt;</code> the other.</li>
+</ol>
+<p>如果存在唯一一种逻辑可靠的&lt;语义，才考虑定义&lt;运算符。如果类同时还包含==，则当且仅当&lt;的定义和==产生的结果一致时才定义&lt;运算符。</p>
+<h2 id="heading-3">=
+</h2><ul>
+<li>必须为成员函数</li>
+<li><strong>必须先释放</strong>当前内存空间</li>
+<li>如果不是拷贝赋值运算符和移动赋值运算符，则<strong>不必检查自赋值</strong>的情况。</li>
+</ul>
+<h2 id="heading-4">[]
+</h2><ul>
+<li>必须为成员函数</li>
+<li>返回元素的引用</li>
+<li>通常定义const和非const版本</li>
+</ul>
+<h1 id="递增递减运算符">递增递减运算符
+</h1><p>由于改变了对象的状态，一般应为<strong>成员函数</strong>，且应该<strong>同时定义</strong>前置版本和后置版本。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// 返回递增或递减后对象的引用
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">StrBlobPtr</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">++</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">StrBlobPtr</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">--</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回对象的原值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">StrBlobPtr</span> <span class="k">operator</span><span class="o">++</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span> <span class="c1">// 形参不会被使用，仅仅是和前置版本进行区分
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">StrBlobPtr</span> <span class="k">operator</span><span class="o">--</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">p</span><span class="p">.</span><span class="k">operator</span><span class="o">--</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span> <span class="c1">// 调用后置版本的
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">p</span><span class="p">.</span><span class="k">operator</span><span class="o">--</span><span class="p">();</span> <span class="c1">// 调用前置版本的
+</span></span></span></code></pre></div><h1 id="成员访问运算符">成员访问运算符
+</h1><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">string</span> <span class="o">&amp;</span><span class="n">StrBlobPtr</span><span class="o">::</span><span class="k">operator</span><span class="o">*</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">check</span><span class="p">(</span><span class="n">curr</span><span class="p">,</span> <span class="s">&#34;deference past end&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)[</span><span class="n">curr</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">string</span> <span class="o">*</span><span class="n">StrBlobPtr</span><span class="o">::</span><span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="k">this</span><span class="o">-&gt;</span><span class="k">operator</span><span class="o">*</span><span class="p">();</span> <span class="p">}</span>
+</span></span></code></pre></div><ul>
+<li><code>-&gt;</code><strong>必须是类成员</strong>，<code>*</code>非必需，但<strong>通常也是</strong>。</li>
+<li>定义为const是因为获取一个元素并不会改变对象的状态。</li>
+<li>虽然可以让解引用返回任何想要的值或打印（不建议），但箭头运算符<strong>必须有成员访问的含义</strong>。重载箭头运算符时，可以改变的是箭头从哪个对象中获取成员。</li>
+</ul>
+<h1 id="函数调用运算符">函数调用运算符
+</h1><p>函数调用运算符<strong>必须是</strong>成员函数。如果类定义了调用运算符，那么该类的对象叫做函数对象。调用函数对象实际上是在运行重载的调用运算符。</p>
+<h2 id="lambda是函数对象">lambda是函数对象
+</h2><p>编写lambda后，编译器将生成一个<strong>未命名类的未命名对象</strong>。这个类中有一个重载的函数调用运算符，且默认情况下这个成员是const（lambda不能改变捕获的变量），除非lambda被声明为mutable。</p>
+<ul>
+<li>
+<p>引用捕获
+由程序确保lambda执行时所引用的对象确实存在，生成的类中无须保存为数据成员。</p>
+</li>
+<li>
+<p>值捕获
+生成的类中需建立对象的数据成员，同时创建构造函数，用捕获的变量来初始化数据成员。</p>
+</li>
+</ul>
+<p>lambda产生的类中，<strong>不包含默认构造函数、赋值运算符和默认析构函数</strong>，默认拷贝和默认移动构造函数视捕获的数据成员类型而定。</p>
+<h1 id="标准库定义的函数对象">标准库定义的函数对象
+</h1><p>标准库规定的函数<strong>对于指针同样适用</strong>。直接比较两个无关的指针将产生未定义的行为，但通过标准库定义的函数对象来比较是<strong>定义良好的</strong>。</p>
+<p>关联容器使用<code>less&lt;key_type&gt;</code>对元素排序，因此可以直接定义一个指针的set或map，而无须声明<code>less</code>。</p>
+<h1 id="function">function
+</h1><p>C++中的可调用对象多种有，它们的类型是不同的，</p>
+<ul>
+<li>函数和函数指针
+类型由返回值类型和实参类型决定</li>
+<li>lambda表达式
+每个lambda有唯一的未命名类类型</li>
+<li>bind创建的对象</li>
+<li>重载了函数调用运算符的类</li>
+</ul>
+<p>类型不同的可调用对象<strong>可能共享</strong>同一种调用形式。调用形式指明了<strong>调用返回的类型</strong>以及<strong>传递给调用的实参类型</strong>。一种调用形式对应一个函数类型。</p>
+<p>定义<code>funcion</code>类型时，需要指明调用形式。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl">  <span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">function</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span><span class="o">&gt;&gt;</span> <span class="n">binops</span> <span class="o">=</span> <span class="p">{{</span><span class="s">&#34;+&#34;</span><span class="p">,</span> <span class="n">plus</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()},</span>
+</span></span><span class="line"><span class="cl">                                                 <span class="p">{</span><span class="s">&#34;-&#34;</span><span class="p">,</span> <span class="n">minus</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()},</span>
+</span></span><span class="line"><span class="cl">                                                 <span class="p">{</span><span class="s">&#34;*&#34;</span><span class="p">,</span> <span class="n">multiplies</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()},</span>
+</span></span><span class="line"><span class="cl">                                                 <span class="p">{</span><span class="s">&#34;/&#34;</span><span class="p">,</span> <span class="n">divides</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()},</span>
+</span></span><span class="line"><span class="cl">                                                 <span class="p">{</span><span class="s">&#34;%&#34;</span><span class="p">,</span> <span class="n">modulus</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">()}};</span>
+</span></span></code></pre></div><h1 id="重载类型转换">重载、类型转换
+</h1><p>如果构造函数只接受一个实参，则它实际上定义了转换为此类型的<strong>隐式转换</strong>机制，这种构造函数叫做转换构造函数。</p>
+<p><strong>转换构造函数</strong>和<strong>类型转换运算符</strong>共同定义类类型转换，也叫用户定义的类型转换。</p>
+<p>编译器<strong>一次只能执行一个</strong>用户定义的类型转换。</p>
+<h2 id="隐式类型转换运算符">隐式类型转换运算符
+</h2><ul>
+<li><code>operator int() const;</code>
+从类类型转换为int</li>
+<li>无显示的返回类型和形参</li>
+<li>返回一个对应类型的值</li>
+<li>必须定义为成员函数</li>
+<li>通常不应该改变转换对象的内容，一般被定义为const</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">S</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;construct&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span><span class="p">(</span><span class="k">const</span> <span class="n">S</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copy&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span><span class="p">(</span><span class="n">S</span> <span class="o">&amp;&amp;</span><span class="n">s</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;move&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">S</span> <span class="o">&amp;</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copy assign&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">val</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">S</span> <span class="o">&amp;&amp;</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;move assign&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">val</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">operator</span> <span class="nf">int</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;conversion-&gt;int&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size_t</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">S</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// construct
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">s</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="c1">// construct， move assign
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// conversion-&gt;int
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">s</span> <span class="o">-</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// conversion-&gt;int, conversion-&gt;int
+</span></span></span></code></pre></div><p>S虽然没有定义<code>-</code>，但隐式转换为int，可以执行内置的<code>-</code>。</p>
+<p>虽然编译器一次只能执行一个用户定义的类型转换，但<strong>隐式的用户定义类型转换</strong>可以至于一个<strong>标准（内置）类型转换之前或之后</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// double-&gt;int-&gt;S
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">s</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span> <span class="c1">// construct， move assign
+</span></span></span><span class="line"><span class="cl"><span class="c1">// S-&gt;int-&gt;double
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">s</span> <span class="o">+</span> <span class="mf">3.14</span><span class="p">;</span> <span class="c1">// conversion-&gt;int
+</span></span></span></code></pre></div><h2 id="显式类型转换运算符">显式类型转换运算符
+</h2><p><code>explicit operator int() const;</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">S</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">explicit</span> <span class="k">operator</span> <span class="nf">int</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">val</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size_t</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">S</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">s</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span> <span class="c1">// 错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>但是当表达式<strong>作为条件</strong>时，编译器会将显式类型转换<strong>自动应用</strong>于它（仅仅是自动应用<code>explicit operator bool() const</code>，以转换为bool）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">S</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">:</span> <span class="n">val</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">explicit</span> <span class="k">operator</span> <span class="nf">bool</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">val</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size_t</span> <span class="n">val</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">S</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="避免有二义性的类型转换">避免有二义性的类型转换
+</h2><p>必须确保类类型和目标类型之间<strong>只存在唯一一种</strong>转换方式。<strong>无法</strong>通过使用强制类型转换来解决二义性问题，强制类型转换也会面临二义性问题。</p>
+<p>多重转换路径可能由于，</p>
+<ul>
+<li>
+<p>两个类提供相同的类型转换</p>
+</li>
+<li>
+<p>类定义了一组类型转换，它们的转换源（或者转换目标）类型本身可以通过其他类型转换联系在一起，由于<strong>所有算术类型转换的级别都一样</strong>，选择转换序列时会有<strong>多个转换序列</strong>，将会导致二义性。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">S</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">S</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">operator</span> <span class="nf">int</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">operator</span> <span class="nf">double</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">S</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// 精确匹配
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">float</span> <span class="n">b</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// 两个“可行函数”
+</span></span></span></code></pre></div></li>
+</ul>
+<blockquote>
+<p>如果已经定义了一个转换为算术类型的类型转换，<strong>不要</strong>再定义<strong>接受算术类型的重载运算符</strong>。在不定义以后，如果用户需要使用这样的运算符，则类型转换操作会转换此类型的对象，然后使用<strong>内置的运算符</strong>。</p>
+</blockquote>
+<h3 id="重载函数与转换构造函数">重载函数与转换构造函数
+</h3><p>当调用重载的函数时，如果两个或多个类型转换都提供了可行的匹配，则这些类型转换一样好。</p>
+<h3 id="重载函数与用户定义的类型转换">重载函数与用户定义的类型转换
+</h3><p>当调用重载的函数时，如果两个或多个类型用户定义的转换都提供了可行的匹配，则这些类型转换一样好。此时，不考虑任何可能出现的标准类型转换级别。</p>
+<p><strong>只有</strong>当重载函数能通过同一个类型转换函数得到匹配时（所有可行函数都请求同一个用户定义的类型转换），才考虑标准类型转换级别。</p>
+<h2 id="函数匹配与重载运算符">函数匹配与重载运算符
+</h2><p>表达式中运算符的候选函数集包括<strong>成员函数</strong>和<strong>非成员函数</strong>。</p>
+<p>如果对同一个类既提供了转换目标是算术类型的类型转换，也提供了重载的运算符，则将会遇到<strong>重载运算符和内置运算符的二义性问题</strong>。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

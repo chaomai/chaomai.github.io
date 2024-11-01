@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Miscellaneous Material about Concurrency date: 2015-10-12 21:43:54 description: 简单记录了一些关于并发的资料（hash table，spinlock，rwlock和CPU对HTM的支持）。 categories: - concurrency tags: - reading Cuckoo hashing Cuckoo hashing是Rasmus Pagh, Flemming Friche Rodler在2001年提出的，在hash table中用于解决hash collision的一种方法，是一种开放寻址法的hash table。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-10-12-miscellaneous-material-about-concurrency/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Miscellaneous Material about Concurrency date: 2015-10-12 21:43:54 description: 简单记录了一些关于并发的资料（hash table，spinlock，rwlock和CPU对HTM的支持）。 categories: - concurrency tags: - reading Cuckoo hashing Cuckoo hashing是Rasmus Pagh, Flemming Friche Rodler在2001年提出的，在hash table中用于解决hash collision的一种方法，是一种开放寻址法的hash table。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-10-12-miscellaneous-material-about-concurrency/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Miscellaneous Material about Concurrency date: 2015-10-12 21:43:54 description: 简单记录了一些关于并发的资料（hash table，spinlock，rwlock和CPU对HTM的支持）。 categories: - concurrency tags: - reading Cuckoo hashing Cuckoo hashing是Rasmus Pagh, Flemming Friche Rodler在2001年提出的，在hash table中用于解决hash collision的一种方法，是一种开放寻址法的hash table。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-10-12-miscellaneous-material-about-concurrency/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--reading">title: Miscellaneous Material about Concurrency
+date: 2015-10-12 21:43:54
+description: 简单记录了一些关于并发的资料（hash table，spinlock，rwlock和CPU对HTM的支持）。
+categories:
+- concurrency
+tags:
+- reading
+</h2><h1 id="cuckoo-hashing">Cuckoo hashing
+</h1><p>Cuckoo hashing是Rasmus Pagh, Flemming Friche Rodler在2001年提出的，在hash table中用于解决hash collision的一种方法，是一种开放寻址法的hash table。</p>
+<p>Cuckoo hashing维护了两个hash table，$T_1$和$T_2$，使用两个hash function，$h_1$和$h_2$。每个key存储在$T_1$的$h_1(x)$或者$T_2$的$h_2(x)$，但不会同时存储在两个地方。</p>
+<p>由于使用了两个hash table，Cuckoo hashing保证了在最坏情况下，lookup和delete也能有$O(1)$的时间，insert的期望时间是$O(1)$。</p>
+<p>原始的cuckoo hashing并不支持并发读写，同时对于每个inset和lookup需要多个内存引用。Bin Fan, David G. Andersen, Michael Kaminsky在2013年提出了Concurrent Cuckoo hashing，用optimistic version，使得cuckoo hashing在保证原有空间高效性的情况下，支持多个reader和一个writer的并发访问；同时使用了针对每个key的short summary，提高了hash table操作中cache的局部性；还优化了insert操作，提高了吞吐率。</p>
+<h2 id="reference">Reference
+</h2><ol>
+<li>Rasmus Pagh, Flemming Friche Rodler. Cuckoo Hashing[J]. Algorithms, 2001, 51(2).</li>
+<li>Bin Fan, David G. Andersen, Michael Kaminsky. MemC3: Compact and Concurrent MemCache with Dumber Caching and Smarter Hashing[C]. Networked Systems Design and Implementation, 2013: 371-384.</li>
+<li>Xiaozhou Li, David G. Andersen, Michael Kaminsky, Michael J. Freedman. Algorithmic improvements for fast concurrent Cuckoo hashing[C]. Proceedings of the Ninth European Conference on Computer Systems, 2014, 27.</li>
+</ol>
+<h1 id="hopscotch-hashing">Hopscotch hashing
+</h1><p>Hopscotch hashing是Maurice Herlihy, Nir Shavit, Moran Tzafrir在2008年提出的，在hash table中用于解决hash collision的一种方法，是一种开放寻址法的hash table，结合了linear探测、链式hash和cuckoo hash的优点。</p>
+<p>它使用了一个hash function，$h$和hopscotch方法。hash table的每个项都包含一个hop-information，一个$H$-bit的一个bitmap（$H$是常数，通常是一个word），被hash到table里的每个item，x总会在$h(x)$或者下$H-1$个位置被找到。</p>
+<p>它的insert，remove和contains的期望时间都是常数时间。</p>
+<p>Hopscotch hashing在设计之初就考虑到了并发，使用了lock和time stamp的方式来保证了并发安全性。</p>
+<h2 id="reference-1">Reference
+</h2><ol>
+<li>Maurice Herlihy, Nir Shavit, Moran Tzafrir. Hopscotch Hashing[C]. Proceedings of the 22nd international symposium on Distributed Computing, 2008: 350-364.</li>
+</ol>
+<h1 id="spinlock">spinlock
+</h1><p>spinlock是一种同步机制，它会导致线程进入忙等待，不断检查锁是否可用，并尝试获取锁。</p>
+<p>它避免了操作系统进行调度时的开销。</p>
+<p>由于spinlock是忙等待，因此在多处理器上使用才有意义。spinlock在锁可能耽搁一小段时间的情况下，很高效。因为这个原因，操作系统的内核中经常使用spinlock。</p>
+<h2 id="reference-2">Reference
+</h2><ol>
+<li>Maurice Herlihy, Nir Shavit. The Art of Multiprocessor Programming Revised Reprint [M]. Elsevier, 2012.</li>
+</ol>
+<h1 id="rwlock">rwlock
+</h1><p>Readers-writer lock是一种同步原语。在访问共享对象时，对于仅有reader的情况，是完全不需要同步的，但如果有writer，就需要同步。当一个wirter范围共享数据的时候，其他所有的writer和reader都会被阻塞，直到这个writer结束访问。</p>
+<p>在共享数据更新很少，读取很多的情况下，Readers-writer lock会拥有很高的效率。</p>
+<h2 id="reference-3">Reference
+</h2><ol>
+<li>Maurice Herlihy, Nir Shavit. The Art of Multiprocessor Programming Revised Reprint [M]. Elsevier, 2012.</li>
+</ol>
+<h1 id="rcu">RCU
+</h1><p>RCU是一种同步机制，在Linux内核中有广泛的用途，Linux内核2.5.43版本就开始使用RCU，截至2014年，已经使用了超过9000个RCU API。它允许reader和writer并发的访问共享数据，支持一个writer和多个reader之间的并发。通过维护多个版本的数据，RCU保证了reader读取到的数据的一致性，还保证在reader完成读取前，被访问的数据不会被释放。</p>
+<p>RCU有3个基本机制，用于insert的Publish-Subscribe机制、用于delete的Wait For Pre-Existing RCU Readers to Complete机制和允许reader容忍并发insert和delete的Maintain Multiple Versions of Recently Updated Objects机制。</p>
+<h2 id="reference-4">Reference
+</h2><ol>
+<li>Paul E. McKenney, John D. Slingwine. Read-Copy Update: Using Execution History to Solve Concurrency Problems[C]. Parallel and Distributed Computing and Systems, 1998: 509–518.</li>
+<li>Paul E. McKenney, Jonathan Walpole. Introducing technology into the Linux kernel: a case study[C]. Special Interest Group on Operating Systems, 2008, 42(5): 4–17.</li>
+</ol>
+<h1 id="cpu-with-htm-from-intel-and-ibm">CPU with HTM from Intel and IBM
+</h1><h2 id="intel">Intel
+</h2><p>Transactional Synchronization Extensions（TSX）是x86架构指令集的扩展，这个扩展加入了Hardware Transactional Memory（HTM）的支持。</p>
+<p>在2013年6月，Intel推出了基于Haswell微架构的处理器。Haswell处理器成为了主流处理器中首次引入Transactional Memory的处理器，在这一系列的处理器中，型号低于45xx，R系列和K系列的不支持TSX。</p>
+<h2 id="ibm">IBM
+</h2><h3 id="power8">Power8
+</h3><p>IBM在2013年8月的Hot Chips会议上推出了Power8。Power8是基于Power架构的超标量体系结构对称多处理器家族。Power8加入了Hardware Transactional Memory的支持。</p>
+<h3 id="blue-gene">Blue Gene
+</h3><p>Blue Gene是IBM的一个项目，目标是设计计算速度能够达到PFLOPS级别的，同时低能耗的超级计算机。这个项目产生了3代的超级计算机，Blue Gene/L，Blue Gene/P和Blue Gene/Q。其中Blue Gene/Q支持Transactional Memory。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

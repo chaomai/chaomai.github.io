@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: C++关联容器 date: 2014-02-28 18:56:17 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 关联容器支持普通容器操作，不支持，\n顺序容器位置相关的操作，push_back等； 构造函数或插入操作接受一个元素值和一个数量值得操作。 定义 定义一个map时必须指定关键字类型和值类型，set只需关键字类型。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2014/2014-02-28-cpp-associative-container/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: C++关联容器 date: 2014-02-28 18:56:17 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 关联容器支持普通容器操作，不支持，\n顺序容器位置相关的操作，push_back等； 构造函数或插入操作接受一个元素值和一个数量值得操作。 定义 定义一个map时必须指定关键字类型和值类型，set只需关键字类型。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2014/2014-02-28-cpp-associative-container/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: C++关联容器 date: 2014-02-28 18:56:17 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 关联容器支持普通容器操作，不支持，\n顺序容器位置相关的操作，push_back等； 构造函数或插入操作接受一个元素值和一个数量值得操作。 定义 定义一个map时必须指定关键字类型和值类型，set只需关键字类型。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2014/2014-02-28-cpp-associative-container/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    4 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>title: C++关联容器
+date: 2014-02-28 18:56:17
+categories:</p>
+<ul>
+<li>cpp
+tags:</li>
+<li>&lsquo;c++ primer&rsquo;</li>
+</ul>
+<hr>
+<p>关联容器支持普通容器操作，不支持，</p>
+<ul>
+<li>顺序容器位置相关的操作，<code>push_back</code>等；</li>
+<li>构造函数或插入操作接受一个元素值和一个数量值得操作。</li>
+</ul>
+<h1 id="定义">定义
+</h1><p>定义一个map时必须指定<strong>关键字类型和值类型</strong>，set只需<strong>关键字类型</strong>。</p>
+<h1 id="初始化">初始化
+</h1><p>可以用下面的方式来初始化，</p>
+<ul>
+<li>同类型容器的copy；</li>
+<li>指定值范围（begin和end）；</li>
+<li>列表初始化。</li>
+</ul>
+<h1 id="有序关联容器关键字类型的要求">有序关联容器关键字类型的要求
+</h1><p>有序关联容器关键字类型必须定义<strong>元素比较的方法</strong>。默认情况下，使用<code>&lt;</code>进行比较。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// list的iterator并无&lt;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">map</span><span class="o">&lt;</span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">iterator</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">ml</span><span class="p">;</span> <span class="c1">// 声明不会报错
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">li</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">ml</span><span class="p">[</span><span class="n">li</span><span class="p">.</span><span class="n">begin</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 报错
+</span></span></span></code></pre></div><p>对于有序容器，有序容器的关键字必须是<strong>严格弱序</strong>的，可看做“小于等于”。</p>
+<h2 id="自定义比较操作">自定义比较操作
+</h2><p>用于组织一个容器中元素的<strong>操作的类型</strong>也是容器类型的一部分，如果需要自定义操作，则在定义容器的时候就指明。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">boo</span> <span class="nf">compare</span><span class="p">(...)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">multiset</span><span class="o">&lt;</span><span class="n">Sales_sata</span><span class="p">,</span> <span class="k">decltype</span><span class="p">(</span><span class="n">compare</span><span class="p">)</span> <span class="o">*&gt;</span> <span class="n">bookstore</span><span class="p">(</span><span class="n">compare</span><span class="p">);</span>
+</span></span></code></pre></div><p>创建对象时，提供的操作类型（<strong>函数指针</strong>）必须与尖括号中的类型吻合。规则与函数的const形参和实参的规则一致，忽略top const。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">comp</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">bool</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="k">const</span> <span class="kt">int</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">m</span><span class="p">(</span><span class="n">comp</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">comp1</span> <span class="o">=</span> <span class="p">[](</span><span class="k">const</span> <span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">bool</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">m1</span><span class="p">(</span><span class="n">comp1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">comp2</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span><span class="o">*</span> <span class="k">const</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="k">const</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">bool</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">int</span><span class="o">*</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">m2</span><span class="p">(</span><span class="n">comp2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">comp3</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span><span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">bool</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="kt">int</span><span class="o">*</span> <span class="k">const</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="k">const</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">m3</span><span class="p">(</span><span class="n">comp3</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">comp4</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span><span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">false</span><span class="p">;</span> <span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">multiset</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="kt">bool</span> <span class="p">(</span><span class="o">*</span><span class="p">)(</span><span class="k">const</span> <span class="kt">int</span><span class="o">*</span><span class="p">,</span> <span class="k">const</span> <span class="kt">int</span><span class="o">*</span><span class="p">)</span><span class="o">&gt;</span> <span class="n">m4</span><span class="p">(</span><span class="n">comp4</span><span class="p">);</span> <span class="c1">// 错误
+</span></span></span></code></pre></div><h2 id="pair">pair
+</h2><p>模板，接受两个类型名，pair的数据成员将有对应的类型，两个类型不要求一样。</p>
+<p>创建对象时，pair的默认构造函数对数据成员进行<strong>值初始化</strong>（vector也可以）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">pair</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">size_t</span><span class="o">&gt;</span> <span class="n">word_count</span><span class="p">;</span>
+</span></span></code></pre></div><p>若函数返回pair，可<strong>对返回值</strong>进行列表初始化，不必显式构造返回值。</p>
+<h1 id="关联容器的操作">关联容器的操作
+</h1><p>map中，每个元素就是一个pair对象，由于关键字不可变，因此pair的<strong>关键字部分是const</strong>。set的关键字也是<code>const</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">value_type</span> <span class="n">v1</span><span class="p">;</span> <span class="c1">// pair&lt;const string, int&gt;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">key_type</span> <span class="n">v2</span><span class="p">;</span> <span class="c1">// string
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;::</span><span class="n">map_type</span> <span class="n">v3</span><span class="p">;</span> <span class="c1">// int
+</span></span></span></code></pre></div><h2 id="关联容器的迭代器">关联容器的迭代器
+</h2><p>对关联容器迭代器解引用，可得到容器的<code>value_type</code>的引用。</p>
+<p>对于set，虽然set定义了<code>iterator</code>和<code>const_iterator</code>，但是都不能改变set中的元素。</p>
+<p>当迭代器遍历一个map，multimap，set或multiset时，按关键字升序遍历。</p>
+<h2 id="关联容器和算法">关联容器和算法
+</h2><p>由于关键字是<code>const</code>，因此不能用于修改或重排容器的算法（都需要向元素写入值）。只可用于读取元素的算法。</p>
+<h2 id="添加元素">添加元素
+</h2><p><code>insert</code>和<code>emplace</code>可以对关联容器进行插入，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// map和set返回pair&lt;iterator, bool&gt;，iterator指向有此关键字的元素，bool说明是否元素是否已经存在，即是否插入成功。multimap和multiset总是进插入，只返回bool。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">li</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回void
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// p指明了从哪里开始新元素的存储位置
+</span></span></span></code></pre></div><h2 id="删除元素">删除元素
+</h2><p>关联容器有三个版本的erase，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 删除所有key为k的元素，返回size_type，表明删除的数量
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回被删除元素后的迭代器
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 返回e
+</span></span></span></code></pre></div><h2 id="map的下标">map的下标
+</h2><p>由于set并无关联值，下标操作对set无意义，故set不支持。multimap和multiset可能存在多个与某个key关联的值，故也不支持。</p>
+<p>下标操作返回<code>mapped_type</code>，是左值。如果关键字不在map中，下标操作会，</p>
+<ol>
+<li><strong>创建一个元素并插入</strong>，关联值将进行<strong>值初始化</strong>；</li>
+<li>提取元素并赋值。</li>
+</ol>
+<p>注意，</p>
+<ol>
+<li>与vector和string不同，map的下标操作和解引用返回的类型（<code>mapped_type</code>和<code>value_type</code>）不一样；</li>
+<li>如果元素不存在，<code>at</code>并不会创建，而是抛出<code>out_of_range</code>；</li>
+<li>下标操作可能会改变map，对const的map无法使用；</li>
+<li>对于const的map，只要<code>at</code>不修改元素，就可以用。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">const</span> <span class="n">map</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">m</span><span class="p">{{</span><span class="s">&#34;hello&#34;</span><span class="p">,</span> <span class="mi">1</span><span class="p">}};</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">m</span><span class="p">[</span><span class="s">&#34;hello&#34;</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 错误，即使是普通访问
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">m</span><span class="p">.</span><span class="n">at</span><span class="p">(</span><span class="s">&#34;hello&#34;</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 错误
+</span></span></span></code></pre></div></li>
+</ol>
+<h1 id="无序关联容器">无序关联容器
+</h1><p>使用hash function和<code>==</code>来组织元素，用<code>hash&lt;key_type&gt;</code>类型的对象生成每个元素的hash值，有序关联容器的操作可以用于无序容器。</p>
+<p>标准库为<strong>内置类型（包括指针类型）和部分标准库类型（包括string和智能指针）类型</strong>定义了hash。但不能直接把自定义类型作为key来定义无序容器，可以</p>
+<ol>
+<li>提供自己的hash模板版本；</li>
+<li>定义hash function和<code>==</code>运算符。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">size_t</span> <span class="nf">hasher</span><span class="p">(</span><span class="k">const</span> <span class="n">Sales_data</span><span class="o">&amp;</span> <span class="n">sd</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">hash</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">()</span> <span class="p">(</span><span class="n">sd</span><span class="p">.</span><span class="n">isbn</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">eqOp</span><span class="p">(</span><span class="k">const</span> <span class="n">Sales_data</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">Sales_data</span><span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">lhs</span><span class="p">.</span><span class="n">isbn</span><span class="p">()</span> <span class="o">==</span> <span class="n">rhs</span><span class="p">.</span><span class="n">isbn</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">unordered_multiset</span><span class="o">&lt;</span><span class="n">Sales_data</span><span class="p">,</span> <span class="k">decltype</span><span class="p">(</span><span class="n">hasher</span><span class="p">)</span><span class="o">*</span><span class="p">,</span> <span class="k">decltype</span><span class="p">(</span><span class="n">eqOp</span><span class="p">)</span><span class="o">*&gt;</span> <span class="n">set</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="n">hasher</span><span class="p">,</span>  <span class="n">eqOp</span><span class="p">);</span>
+</span></span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

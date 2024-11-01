@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Scala on chaomai&#39;s-blog</title>
+        <link>http://localhost:1313/tags/scala/</link>
+        <description>Recent content in Scala on chaomai&#39;s-blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Fri, 12 May 2017 09:10:55 +0000</lastBuildDate><atom:link href="http://localhost:1313/tags/scala/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>函数式编程相关</title>
+        <link>http://localhost:1313/posts/2017/2017-05-12-about-functional-programming/</link>
+        <pubDate>Fri, 12 May 2017 09:10:55 +0000</pubDate>
+        
+        <guid>http://localhost:1313/posts/2017/2017-05-12-about-functional-programming/</guid>
+        <description>&lt;p&gt;Notes of Functional Programming in Scala and more.&lt;/p&gt;
+&lt;h2 id=&#34;pure-function&#34;&gt;Pure Function
+&lt;/h2&gt;&lt;p&gt;对于一个函数 &lt;code&gt;f: A =&amp;gt; B&lt;/code&gt;，如果任何一个值 &lt;code&gt;a: A&lt;/code&gt; 都有只有一个 &lt;code&gt;b: B&lt;/code&gt; 与之对应，使得 &lt;code&gt;b&lt;/code&gt; 仅仅由 &lt;code&gt;a&lt;/code&gt; 决定，那么这个函数是纯函数。任何内部或外部状态的改变都不影响 &lt;code&gt;f(a)&lt;/code&gt; 的结果。&lt;/p&gt;
+&lt;h2 id=&#34;referential-transparency&#34;&gt;Referential Transparency
+&lt;/h2&gt;&lt;p&gt;引用透明是表达式的属性。如果一个表达式是引用透明的，那么把这个表达式替换为它求值后的结果不会影响程序的行为。引用透明是定义一个纯函数的必要条件。&lt;/p&gt;
+&lt;p&gt;如果表达式不是引用透明的，那么这个表达式就是有 side-effect（副作用）。根据引用透明的定义，对于一个纯函数函数 &lt;code&gt;f&lt;/code&gt;，表达式 &lt;code&gt;f(x)&lt;/code&gt; 不会有任何的副作用。&lt;/p&gt;
+&lt;h2 id=&#34;idempotence幂等性&#34;&gt;Idempotence（幂等性）
+&lt;/h2&gt;&lt;p&gt;纯函数的幂等的。&lt;/p&gt;
+&lt;p&gt;$$
+\forall x, f(f(x)) = f(x)
+$$&lt;/p&gt;
+&lt;h1 id=&#34;currying&#34;&gt;Currying
+&lt;/h1&gt;&lt;p&gt;一个 Curryied 函数是，把一个接受多个参数的函数重写为，一个首先接受第一个参数并返回一个函数接受第二个参数&amp;hellip;的函数。&lt;/p&gt;
+&lt;p&gt;例如：foldLeft。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://oldfashionedsoftware.com/2009/07/10/scala-code-review-foldleft-and-foldright/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://oldfashionedsoftware.com/2009/07/10/scala-code-review-foldleft-and-foldright/&lt;/a&gt;&lt;/p&gt;
+&lt;h1 id=&#34;currying-和-partially-applied-function&#34;&gt;Currying 和 Partially Applied Function
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/14309501/scala-currying-vs-partially-applied-functions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://stackoverflow.com/questions/14309501/scala-currying-vs-partially-applied-functions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/8650549/using-partial-functions-in-scala-how-does-it-work/8650639#8650639&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://stackoverflow.com/questions/8650549/using-partial-functions-in-scala-how-does-it-work/8650639#8650639&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;trait-and-class&#34;&gt;trait and class
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/1991042/what-is-the-advantage-of-using-abstract-classes-instead-of-traits&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://stackoverflow.com/questions/1991042/what-is-the-advantage-of-using-abstract-classes-instead-of-traits&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/2005681/difference-between-abstract-class-and-trait&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://stackoverflow.com/questions/2005681/difference-between-abstract-class-and-trait&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.artima.com/pins1ed/traits.html#12.7&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.artima.com/pins1ed/traits.html#12.7&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;functions-and-methods&#34;&gt;Functions and Methods
+&lt;/h1&gt;&lt;p&gt;In Scala there is a rather arbitrary distinction between functions defined as &lt;em&gt;methods&lt;/em&gt;, which are introduced with the &lt;code&gt;def&lt;/code&gt; keyword, and function values, which are the first-class objects we can pass to other functions, put in collections, and so on.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.google.com/search?q=difference&amp;#43;scala&amp;#43;function&amp;#43;method&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.google.com/search?q=difference+scala+function+method&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.cnblogs.com/shihuc/p/5082701.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.cnblogs.com/shihuc/p/5082701.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/4839537/functions-vs-methods-in-scala&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://stackoverflow.com/questions/4839537/functions-vs-methods-in-scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/2529184/difference-between-method-and-function-in-scala&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://stackoverflow.com/questions/2529184/difference-between-method-and-function-in-scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://jim-mcbeath.blogspot.com/2009/05/scala-functions-vs-methods.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://jim-mcbeath.blogspot.com/2009/05/scala-functions-vs-methods.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://dzone.com/articles/revealing-scala-magician%E2%80%99s&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://dzone.com/articles/revealing-scala-magician%E2%80%99s&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://tpolecat.github.io/2014/06/09/methods-functions.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://tpolecat.github.io/2014/06/09/methods-functions.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.quora.com/What-is-the-difference-between-function-and-method-in-Scala&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.quora.com/What-is-the-difference-between-function-and-method-in-Scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://softwarecorner.wordpress.com/2013/09/06/scala-methods-and-functions/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://softwarecorner.wordpress.com/2013/09/06/scala-methods-and-functions/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.marcinkossakowski.com/difference-between-functions-and-methods-in-scala/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.marcinkossakowski.com/difference-between-functions-and-methods-in-scala/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://japgolly.blogspot.com/2013/10/scala-methods-vs-functions.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://japgolly.blogspot.com/2013/10/scala-methods-vs-functions.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://blog.vmoroz.com/posts/2016-06-01-scala-should-i-use-a-method-or-a-function.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://blog.vmoroz.com/posts/2016-06-01-scala-should-i-use-a-method-or-a-function.html&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;functional-combinators&#34;&gt;Functional Combinators
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/7533837/explanation-of-combinators-for-the-working-man&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Explanation of combinators&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;List(1, 2, 3) map squared&lt;/code&gt;把函数&lt;code&gt;squared&lt;/code&gt;应用到了&lt;code&gt;List(1, 2, 3)&lt;/code&gt;的每个元素上，并返回一个新的List。这个操作叫做map组合子（map combinators）。&lt;/p&gt;
+&lt;h1 id=&#34;partialfunction-and-partially-applied-function&#34;&gt;PartialFunction and Partially Applied Function
+&lt;/h1&gt;&lt;h1 id=&#34;rank-1-polymorphism-and-higher-rank-polymorphism&#34;&gt;Rank-1 polymorphism and Higher-Rank Polymorphism
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://apocalisp.wordpress.com/2010/07/02/higher-rank-polymorphism-in-scala/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://apocalisp.wordpress.com/2010/07/02/higher-rank-polymorphism-in-scala/&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;related:&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://apocalisp.wordpress.com/2010/10/26/type-level-programming-in-scala-part-7-natural-transformation%C2%A0literals/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://apocalisp.wordpress.com/2010/10/26/type-level-programming-in-scala-part-7-natural-transformation%C2%A0literals/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://apocalisp.wordpress.com/2011/03/20/towards-an-effect-system-in-scala-part-1/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://apocalisp.wordpress.com/2011/03/20/towards-an-effect-system-in-scala-part-1/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://existentialtype.net/2008/03/09/higher-rank-impredicative-polymorphism-in-scala/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://existentialtype.net/2008/03/09/higher-rank-impredicative-polymorphism-in-scala/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;existential-types&#34;&gt;Existential Types
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.drmaciver.com/2008/03/existential-types-in-scala/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.drmaciver.com/2008/03/existential-types-in-scala/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;algebraic-data-type&#34;&gt;Algebraic Data Type
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://tpolecat.github.io/presentations/algebraic_types.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://tpolecat.github.io/presentations/algebraic_types.html&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=YScIPA8RbVE&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.youtube.com/watch?v=YScIPA8RbVE&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;variant&#34;&gt;Variant
+&lt;/h1&gt;&lt;h2 id=&#34;covariant-and-contravariant&#34;&gt;Covariant and contravariant
+&lt;/h2&gt;&lt;p&gt;对于所有类型&lt;code&gt;X&lt;/code&gt;和&lt;code&gt;Y&lt;/code&gt;，以及类型&lt;code&gt;Co[+A]&lt;/code&gt;，&lt;code&gt;Ctr[-A]&lt;/code&gt;，&lt;code&gt;Iv[A]&lt;/code&gt;。如果X是Y的子类，&lt;/p&gt;
+&lt;p&gt;covariant：&lt;code&gt;Co[X]&lt;/code&gt;是&lt;code&gt;Co[Y]&lt;/code&gt;的子类。在类型参数A前加上+表示 covariant。
+contravariant：&lt;code&gt;Ctr[Y]&lt;/code&gt;是&lt;code&gt;Ctr[X]&lt;/code&gt;的子类。在类型参数A前加上-表示 contravariant。
+invariant：&lt;code&gt;Iv[X]&lt;/code&gt;和&lt;code&gt;Iv[Y]&lt;/code&gt;无关。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;┌───┐     ┌───────┐     ┌───────┐
+│ Y │     │ Co[Y] │     │Ctr[X] │
+└───┘     └───────┘     └───────┘
+  ▲           ▲             ▲
+  │           │             │
+  │           │             │
+┌───┐     ┌───────┐     ┌───────┐
+│ X │     │ Co[X] │     │Ctr[Y] │
+└───┘     └───────┘     └───────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;表述 covariant 的另一种方式是，在所有上下文中，都可安全的把&lt;code&gt;A&lt;/code&gt;转换为&lt;code&gt;A&lt;/code&gt;父类。contravariant 类似。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Animal&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sound&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;rustle&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bird&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Animal&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;override&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sound&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;call&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Chicken&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bird&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;override&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;sound&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;cluck&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;covariant1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;+A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// error:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// val covariant_b1: covariant1[Bird] = new covariant1[Animal]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;variant_b2&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;variant1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Bird&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;variant1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Chicken&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;│&lt;/span&gt;            &lt;span class=&#34;o&#34;&gt;│&lt;/span&gt;       &lt;span class=&#34;o&#34;&gt;│&lt;/span&gt;               &lt;span class=&#34;o&#34;&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                &lt;span class=&#34;o&#34;&gt;└────────────┘&lt;/span&gt;       &lt;span class=&#34;o&#34;&gt;└───────────────┘&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                      &lt;span class=&#34;o&#34;&gt;▲&lt;/span&gt;                       &lt;span class=&#34;o&#34;&gt;│&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                      &lt;span class=&#34;o&#34;&gt;└───────────────────────┘&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                           &lt;span class=&#34;n&#34;&gt;to&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;supper&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nc&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;contravariant2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;-A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;contravariant_b3&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;contravariant2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Bird&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;contravariant2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Animal&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// error:
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// val contravariant_b4: contravariant2[Bird] = new contravariant2[Chicken]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;covariant-and-contravariant-positions&#34;&gt;Covariant and Contravariant Positions
+&lt;/h2&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Function1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;-T1&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;+R&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;AnyRef&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;以函数为例，&lt;/p&gt;
+&lt;p&gt;contravariant (positive) position：一个类型在函数参数的类型中。更一般的来说，是函数所使用的值的类型。
+covariant (negative) position：一个类型在函数结果的类型中。更一般的来说，是函数产生的值的类型。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;                   ┌────────────────────────┐
+                   │ contravariant position │
+                   └────────────────────────┘
+                                ▲
+             ┌──────────────────┘
+             │
+  def foo(a: A): B
+                 │
+                 └────────────┐
+                              ▼
+                   ┌────────────────────┐
+                   │ covariant position │
+                   └────────────────────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;对于高阶函数，从外层向内分析。类型最终是什么 position 由分析过程中，各个类型的“累加”得到。就函数 &lt;code&gt;foo&lt;/code&gt; 而言，&lt;code&gt;A =&amp;gt; B&lt;/code&gt; 是在 contravariant position；就函数 &lt;code&gt;f&lt;/code&gt; 而言， &lt;code&gt;A&lt;/code&gt; 是在 contravariant position，&lt;code&gt;B&lt;/code&gt; 是在 covariant position。因此，最终 &lt;code&gt;A&lt;/code&gt; 是在 covariant position（可以理解为两个 negative position 合并，负负得正），而 &lt;code&gt;B&lt;/code&gt; 是在 contravariant position。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;                    ┌───────────────────────┐
+                    │ A: covariant position │
+                    └───────────────────────┘
+                                ▲
+                                │                    ┌───────────────────────────┐
+                                                     │ B: contravariant position │
+                ┌ ─ ─ ─ ─ ─ ─ ─ ┴ ─ ─ ─ ─ ─ ─ ─ ─    └───────────────────────────┘
+                                                 │                 ▲
+                ├──────────────────────────────────────────────────┴──────────┐
+                │                                │                            │
+                │                   ┌────────────────────────┐                │
+   ┌────────────────────────┐       │ contravariant position │     ┌────────────────────┐
+   │ contravariant position │       └────────────────────────┘     │ covariant position │
+   └────────────────────────┘                    ▲                 └────────────────────┘
+                ▲                    ┌───────────┘                            ▲
+                │                    │    ┌───────────────────────────────────┘
+                │                    │    │
+             ┌────┐       ┌───────▶  A =&amp;gt; B
+             │    │───────┘
+  def foo(f: A =&amp;gt; B): C
+                      │
+                      └────────────┐
+                                   ▼
+                        ┌────────────────────┐
+                        │ covariant position │
+                        └────────────────────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Scala要求类型本身的variant与类型所在位置的variant一致。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// error 1
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;+A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;orElse&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;o&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;o&#34;&gt;...&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// error 2
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;V1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;+A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nc&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;V2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;-B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;V1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这个定义将会导致编译错误，&lt;code&gt;Error:... covariant type A occurs in contravariant position in type&lt;/code&gt;。&lt;code&gt;orElse&lt;/code&gt; 函数接受参数&lt;code&gt;Option[A]&lt;/code&gt;，这个位置（contravariant position）是只能将 &lt;code&gt;A&lt;/code&gt; 转换为 &lt;code&gt;A&lt;/code&gt; 的子类型的地方。但是类型 &lt;code&gt;A&lt;/code&gt; 是 covariant 的，也就是说在所有上下文中，都可安全的把 &lt;code&gt;A&lt;/code&gt; 转换为 &lt;code&gt;A&lt;/code&gt; 父类。这里出现了冲突。&lt;/p&gt;
+&lt;p&gt;对于 &lt;code&gt;orElse&lt;/code&gt;，解决方式是不使用 &lt;code&gt;A&lt;/code&gt;，使用边界限定类型为 &lt;code&gt;A&lt;/code&gt; 的父类。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;orElse&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;o&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;None&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;ob&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;那为什么不，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 1.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;orElse&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;o&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 2.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;orElse&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;o&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Option&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;B&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;code&gt;orElse&lt;/code&gt; 返回值可能的类型为 &lt;code&gt;Option[B]&lt;/code&gt; 或 &lt;code&gt;Option[A]&lt;/code&gt;，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;对于1，&lt;code&gt;B&lt;/code&gt; 是 &lt;code&gt;A&lt;/code&gt; 的子类，&lt;code&gt;Option[B]&lt;/code&gt; 是 &lt;code&gt;Option[A]&lt;/code&gt; 的子类，当返回 &lt;code&gt;this&lt;/code&gt; 时，类型为 &lt;code&gt;Option[A]&lt;/code&gt;，这里无法从父类转换到子类。&lt;/li&gt;
+&lt;li&gt;对于2，当返回 &lt;code&gt;this&lt;/code&gt; 时，类型为 &lt;code&gt;Option[A]&lt;/code&gt;，和 &lt;code&gt;Option[B]&lt;/code&gt; 完全无关，类型不匹配。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;laziness-和-non-strictness&#34;&gt;Laziness 和 Non-strictness
+&lt;/h1&gt;&lt;p&gt;二者都与求值策略&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;（evaluation strategy）有关。一个编程语言用求值策略来，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;确定合适计算一个函数调用的参数。&lt;/li&gt;
+&lt;li&gt;以什么样的形式来把数值传递给函数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;求值策略包括，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;严格求值（strict evaluation）：一个函数调用的参数总是在应用这个函数之前进行完全求值。常见的有，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;call by value&lt;/li&gt;
+&lt;li&gt;call by reference&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;关于这个话题，不得不提的是计算顺序&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;（order of evaluation），在c++中，这个顺序未定义，由编译器决定。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;非严格求值（non-strict evaluation）：一个函数调用的参数只有在函数体内被使用到时，才进行求值。常见有，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;call by name：在函数体内被使用到时才进行求值，没有被用到则不会求值。如果被多次使用到，那么每次使用都需要重新求值。&lt;/li&gt;
+&lt;li&gt;call by need：记忆版的 call by name。当参数首次被求值时，值被保留用于后续使用。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;非确定性策略（nondeterministic strategies）&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;call by future&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在 Scala 中，非严格参数又叫做 call &amp;ldquo;by name&amp;rdquo; 参数，对应 Scala 中对这些参数使用的 call by name求值策略。当首次使用到某个参数的时候，通过 &lt;code&gt;lazy val&lt;/code&gt; 缓存这个值，来达到 call by need（又叫做 lazy evaluation）。&lt;/p&gt;
+&lt;h1 id=&#34;nothing-和-notnothing&#34;&gt;Nothing 和 NotNothing
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/OlegIlyenko/hacking-scala-blog/blob/master/posts/Advanced-Type-Constraints-with-Type-Classes.md&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Advanced Type Constraints with Type Classes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/mongodb/mongo-spark/blob/master/src/main/scala/com/mongodb/spark/NotNothing.scala&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NotNothing.scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/41403287/possible-to-make-scala-require-a-non-nothing-generic-method-parameter-and-return&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Possible to make scala require a non-Nothing generic method parameter and return to type-safety&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Scala 中，关于多态，一个头疼的&lt;a class=&#34;link&#34; href=&#34;https://issues.scala-lang.org/browse/SI-2609&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;问题&lt;/a&gt;是，如果没有为一个多态方法指定类型参数，并且无法从方法的参数中推断出类型，由于 &lt;code&gt;Nothing&lt;/code&gt; 是所有类型的子类型，此时 Scala 就会把没有指定的类型推断为 &lt;code&gt;Nothing&lt;/code&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;sealed&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Dimension&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;sealed&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;UnitDim&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Dimension&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;VarDim&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Dimension&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;sealed&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;DimValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;D&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Dimension&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;DimValue&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;D&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Dimension&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;DimValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;D&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;override&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;上面的 &lt;code&gt;DimValue&lt;/code&gt;，我希望 &lt;code&gt;apply&lt;/code&gt; 中，&lt;code&gt;D&lt;/code&gt; 为 &lt;code&gt;Dimension&lt;/code&gt; 的子类型。如果在调用这个方法时为明确指定类型参数，结果就会是 &lt;code&gt;DimValue[Nothing]&lt;/code&gt;。这不是我所期望的。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;dv&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;DimValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nc&#34;&gt;Pattern&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;dv:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;DimValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Nothing&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Object&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;value&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Google 了 Scala NotNothing 以后，找到两个方法，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/41403287/possible-to-make-scala-require-a-non-nothing-generic-method-parameter-and-return&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Possible to make scala require a non-Nothing generic method parameter and return to type-safety Ask Question&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/OlegIlyenko/hacking-scala-blog/blob/master/posts/Advanced-Type-Constraints-with-Type-Classes.md&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Advanced Type Constraints with Type Classes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/mongodb/mongo-spark/blob/master/src/main/scala/com/mongodb/spark/NotNothing.scala&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;mongodb/mongo-spark&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://baddotrobot.com/blog/2015/07/03/scala-implicit-parameters/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Implicit Parameters in Scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://docs.scala-lang.org/tutorials/tour/implicit-parameters.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Implicit Parameters&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&#34;state-action-and-fsm&#34;&gt;State Action and FSM
+&lt;/h1&gt;&lt;p&gt;&lt;code&gt;type State[S, +A] = S =&amp;gt; (A, S)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;State&lt;/code&gt; 代表&lt;em&gt;携带者某种状态的计算&lt;/em&gt;，或 state action，state transition，或 statement。&lt;code&gt;State&lt;/code&gt; 类型表示将 &lt;code&gt;S&lt;/code&gt; 从一个状态转换到另一个状态，并产生副作用 &lt;code&gt;A&lt;/code&gt;。这有点像有限状态机。&lt;/p&gt;
+&lt;p&gt;考虑一个 Mealy 型的 FSM，根据定义（主要是转移函数和输出函数），把这个 FSM 表示为，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Mealy&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;S&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;I&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;g&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;其中，&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;S&lt;/code&gt;：状态的有限集合&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;I&lt;/code&gt;：输入字母表的有限集合&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;A&lt;/code&gt;：输出字母表的有限集合&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;t&lt;/code&gt;：转移函数&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;g&lt;/code&gt;：输出函数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;转移函数和输出函数都接受 &lt;code&gt;S&lt;/code&gt; 和 &lt;code&gt;I&lt;/code&gt; 的值作为参数，可以把这两个函数合并，得到，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// currying
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;I&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;S&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;根据 State 的定义得到，&lt;code&gt;I =&amp;gt; State[S, A]&lt;/code&gt;。&lt;code&gt;State[S, A]&lt;/code&gt; 代表类型为 &lt;code&gt;S =&amp;gt; (A, S)&lt;/code&gt; 的函数，这个函数参数可以看做这个 Mealy 型的 FSM 的初始状态。&lt;/p&gt;
+&lt;p&gt;同样的一个 Moore 型的 FSM，根据定义可以表示为，&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Moore&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;S&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;I&lt;/span&gt;, &lt;span class=&#34;kt&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;t&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;I&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;S&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;g&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;S&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;转移函数和输出函数都接受 &lt;code&gt;S&lt;/code&gt; 的值作为参数，合并得到，&lt;code&gt;S =&amp;gt; (I =&amp;gt; S, A)&lt;/code&gt;，但此时就不能够用 &lt;code&gt;State&lt;/code&gt; 数据类型来表示了。&lt;/p&gt;
+&lt;h1 id=&#34;implicit&#34;&gt;implicit
+&lt;/h1&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://akmetiuk.com/posts/2017-05-12-implicits.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Implicits mechanism in Scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://docs.scala-lang.org/tutorials/tour/implicit-parameters.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Implicit Parameters&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://docs.scala-lang.org/overviews/core/implicit-classes.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Implicit Classes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://stackoverflow.com/questions/10375633/understanding-implicit-in-scala&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Understanding implicit in Scala&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.lihaoyi.com/post/ImplicitDesignPatternsinScala.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Implicit Design Patterns in Scala&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Evaluation_strategy&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://en.wikipedia.org/wiki/Evaluation_strategy&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;http://en.cppreference.com/w/cpp/language/eval_order&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://en.cppreference.com/w/cpp/language/eval_order&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

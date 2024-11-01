@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Notes of Non-blocking Binary Search Trees date: 2015-10-04 17:21:49 description: 使用了mark标记结点的方式，解决了single word cas无法同时操作multi-word的问题，同时使用外部树减少了操作影响到的结点的数目，还有就是Excellent tutorial about helping mechanism! categories: - concurrency tags: - &lsquo;binary search tree&rsquo; - reading specification no duplicate key\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-10-04-notes-of-non-blocking-binary-search-trees/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Notes of Non-blocking Binary Search Trees date: 2015-10-04 17:21:49 description: 使用了mark标记结点的方式，解决了single word cas无法同时操作multi-word的问题，同时使用外部树减少了操作影响到的结点的数目，还有就是Excellent tutorial about helping mechanism! categories: - concurrency tags: - &lsquo;binary search tree&rsquo; - reading specification no duplicate key\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-10-04-notes-of-non-blocking-binary-search-trees/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Notes of Non-blocking Binary Search Trees date: 2015-10-04 17:21:49 description: 使用了mark标记结点的方式，解决了single word cas无法同时操作multi-word的问题，同时使用外部树减少了操作影响到的结点的数目，还有就是Excellent tutorial about helping mechanism! categories: - concurrency tags: - &lsquo;binary search tree&rsquo; - reading specification no duplicate key\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-10-04-notes-of-non-blocking-binary-search-trees/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--reading">title: Notes of Non-blocking Binary Search Trees
+date: 2015-10-04 17:21:49
+description: 使用了mark标记结点的方式，解决了single word cas无法同时操作multi-word的问题，同时使用外部树减少了操作影响到的结点的数目，还有就是Excellent tutorial about helping mechanism!
+categories:
+- concurrency
+tags:
+- &lsquo;binary search tree&rsquo;
+- reading
+</h2><h1 id="specification">specification
+</h1><ul>
+<li>
+<p>no duplicate key</p>
+</li>
+<li>
+<p>deleting non-existent key leads to return false</p>
+</li>
+<li>
+<p>leaf-oriented BST</p>
+<blockquote>
+<ul>
+<li>all keys currently in the dictionary are <strong>stored in the leaves of the tree.</strong></li>
+<li>Internal nodes of the tree are used to direct a Find operation along the path to the correct leaf.</li>
+<li>The keys stored in internal nodes may or may
+not be in the dictionary.</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<h1 id="features">features
+</h1><ul>
+<li>
+<p>non-blocking</p>
+</li>
+<li>
+<p>linearizable</p>
+<blockquote>
+<p>for every execution, one can assign a linearization point to each completed operation and some of the uncompleted operations <strong>so that the linearization point of each operation occurs after the operation starts and before it ends</strong>, and the results of these operations are the same <em>as if they had been performed sequentially, in the order of their linearization points.</em></p>
+</blockquote>
+</li>
+</ul>
+<h1 id="basic-idea">basic idea
+</h1><p>类似Harris&rsquo; Linked List里面的做法，这里是mark the parent of the leaf before
+splicing that parent out of the tree。一旦被标记，那么其指向子结点的指针将不能被改变。</p>
+<h1 id="problems">problems
+</h1><p><img src="/images/2015/non-block-bst_problems.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>上图中，两个线程分别delete C和E，两个concurrent operation同时看到了BST以后，接下来的操作是，<em>基于各自看到的的BST来进行的</em>，它们彼此并不知道对方进行了什么操作，最后导致E并没有被deleted，其中一个操作丢失了。</p>
+<p>解决这个需要对parent的child pointer进行mark，但是要mark的pointer是存在两个不同的word（left and right child pointer）里面的，不能够用一个cas来同时mark。</p>
+<h1 id="solutions">solutions
+</h1><p>using a separate state <strong>ﬁeld of the node</strong> to mark or flag，而不是mark那个pointer。</p>
+<ul>
+<li>mark: node marked is unchangeable。</li>
+<li>flag: indicate that an update is trying to change a child pointer of the node.</li>
+</ul>
+<p>mark和flag类似于加锁。</p>
+<h2 id="insert和delete">insert和delete
+</h2><h3 id="insert">insert
+</h3><p><img src="/images/2015/non-block-bst_insert.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>Insert (C):</p>
+<ol>
+<li>ﬂag node D&rsquo;s parent, node B,</li>
+<li>change the appropriate child pointer of node B,</li>
+<li>unﬂag node B.</li>
+</ol>
+<h3 id="delete">delete
+</h3><p><img src="/images/2015/non-block-bst_delete.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>Delete (C):</p>
+<ol>
+<li>ﬂag C&rsquo;s grandparent, node B,</li>
+<li>mark C&rsquo;s parent, node D,</li>
+<li>change the appropriate child pointer of B,</li>
+<li>unﬂag node B.</li>
+</ol>
+<p>insert在完成第一步以后，在insert进行后续操作时，其他线程将不能够block insert。delete类似的，在完成第一二步以后也是。</p>
+<p><img src="/images/2015/non-block-bst_delete2.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>但是delete在完成第一步以后，第二步mark有可能失败，比如insert把将要删除的node换为新的三个node。in which case the ﬂag is no longer on the node whose child pointer must be changed to accomplish the deletion.</p>
+<p>如果mark失败，delete会remove flag，重新开始。</p>
+<p><img src="/images/2015/non-block-bst_state.PNG"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h1 id="some-details-in-implementation">some details in implementation
+</h1><h2 id="helping-mechanism">helping mechanism
+</h2><h3 id="method">method
+</h3><p>类似Barnes的方法，将线程拥有lock换成操作拥有lock（marked or flagged）。一个操作在处理tree的同时，还保存了它在holding lock的时候要进行的操作，其他线程遇到lock，就帮助它完成，使得lock最终release。</p>
+<p>为了避免helping mechanism带来的性能下降（多个线程会尝试进行同一个操作），这里用了保守的策略： a process P helps another process&rsquo;s operation <strong>only if the other operation is preventing P&rsquo;s own progress</strong>.</p>
+<h3 id="implementation">implementation
+</h3><p>线程之间是无法自动感知对方的存在的，也就是说实现helping mechanism，需要a data structure that is shared between threads holds the operating information。</p>
+<h2 id="dummy-keys">dummy keys
+</h2><p>在delete时，需要flag grandparent和mark parent，如果BST的key少于4个，必然就会有一个leaf没有grandparent，那么在delete就需要考虑很多例外的情况（insert类似）。</p>
+<p>为了避免这些特殊情况，下面引入两个特殊值$\infty_1$和$\infty_2$，使得BST在没有key的时候，也存在3个node。这两个dummy keys是不允许删除的。</p>
+<p><img src="/images/2015/non-block-bst_dummy_keys.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<h1 id="summary">summary
+</h1><ol>
+<li><strong>Excellent tutorial</strong> about helping mechanism!!!</li>
+<li>在树上面进行并发操作的时候，这篇论文中描述的问题其实大都是存在的，因此论文中的方法可以考虑用到其他树型结构上面。</li>
+</ol>
+<h1 id="references">references
+</h1><ol>
+<li>Non-blocking Binary Search Trees, Faith Ellen, Panagiota Fatourou, Eric Ruppert, Franck van Breugel</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

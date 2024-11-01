@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Gdt on chaomai&#39;s-blog</title>
+        <link>http://localhost:1313/tags/gdt/</link>
+        <description>Recent content in Gdt on chaomai&#39;s-blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sat, 13 Mar 2021 22:40:00 +0000</lastBuildDate><atom:link href="http://localhost:1313/tags/gdt/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>用 org mode 管理生活和工作</title>
+        <link>http://localhost:1313/posts/2021/2021-03-13-organized-life/</link>
+        <pubDate>Sat, 13 Mar 2021 22:40:00 +0000</pubDate>
+        
+        <guid>http://localhost:1313/posts/2021/2021-03-13-organized-life/</guid>
+        <description>&lt;h1 id=&#34;起因&#34;&gt;起因
+&lt;/h1&gt;&lt;p&gt;notion 是个方便高效的工具，用起来很顺手，但是最近频繁的 Notion Incident 邮件报警看得我着实心烦，很担心哪天要用的时候服务挂了干着急。所以决定寻找 notion 的替代。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/2021/03/Snipaste_2021-03-13_22-03-37.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;目标&#34;&gt;目标
+&lt;/h1&gt;&lt;p&gt;对我来说，一个高效的任务管理系统需要有一下功能：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;任务管理：管理 deadline、与他人共同工作的项目。&lt;/li&gt;
+&lt;li&gt;材料记录和收集：记录想法、临时的一些思路、可以灵活的添加链接、图片等。&lt;/li&gt;
+&lt;li&gt;保存和分享：持久化保存数据、不限于工具限制，便于导出分享。&lt;/li&gt;
+&lt;li&gt;定期 review：达成一个长期的目标需要定期 review 短期的 task，保证方向合理和根据达成情况适当调整目标。&lt;/li&gt;
+&lt;li&gt;易用：学习和维护成本低，用工具管理 task，而不是被工具牵制。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;工具选择&#34;&gt;工具选择
+&lt;/h1&gt;&lt;p&gt;基于前面描述的功能点，很多工具就被否定了，&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;各种 todo 管理 app，以及附带番茄钟计时器的 app，例如：&lt;a class=&#34;link&#34; href=&#34;https://pomotodo.com/intl/en/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Pomotodo&lt;/a&gt;，&lt;a class=&#34;link&#34; href=&#34;https://www.wunderlist.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Wunderlist&lt;/a&gt;。 过于简单。&lt;/li&gt;
+&lt;li&gt;专门的任务管理 app，例如：&lt;a class=&#34;link&#34; href=&#34;https://www.omnigroup.com/omnifocus/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;omnifocus&lt;/a&gt;。 不便于添加各种资料。&lt;/li&gt;
+&lt;li&gt;notion：不便于导出，服务频繁出问题。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;最终我选择了 emacs 的 org mode。因为我有 emacs 的使用经历，上手 org-mode 较为容易；其次是会简单的写和改 elisp 代码，配置起来难度不大。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;简单但是比 markdown 强大的多的纯文本记录格式。&lt;/li&gt;
+&lt;li&gt;task 支持状态、标签和时间，能方便的移动 task，便于调整 task 和 review。&lt;/li&gt;
+&lt;li&gt;agenda view 过滤和查看 task。&lt;/li&gt;
+&lt;li&gt;通过 pandoc 实现丰富的导出功能，就算哪天不用 org mode，也不影响查阅内容。&lt;/li&gt;
+&lt;li&gt;添加图片确实不方便，但通过 org-download 也基本能实现拖拽添加。&lt;/li&gt;
+&lt;li&gt;能&lt;strong&gt;华丽呼哨&lt;/strong&gt;的定制，&lt;del&gt;感觉这个才是从 notion 换到 emacs 的动力&lt;/del&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;http://localhost:1313/images/2021/03/Snipaste_2021-03-13_21-36-25.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;img&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;我的-org-mode-workflow&#34;&gt;我的 org-mode workflow
+&lt;/h1&gt;&lt;h2 id=&#34;task-状态&#34;&gt;task 状态
+&lt;/h2&gt;&lt;p&gt;参考别人的用法后，规划了如下几个 task 状态，含义如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TODO：收集到 inbox 中，但是还没有决定是否要做&lt;/li&gt;
+&lt;li&gt;NEXT：review TODO 的 task 以后，规划要做&lt;/li&gt;
+&lt;li&gt;PROG：正在进行&lt;/li&gt;
+&lt;li&gt;DONE：完成&lt;/li&gt;
+&lt;li&gt;HOLD：由于某些原因 task 暂停了&lt;/li&gt;
+&lt;li&gt;CANCELLED：取消不做了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;状态的变更规则如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;TODO -&amp;gt; NEXT -&amp;gt; PROG -&amp;gt; DONE&lt;/li&gt;
+&lt;li&gt;PROG -&amp;gt; HOLD&lt;/li&gt;
+&lt;li&gt;PROG -&amp;gt; CANCELLED&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;除了上述状态，如果有的 task 有开始或截止时间，那么还可以加上 SCHEDULED 或者 DEADLINE。&lt;/p&gt;
+&lt;h2 id=&#34;daily-highlight&#34;&gt;daily highlight
+&lt;/h2&gt;&lt;p&gt;经过长久的实践，发现不管怎么规划 task，一旦事情堆的太多，看着整页的 NEXT 就会不想做。为此每天开始都先定一下当天&lt;strong&gt;必须&lt;/strong&gt;要完成的事情，叫做 daily highlight，不限于工作的任务，休息日的时候也可以是看一本书之类的。daily highlight 不要过多，2～3 件即可。&lt;del&gt;上班的时候集中精力做完 daily highlight 以后就可以愉快的摸鱼了&lt;/del&gt;。&lt;/p&gt;
+&lt;p&gt;目前使用 org mode 的时间还不长，上述的 workflow 可能还会随着时间不断更新。&lt;/p&gt;
+&lt;h1 id=&#34;导入-notion-文件&#34;&gt;导入 notion 文件
+&lt;/h1&gt;&lt;p&gt;从 notion 导出的格式为 markdown，可以使用 pandoc 转为 org 格式。&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;pandoc -f markdown -t org markdown_file.md | sed -E &amp;quot;/^[[:space:]]+:/ d&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;references&#34;&gt;References
+&lt;/h1&gt;&lt;ol&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.cachestocaches.com/2020/3/my-organized-life/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;A Guide to My Organizational Workflow: How to Streamline Your Life&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://whhone.com/posts/org-mode-task-management/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;An Org-Mode Workflow for Task Management&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.jethro.dev/posts/org_mode_workflow_preview/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Org-mode Workflow: A Preview&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

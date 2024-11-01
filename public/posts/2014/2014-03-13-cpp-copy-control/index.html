@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: C++拷贝控制 date: 2014-03-13 20:41:20 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 拷贝、赋值和销毁 拷贝构造函数 拷贝构造函数的第一个参数必须是一个引用类型，且几乎总是一个const引用。由于拷贝构造函数在多个情况下会被隐式使用，因此不能是explict的。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2014/2014-03-13-cpp-copy-control/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: C++拷贝控制 date: 2014-03-13 20:41:20 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 拷贝、赋值和销毁 拷贝构造函数 拷贝构造函数的第一个参数必须是一个引用类型，且几乎总是一个const引用。由于拷贝构造函数在多个情况下会被隐式使用，因此不能是explict的。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2014/2014-03-13-cpp-copy-control/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: C++拷贝控制 date: 2014-03-13 20:41:20 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 拷贝、赋值和销毁 拷贝构造函数 拷贝构造函数的第一个参数必须是一个引用类型，且几乎总是一个const引用。由于拷贝构造函数在多个情况下会被隐式使用，因此不能是explict的。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2014/2014-03-13-cpp-copy-control/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    13 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>title: C++拷贝控制
+date: 2014-03-13 20:41:20
+categories:</p>
+<ul>
+<li>cpp
+tags:</li>
+<li>&lsquo;c++ primer&rsquo;</li>
+</ul>
+<hr>
+<h1 id="拷贝赋值和销毁">拷贝、赋值和销毁
+</h1><h2 id="拷贝构造函数">拷贝构造函数
+</h2><p>拷贝构造函数的第一个参数必须是一个引用类型，且几乎总是一个const引用。由于拷贝构造函数在多个情况下会被隐式使用，因此不能是explict的。</p>
+<pre tabindex="0"><code class="language-class" data-lang="class"> public:
+  Foo();
+  Foo(const Foo&amp;);
+}
+</code></pre><h3 id="合成拷贝构造函数">合成拷贝构造函数
+</h3><p>如果没有定义拷贝构造函数，编译器会定义一个合成拷贝构造函数。不同于合成默认构造函数r，即使自己定义了其它的拷贝构造函数，编译器也会合成一个拷贝构造函数。</p>
+<p>合成拷贝构造函数会将<strong>参数的每个非static成员逐个拷贝</strong>到正在创建的对象中。拷贝方式依据成员类型而定，</p>
+<ul>
+<li>对于类类型，会使用其拷贝构造函数；</li>
+<li>对于内置类型，会直接拷贝；</li>
+<li>如果成员有数组类型，合成拷贝构造函数会<strong>逐元素</strong>的拷贝。</li>
+</ul>
+<p>合成的函数会被<strong>隐式地声明为内联的</strong>。</p>
+<h3 id="拷贝初始化">拷贝初始化
+</h3><p>直接初始化会选择<strong>与参数最匹配的构造函数</strong>。拷贝初始化是件右侧运算对象拷贝到正在创建的对象中。</p>
+<p>拷贝初始化<strong>通常</strong>使用拷贝构造函数来完成，以下情况会发生拷贝初始化，</p>
+<ul>
+<li>用<code>=</code>定义变量；</li>
+<li>将对象作为实参传递给一个非引用类型的形参；</li>
+<li>用一个返回类型为非引用类型的函数返回一个对象；</li>
+<li>用列表初始化一个数组中的元素或一个聚合类中的成员；</li>
+<li>某些类类型会对它们所分配的对象使用拷贝初始化（如：容器的insert）。</li>
+</ul>
+<p>在进行拷贝初始化时，编译器<strong>可以跳过</strong>拷贝/移动构造函数，直接创建对象，但此时拷贝/移动构造函数必须<strong>存在且可访问</strong>。</p>
+<p>如上文所说，拷贝构造函数会被隐式使用，下面是几个例子，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="n">C</span><span class="o">&gt;</span> <span class="n">vc</span><span class="p">{</span><span class="n">c</span><span class="p">};</span>
+</span></span></code></pre></div><p>上述代码中，对vector使用列表初始化时，c会被copy两次。1. initializer_list的构造函数会<a class="link" href="http://stackoverflow.com/questions/20501638/stdvector-init-with-braces-call-copy-constructor-twice"  target="_blank" rel="noopener"
+    >copy一次</a>，2. 从initializer_list到设计存储位置还会copy一次。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="n">C</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span> <span class="n">tmp</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">tmp</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">fr</span><span class="p">(</span><span class="n">C</span> <span class="o">&amp;</span><span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span> <span class="n">tmp</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">tmp</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="n">obj</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">f</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">f</span><span class="p">(</span><span class="n">C</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">fr</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">fr</span><span class="p">(</span><span class="n">C</span><span class="p">(</span><span class="mi">4</span><span class="p">));</span>
+</span></span></code></pre></div><ul>
+<li>第一个f调用，首先会用obj对形参c做拷贝初始化，然后用拷贝赋值，将c赋值给tmp；</li>
+<li>**第二个f调用，这里并没有用临时对象对形参c做拷贝初始化，而是用临时对象C(1)对tmp进行复制。**因为有copy elision。</li>
+<li>第一个fr调用，直接拷贝赋值，将obj赋值给tmp；</li>
+<li>第二个fr调用是错误的，问题类似<a class="link" href="http://stackoverflow.com/questions/4301179/why-is-taking-the-address-of-a-temporary-illegal"  target="_blank" rel="noopener"
+    >取临时对象的地址</a>，这里C(4)是rvalue表达式，而fr()需要一个左值作为参数。</li>
+</ul>
+<h2 id="拷贝赋值运算符">拷贝赋值运算符
+</h2><p>拷贝赋值运算符执行与<strong>析构函数和拷贝构造函数</strong>相同的工作。
+如果没有定义拷贝赋值运算符，编译器会定义一个合成拷贝赋值运算符。</p>
+<h3 id="重载赋值运算符">重载赋值运算符
+</h3><p>赋值运算符就是一个名为<strong>operator=<strong>的函数，其参数表示要收费的运算对象。定义为成员函数的运算符，其左侧运算对象就绑定到</strong>隐式的this参数</strong>。返回值通常为<strong>左侧运算对象的引用</strong>。</p>
+<p>拷贝赋值运算符参数应为<strong>与所在类相同类型的参数</strong>。</p>
+<h3 id="合成拷贝赋值运算符">合成拷贝赋值运算符
+</h3><p>合成拷贝赋值运算符会将右侧运算对象的<strong>每个非static</strong>成员赋予左侧运算对象的相应成员。类似拷贝构造函数逐个拷贝成员，这一工作是由<strong>成员类型的拷贝赋值运算符</strong>完成的。如果是数组类型的成员，则<strong>逐个赋值数组元素</strong>。</p>
+<p>如果<strong>自己定义的</strong>拷贝赋值运算符或拷贝构造函数<strong>没有处理成员中的数组</strong>，逐个拷贝/赋值不会发生。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HasPtr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span> <span class="o">=</span> <span class="n">string</span><span class="p">())</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="o">*</span><span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">arr</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">  <span class="n">array</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="mi">10</span><span class="o">&gt;</span> <span class="n">sarr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">HasPtr</span> <span class="nf">a</span><span class="p">(</span><span class="s">&#34;abc&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">a</span><span class="p">.</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">232</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">a</span><span class="p">.</span><span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">232</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">a</span><span class="p">.</span><span class="n">sarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">232</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">a</span><span class="p">.</span><span class="n">sarr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">232</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">HasPtr</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">HasPtr</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">c</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="o">*</span><span class="n">b</span><span class="p">.</span><span class="n">ps</span><span class="p">).</span><span class="n">append</span><span class="p">(</span><span class="s">&#34;a&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">a</span><span class="p">.</span><span class="n">ps</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">b</span><span class="p">.</span><span class="n">ps</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="o">*</span><span class="n">c</span><span class="p">.</span><span class="n">ps</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// abc abca abc
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">sarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// user defined copy constructor
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 232 32627 32627
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">.</span><span class="n">sarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">.</span><span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="s">&#34; &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">c</span><span class="p">.</span><span class="n">sarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// synthesized copy-assignment operator
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 232 232 232
+</span></span></span></code></pre></div><h2 id="析构函数">析构函数
+</h2><p>销毁对象的<strong>非static</strong>成员。没有返回值，不接受参数（因此不能够被重载）。对于一个给定类，只会有唯一一个析构函数。</p>
+<p>销毁顺序按照初始化顺序的<strong>逆序</strong>进行，销毁内置类型成员不需要做什么，销毁类类型成员需要<strong>执行成员自己的</strong>析构函数，销毁内置指针类型的成员<strong>不会delete</strong>所指向的对象。</p>
+<p>析构函数在以下情况进行调用，</p>
+<ul>
+<li>变量离开其作用域；</li>
+<li>一个对象呗销毁时，其成员也被销毁；</li>
+<li>容器（标准库容器和数组）被销毁时，其元素被销毁；</li>
+<li>对动态分配的对象，其指针使用delete；</li>
+<li>对于临时对象，当创建它的完整表达式结束时被销毁。</li>
+</ul>
+<h3 id="合成析构函数">合成析构函数
+</h3><p>合成析构函数函数体为空，当其函数体执行完以后，成员会被自动销毁。析构函数函数体并<strong>不直接销毁成员</strong>，成员是在析构函数函数体之后<strong>隐含的析构阶段</strong>中被销毁的。</p>
+<h2 id="三五法则">三/五法则
+</h2><ul>
+<li>需要析构函数的类也需要拷贝构造函数和拷贝赋值运算符。</li>
+<li>需要拷贝操作的类也需要赋值操作，反之亦然，但<strong>不必然意味着也需要析构函数</strong>。</li>
+<li>拷贝操作会带来额外的开销，在拷贝不必须的情况下，应加入移动操作。</li>
+</ul>
+<h2 id="阻止拷贝">阻止拷贝
+</h2><p>类似<code>=default</code>，使用<code>=delete</code>可以定义删除的函数。<code>=delete</code>必须出现在函数第一次声明的时候，且可以回任何函数指定<code>=delete</code>。</p>
+<p>如果一个类的析构函数或者一个成员的析构函数是<code>=delete</code>，那么将<strong>无法定义该类型的变量或创建该类的临时对象</strong>，可以new但无法delete。</p>
+<p>关于合成拷贝控制成员，当<strong>不可能拷贝、赋值或销毁类的成员</strong>时，类的合成拷贝控制成员就被定义为删除的。</p>
+<h1 id="拷贝控制和资源管理">拷贝控制和资源管理
+</h1><h2 id="行为像值的类">行为像值的类
+</h2><p>行为像值的类有自己状态，副本和原对象是完全独立的。</p>
+<p>由于赋值操作会<strong>销毁左侧运算对象的资源</strong>，在对如下类定义拷贝赋值运算符时，需要考虑将一个对象赋值给自身的情况。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HasPtr1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr1</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span> <span class="o">=</span> <span class="n">string</span><span class="p">())</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr1</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">HasPtr1</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="o">*</span><span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>如果拷贝赋值运算符是这样的，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ps</span> <span class="o">=</span> <span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ai</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">HasPtr1</span> <span class="n">h</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="p">;</span>
+</span></span></code></pre></div><p>将一个对象赋值给自身时，解引用<code>*rhs.ps</code>就是错误的，因为ps所指向的对象已经被delete了。因此需要<strong>用一个局部临时对象先保存右侧运算符对象的资源</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr1</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">auto</span> <span class="n">newp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ps</span> <span class="o">=</span> <span class="n">newp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ai</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="行为像指针的类">行为像指针的类
+</h2><p>行为像值的类共享状态。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HasPtr2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr2</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span> <span class="o">=</span> <span class="n">string</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">      <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">use</span><span class="p">(</span><span class="k">new</span> <span class="n">size_t</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr2</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr2</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">),</span> <span class="n">i</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">),</span> <span class="n">use</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">use</span><span class="p">)</span> <span class="p">{</span> <span class="o">++*</span><span class="n">use</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr2</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr2</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">HasPtr2</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">--*</span><span class="n">use</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">delete</span> <span class="n">use</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="o">*</span><span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">size_t</span> <span class="o">*</span><span class="n">use</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><p>对于以上类的拷贝构造函数，需要递增右侧运算对象的引用计数，递减左侧运算对象的引用计数。这里同样需要考虑同一个对象给自身赋值的情况，应该先递增右侧运算对象的引用计数，然后递减左侧的并检查，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">HasPtr2</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr2</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="o">++*</span><span class="n">rhs</span><span class="p">.</span><span class="n">use</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">--*</span><span class="n">use</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">use</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">ps</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">i</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">use</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">use</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="交换操作">交换操作
+</h1><p>如果一个类没有定义自己的swap，需要的时候将调用标准库的swap。一般来说，一次swap需要一次copy和两次assign，但这并不是必须要的。如果一个类有动态分配的内存，可以交换指针，而不是既copy又assign。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HasPtr</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="k">friend</span> <span class="n">swap</span><span class="p">(</span><span class="n">HasPtr</span> <span class="o">&amp;</span><span class="n">lhs</span><span class="p">,</span> <span class="n">HasPtr</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">HasPtr</span> <span class="o">&amp;</span><span class="n">lhs</span><span class="p">,</span> <span class="n">HasPtr</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">ps</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">i</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>要注意的是：</p>
+<ol>
+<li>HasPtr的成员是内置类型，并没有特定版本的swap，因此上述swap中调用的是标准库的swap；</li>
+<li>如果一个<strong>类的成员有自己类型特定的swap</strong>，那么调用std::swap就是错误的，标准库swap会进行不必要的copy。
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">Foo</span> <span class="o">&amp;</span><span class="n">lhs</span><span class="p">,</span> <span class="n">Foo</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">h</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">h</span><span class="p">);</span> <span class="c1">// 使用HasPtr的swap
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div>如果存在类型特定的swap，其匹配程度会优于std中定义的版本。上面的<code>using std::swap;</code><strong>并未隐藏</strong>HasPtr的swap。</li>
+</ol>
+<h2 id="copy-and-swap">copy and swap
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">HasPtr</span><span class="o">&amp;</span> <span class="n">HasPtr</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">HasPtr</span> <span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">swap</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">,</span> <span class="n">rhs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里的赋值运算符是用传值的方式。swap左侧运算对象和副本，然后销毁副本。</p>
+<p>copy and swap天然就是<strong>异常安全</strong>的，因为可能抛出异常的情况就是传值时候的copy，如果此时抛出异常，左侧对象不会被修改。同时保证了<strong>自赋值的正确</strong>，因为是copy。</p>
+<h1 id="move">move
+</h1><h2 id="lvalue和rvalue">lvalue和rvalue
+</h2><p>lvalue：有持久的状态，可以取地址。
+rvalue：字面值常量或临时对象，不可以取地址。</p>
+<h2 id="rvalue-reference">rvalue reference
+</h2><p>必须绑定到右值，即要求转换的表达式、字面值常量或返回右值的表达式。但<strong>不能直接绑定</strong>到一个左值上。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;</span><span class="n">r1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">42</span><span class="p">;</span> <span class="c1">// 错误i*42是右值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="k">const</span> <span class="kt">int</span> <span class="o">&amp;</span><span class="n">r1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rr1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">42</span><span class="p">;</span>
+</span></span></code></pre></div><p>由于rvalue reference只能绑定到临时对象，因此这个对象，</p>
+<ul>
+<li>将要被销毁</li>
+<li>没有其他用户</li>
+</ul>
+<p>这意味着使用rvalue reference可以自由地<strong>接管</strong>所引用对象的资源。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rr1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rr2</span> <span class="o">=</span> <span class="n">rr1</span><span class="p">;</span> <span class="c1">// 错误
+</span></span></span></code></pre></div><h2 id="右值引用类型变量">右值引用类型变量
+</h2><p>进行右值引用后，得到的<strong>右值引用类型变量是左值</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">32</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rr1</span> <span class="o">=</span> <span class="n">i</span> <span class="o">*</span> <span class="mi">32</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">&amp;</span><span class="n">i</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 0x71d77768be28
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">&amp;</span><span class="n">rr1</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">// 0x71d77768be2c
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rr2</span> <span class="o">=</span> <span class="n">rr1</span><span class="p">;</span> <span class="c1">// 错误rr1是左值
+</span></span></span></code></pre></div><p>要将右值引用绑定到一个左值，应该显示地转换或move，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rri</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span> <span class="o">&amp;&amp;&gt;</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">rri1</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// int &amp;&amp;rri2 = i;
+</span></span></span></code></pre></div><p>使用move后，不能对移后源对象的值做任何假设，<strong>不能使用移后源对象的值</strong>。<strong>除了对rri赋值或销毁外</strong>，不能再使用它。</p>
+<h1 id="移动构造函数和移动赋值运算符">移动构造函数和移动赋值运算符
+</h1><h2 id="移动构造函数">移动构造函数
+</h2><p>参数是一个右值引用，且<strong>任何额外的参数</strong>都必须有默认实参。完成移动后，必须保证<strong>销毁源对象是无害的</strong>。一旦完成移动，源对象必须<strong>不能再指向被移动的资源</strong>，资源所有权已归属新创建的对象。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">StrVec</span><span class="o">::</span><span class="n">StrVec</span><span class="p">(</span><span class="n">StrVec</span> <span class="o">&amp;&amp;</span><span class="n">s</span><span class="p">)</span> <span class="k">noexcept</span> <span class="o">:</span> <span class="n">elements</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">elements</span><span class="p">),</span> <span class="n">first_free</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">first_free</span><span class="p">),</span> <span class="n">cap</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">cap</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">s</span><span class="p">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">first_free</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">cap</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>移动构造函数通常<strong>不分配</strong>任何新内存，因此通常不抛出异常。为避免标准库<strong>为了处理可能抛出异常而做的额外工作</strong>，一种通知标准库的方法是指明<code>noexcept</code>。</p>
+<h3 id="移动操作和异常">移动操作和异常
+</h3><ul>
+<li>虽然移动操作通常不抛出异常，但是抛出异常是允许的。</li>
+<li>标准库能够对异常发生是其自身的行为提供保障。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="n">StrVec</span><span class="o">&gt;</span> <span class="n">vs</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// reallocate vecotr
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">vs</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span></code></pre></div><ul>
+<li>上面的代码中，如果在reallocate时，<strong>移动了部分元素</strong>后抛出异常，那么问题就会发生，源vector已经改变，但是新空间有的元素还不存在。</li>
+<li>如果vector使用拷贝构造函数且发生了异常，那么不会影响源vector。</li>
+</ul>
+<p>基于上面两点，<strong>除非vector知道</strong>元素类型的移动构造函数不会抛出异常，否则在reallocate时，就必须使用拷贝构造函数（即前面所说的，<em>为了处理可能抛出异常而做的额外工作</em>）。如果希望在类似reallocate 的情况下使用移动而非拷贝，就必须<strong>显式的告诉标准库</strong>移动构造函数可以安全使用。</p>
+<h2 id="移动赋值运算符">移动赋值运算符
+</h2><p>移动赋值运算符执行与<strong>析构函数和移动构造函数</strong>相同的工作。如果不抛出异常，则应该标记为<code>noexcept</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">StrVec</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">StrVec</span> <span class="o">&amp;&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 处理自赋值
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">free</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="n">elements</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">elements</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">first_free</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">first_free</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cap</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">cap</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">rhs</span><span class="p">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">first_free</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">cap</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里必须check是否是同一对象，因为<strong>此右值可能是move调用返回的结果</strong>，再者不能在使用右侧运算对象的资源之前就释放左侧运算对象的资源。</p>
+<h2 id="移后源对象必须可析构">移后源对象必须可析构
+</h2><p>从一个对象移动数据并不会销毁此对象，但有时在移动操作完成后，源对象会被销毁，因此需确保移后源对象必须可析构。</p>
+<p>移动操作还应保证对象仍是<strong>有效的</strong>，即可以安全地为其<strong>赋予新值</strong>或可以<strong>安全地使用</strong>而<strong>不依赖其当前值</strong>。</p>
+<p>移动后，源对象的值是没有保证的，不应依赖移后源对象中的数据。</p>
+<h1 id="合成移动操作">合成移动操作
+</h1><h2 id="何时定义">何时定义
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">X</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">hasX</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">X</span> <span class="n">mem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">X</span> <span class="n">x</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="c1">// 合成移动构造函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">hasX</span> <span class="n">hx</span><span class="p">,</span> <span class="n">hx2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">hx</span><span class="p">);</span> <span class="c1">// 合成移动构造函数
+</span></span></span></code></pre></div><p>只有当一个类<strong>没有定义任何自己版本的拷贝控制成员</strong>，且类的<strong>每个非static数据成员都可以移动构造或移动赋值</strong>时，编译器才会合成移动构造函数和移动赋值运算符。</p>
+<h2 id="何时删除">何时删除
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Y</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Y</span><span class="p">(</span><span class="k">const</span> <span class="n">Y</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">hasY</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hasY</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hasY</span><span class="p">(</span><span class="n">hasY</span> <span class="o">&amp;&amp;</span><span class="p">)</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Y</span> <span class="n">mem</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">hasY</span> <span class="n">hy</span><span class="p">,</span> <span class="n">hy2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">hy</span><span class="p">);</span> <span class="c1">// call to implicitly-deleted default constructor of &#39;hasY&#39;
+</span></span></span></code></pre></div><p>移动操作永远<strong>不会隐式定义</strong>为delete。但如果<strong>显式地</strong>要求编译器生成=default的移动操作，且编译器<strong>不能移动所有成员</strong>时，移动操作会被定义为delete。</p>
+<p>定义了一个移动构造函数或移动赋值运算符的类<strong>必须也定义</strong>拷贝操作，否则这些成员<strong>默认定义为delete</strong>。</p>
+<h2 id="如果未定义">如果未定义
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Foo</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Foo</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Foo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span> <span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copied&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">Foo</span> <span class="n">foo</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Foo</span> <span class="nf">foo1</span><span class="p">(</span><span class="n">foo</span><span class="p">);</span> <span class="c1">// copied
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Foo</span> <span class="nf">foo2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">foo1</span><span class="p">));</span> <span class="c1">// copied
+</span></span></span></code></pre></div><p>如果没有移动构造函数，就算试图调用move来移动，对象也会被拷贝。</p>
+<p>这里与上面的hasY不同，hasY的移动构造函数是delete的（由于显式地要求生成，但编译器无法生成）。而这里的仅仅是未定义，函数匹配保证该类型的对象会被copy。</p>
+<h2 id="copy-and-swap-again">copy and swap again
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Hp</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Hp</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Hp</span><span class="p">(</span><span class="k">const</span> <span class="n">Hp</span> <span class="o">&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copied&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Hp</span><span class="p">(</span><span class="n">Hp</span> <span class="o">&amp;&amp;</span><span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;moved&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Hp</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Hp</span> <span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;assign&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">Hp</span> <span class="n">hp1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Hp</span> <span class="n">hp2</span> <span class="o">=</span> <span class="n">hp1</span><span class="p">;</span> <span class="c1">// copied，拷贝构造函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Hp</span> <span class="n">hp3</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">hp1</span><span class="p">);</span> <span class="c1">// moved，移动构造函数
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;---&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">hp1</span> <span class="o">=</span> <span class="n">hp3</span><span class="p">;</span> <span class="c1">// copied assign，拷贝赋值运算符
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">hp2</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">hp3</span><span class="p">);</span> <span class="c1">// moved assign，移动赋值运算符
+</span></span></span></code></pre></div><p>这里除了拷贝构造函数，还有移动构造函数和赋值运算符。对于之前未定义移动构造函数的情况下，调用赋值运算符，初始化形参时<strong>总是进行拷贝</strong>。</p>
+<p>现在拷贝初始化依赖于实参的类型，</p>
+<ul>
+<li>左值-&gt;使用<strong>拷贝构造函数</strong>进行初始化，赋值运算符为<strong>拷贝赋值运算符</strong></li>
+<li>右值-&gt;使用<strong>移动构造函数</strong>进行初始化，赋值运算符为<strong>移动赋值运算符</strong></li>
+</ul>
+<p>从而单一的赋值运算符，实现了两种功能。</p>
+<h2 id="copy-and-swap-idiom">copy and swap idiom
+</h2><p>上面的将拷贝赋值运算符和移动赋值运算符“合并”到一起的方式叫做copy and swap idiom。如果按照上面的方式实现了拷贝赋值运算符和移动赋值运算符，就<strong>不能</strong>再单独写两个拷贝赋值运算符和移动赋值运算符。</p>
+<p>而两种实现拷贝赋值运算符和移动赋值运算符的<strong>效率</strong>是有区别的（C++ Primer 5th Chinese Edition, Exercise 15.53）。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="cp">#define NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HasPtr3</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">friend</span> <span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">HasPtr3</span><span class="o">&amp;</span><span class="p">,</span> <span class="n">HasPtr3</span><span class="o">&amp;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">friend</span> <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="k">const</span> <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr3</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">s</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">      <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr3</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="n">hp</span><span class="p">)</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">hp</span><span class="p">.</span><span class="n">ps</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="n">hp</span><span class="p">.</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifndef NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copied&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">HasPtr3</span><span class="p">(</span><span class="n">HasPtr3</span><span class="o">&amp;&amp;</span> <span class="n">hp</span><span class="p">)</span> <span class="k">noexcept</span> <span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="n">hp</span><span class="p">.</span><span class="n">ps</span><span class="p">),</span> <span class="n">i</span><span class="p">(</span><span class="n">hp</span><span class="p">.</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">hp</span><span class="p">.</span><span class="n">ps</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifndef NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;moved&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// = 4s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// mixed 4.8s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">auto</span> <span class="n">newp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ps</span> <span class="o">=</span> <span class="n">newp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">i</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifndef NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copy assigned&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// move 0.7s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// mixed 4.8s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">HasPtr3</span><span class="o">&amp;&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">ps</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">i</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="n">rhs</span><span class="p">.</span><span class="n">ps</span> <span class="o">=</span> <span class="k">nullptr</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifndef NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;move assigned&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// = 6s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// move 2.5s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// mixed 8.8s
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// HasPtr3&amp; operator=(HasPtr3 rhs) {
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// swap(*this, rhs);
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// #ifndef NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// std::cout &lt;&lt; &#34;assigned&#34; &lt;&lt; std::endl;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// #endif
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// return *this;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// }
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">HasPtr3</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*</span> <span class="n">ps</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">HasPtr3</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">ps</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">);</span>  <span class="c1">// swap the pointers, not the string data
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">i</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">);</span>    <span class="c1">// swap the int members
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="cp">#ifndef NDEBUG
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;swapped&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#endif
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="p">}</span>
+</span></span></code></pre></div><p>测试代码如下，这里最好<strong>不要</strong>把对象的创建放到循环中去，<strong>每次构造和销毁的开销</strong>会使得两种拷贝和移动的区别不太明显，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">HasPtr3</span> <span class="n">hp</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">HasPtr3</span> <span class="n">hp1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">HasPtr3</span> <span class="n">hp2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">t0</span> <span class="o">=</span> <span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">100000000</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hp</span> <span class="o">=</span> <span class="n">hp1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">hp</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">hp2</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">t1</span> <span class="o">=</span> <span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">duration_cast</span><span class="o">&lt;</span><span class="n">milliseconds</span><span class="o">&gt;</span><span class="p">(</span><span class="n">t1</span> <span class="o">-</span> <span class="n">t0</span><span class="p">).</span><span class="n">count</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;ms&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span></code></pre></div><p>结果如下（VMware 12, Archlinux x64, Intel i7-2620m），</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th></th>
+          <th><code>hp = hp1;</code></th>
+          <th><code>hp = std::move(hp2);</code></th>
+          <th>mixed</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>HasPtr3&amp; operator=(const HasPtr3&amp; rhs)</code></td>
+          <td>4s</td>
+          <td>N/A</td>
+          <td>4.8s</td>
+      </tr>
+      <tr>
+          <td><code>HasPtr3&amp; operator=(HasPtr3&amp;&amp; rhs) noexcept</code></td>
+          <td>N/A</td>
+          <td>0.7s</td>
+          <td>4.8s</td>
+      </tr>
+      <tr>
+          <td><code>HasPtr3&amp; operator=(HasPtr3 rhs)</code></td>
+          <td>6s</td>
+          <td>2.5s</td>
+          <td>8.8s</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>可看出copy and swap idiom的效率是不如分开写好。</p>
+<h1 id="移动迭代器">移动迭代器
+</h1><p>一个移动迭代器通过改变给定迭代器的解引用运算符的行为来<strong>适配</strong>此迭代器。对移动迭代器<strong>解引用</strong>生成的是一个<strong>右值</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">auto</span> <span class="n">newe</span> <span class="o">=</span> <span class="n">uninitialized_copy</span><span class="p">(</span><span class="n">make_move_iterator</span><span class="p">(</span><span class="n">elements</span><span class="p">),</span> <span class="n">make_move_iterator</span><span class="p">(</span><span class="n">cap</span><span class="p">),</span> <span class="n">newb</span><span class="p">);</span>
+</span></span></code></pre></div><p>通过调用<code>make_move_iterator</code>可将一个普通迭代器转换为一个移动迭代器。上面的代码中，传递给<code>uninitialized_copy</code>的是一个移动迭代器，解引用后得到的是右值，因此<code>uninitialized_copy</code>将使用移动构造函数来构造元素。</p>
+<p>标准库<strong>不保证</strong>哪些算法适用于移动迭代器。只有确认对象在传递给函数后<strong>不再访问</strong>，才能将移动迭代器传递给算法。</p>
+<h1 id="右值引用和成员函数">右值引用和成员函数
+</h1><p>类似构造函数和赋值运算符，成员函数同样可以提供拷贝版本和移动版本。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">push_back</span><span class="p">(</span><span class="k">const</span> <span class="n">X</span><span class="o">&amp;</span><span class="p">);</span> <span class="c1">// 拷贝
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">void</span> <span class="nf">push_back</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;&amp;</span><span class="p">);</span> <span class="c1">// 移动
+</span></span></span></code></pre></div><p>拷贝版本接受能够<strong>转换</strong>为类型X的<strong>任何对象</strong>。使用<code>const X&amp;</code>是因为拷贝操作<strong>不应该改变该对象</strong>。</p>
+<p>而移动版本接受<strong>非const右值</strong>，对于非const右值是精确匹配。从源对象移动数据时，显然需要更改源对象，所以是<code>X&amp;&amp;</code>。</p>
+<h2 id="右值和左值引用成员函数">右值和左值引用成员函数
+</h2><p>对于赋值运算符，为了<strong>强制左侧运算对象</strong>是一个左值，可以类似const，在参数列表后使用引用限定符，引用限定符可以是<code>&amp;</code>或<code>&amp;&amp;</code>，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">Foo</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span><span class="p">)</span> <span class="o">&amp;</span><span class="p">;</span> <span class="c1">// 只能向可修改的左值赋值
+</span></span></span></code></pre></div><p>const改变了this指针的类型，指明了this是指向常量的指针，这里类似，引用限定符说明了this<strong>可以指向</strong>一个<strong>左值还是右值</strong>。const和引用限定符只能用于<strong>非static</strong>成员函数。</p>
+<h2 id="重载和引用函数">重载和引用函数
+</h2><ul>
+<li>
+<p>当定义const成员函数是，可以根据有无const，定义两个重载版本。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">Foo</span> <span class="nf">sorted</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">Foo</span> <span class="nf">sorted</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>当定义有引用限定符的成员函数时，如果定义<strong>两个或两个以上</strong>具有相同<strong>名字和参数列表</strong>的成员函数，就必须对**所有重载函数*都加上引用限定符。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="n">Foo</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">Comp</span><span class="o">*</span><span class="p">)</span> <span class="o">&amp;&amp;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">Foo</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">Comp</span><span class="o">*</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span> <span class="c1">// 错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">Foo</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">Comp</span><span class="o">*</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span><span class="p">;</span>
+</span></span></code></pre></div></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

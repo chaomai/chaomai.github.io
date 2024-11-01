@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Notes of Non-blocking k-ary Search Trees date: 2015-11-30 15:09:25 description: Brown在Toronto大学读PhD期间写过2篇关于k-ary的文章，他读PhD期间的导师是Ellen，而Ellen正是写了Non-blocking Binary Search Trees的那位。这篇文章里看到了好几个methods或者ideas是extended from Non-blocking Binary Search Trees。 categories: - concurrency tags: - &lsquo;k-ary search tree&rsquo; - reading About k-ary Search Trees No duplicate key Leaf-oriented k-ST Each leaf has zero children and at most k - 1 keys Each internal node has exactly k children and k − 1 keys (in increasing order) Non-blocking k-ary Search Trees需要平衡，tree的深度和每个internal node进行search和update时的work总量。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-11-30-notes-of-k-ary/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Notes of Non-blocking k-ary Search Trees date: 2015-11-30 15:09:25 description: Brown在Toronto大学读PhD期间写过2篇关于k-ary的文章，他读PhD期间的导师是Ellen，而Ellen正是写了Non-blocking Binary Search Trees的那位。这篇文章里看到了好几个methods或者ideas是extended from Non-blocking Binary Search Trees。 categories: - concurrency tags: - &lsquo;k-ary search tree&rsquo; - reading About k-ary Search Trees No duplicate key Leaf-oriented k-ST Each leaf has zero children and at most k - 1 keys Each internal node has exactly k children and k − 1 keys (in increasing order) Non-blocking k-ary Search Trees需要平衡，tree的深度和每个internal node进行search和update时的work总量。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-11-30-notes-of-k-ary/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Notes of Non-blocking k-ary Search Trees date: 2015-11-30 15:09:25 description: Brown在Toronto大学读PhD期间写过2篇关于k-ary的文章，他读PhD期间的导师是Ellen，而Ellen正是写了Non-blocking Binary Search Trees的那位。这篇文章里看到了好几个methods或者ideas是extended from Non-blocking Binary Search Trees。 categories: - concurrency tags: - &lsquo;k-ary search tree&rsquo; - reading About k-ary Search Trees No duplicate key Leaf-oriented k-ST Each leaf has zero children and at most k - 1 keys Each internal node has exactly k children and k − 1 keys (in increasing order) Non-blocking k-ary Search Trees需要平衡，tree的深度和每个internal node进行search和update时的work总量。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-11-30-notes-of-k-ary/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--reading">title: Notes of Non-blocking k-ary Search Trees
+date: 2015-11-30 15:09:25
+description: Brown在Toronto大学读PhD期间写过2篇关于k-ary的文章，他读PhD期间的导师是Ellen，而Ellen正是写了Non-blocking Binary Search Trees的那位。这篇文章里看到了好几个methods或者ideas是extended from Non-blocking Binary Search Trees。
+categories:
+- concurrency
+tags:
+- &lsquo;k-ary search tree&rsquo;
+- reading
+</h2><h1 id="about-k-ary-search-trees">About k-ary Search Trees
+</h1><ul>
+<li>No duplicate key</li>
+<li>Leaf-oriented k-ST</li>
+<li>Each leaf has zero children and at most k - 1 keys</li>
+<li>Each internal node has exactly k children and k − 1 keys (in increasing order)</li>
+</ul>
+<p>Non-blocking k-ary Search Trees需要平衡，tree的深度和每个internal node进行search和update时的work总量。</p>
+<p>大的k&ndash;&gt;减少tree的depth，但是增加了每个internal node进行search和update时的work总量。</p>
+<p>k = 4的时候，在高contention和低contention的情况下，性能都是最好的。
+高contention时，较少的小k减少了update时影响到的key的数目，增加了并行度；低contention时，较少的depth加快了search，加快了update。</p>
+<h1 id="from-bst-to-k-ary-search-trees">From BST to k-ary Search Trees
+</h1><ul>
+<li>Insert: the BST&rsquo;s insertion -&gt; sprouting insertion</li>
+<li>Delete: the  BST&rsquo;s deletion -&gt; pruning deletion</li>
+<li>Coordination: extended from BST</li>
+</ul>
+<h1 id="data-structure">Data Structure
+</h1><h2 id="nodes">Nodes
+</h2><p>Each <strong>leaf</strong> has zero children and <strong>at most</strong> k − 1 keys (zero keys is permitted). Each <strong>internal node</strong> has exactly k children and k − 1 keys. Inside each node, keys are maintained in <strong>increasing order</strong>.</p>
+<h2 id="dummy-nodes">Dummy Nodes
+</h2><p>Dummy nodes are used in BST to avoid special cases when there is no parent or grandparent to flag and mark. The following pruning deletion operation will meet similar problem. When perform pruning deletion, the leaf may <em>won&rsquo;t have a parent or grandparent</em>. To avoid dealing with that, <strong>dummy nodes</strong> and <strong>empty leaves</strong> used again when initializing the tree.</p>
+<p><img src="/images/2015/k-ary_dummy.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<ul>
+<li>Dummy nodes: each have k − 1 keys valued $\infty$.</li>
+<li>Empty leaves: 2k - 1 empty keys in total.</li>
+</ul>
+<h1 id="sequential-operations">Sequential Operations
+</h1><h2 id="insertion">Insertion
+</h2><p>Search for the key first.</p>
+<h3 id="sprouting-insertion">Sprouting Insertion
+</h3><p>If the leaf is full, replaces the leaf by a <em>newly created</em> subtree.</p>
+<p>The newly created subtree:</p>
+<ul>
+<li>The k - 1 greatest keys among the original k - 1 keys and the new key.</li>
+<li>The children are k (the original k - 1 keys and the new key) <em>new</em> nodes.</li>
+</ul>
+<h3 id="simple-insertion">Simple Insertion
+</h3><p>If the leaf is full, replaces the leaf by a <em>newly</em> leaf with k keys (the original k - 1 keys and the new key).</p>
+<h2 id="deletion">Deletion
+</h2><p>First search for the key.</p>
+<h3 id="pruning-deletion">Pruning Deletion
+</h3><p>If the leaf has one key <strong>and</strong> the parent of leaf has <em>exactly two non-empty children</em>, replace the parent with the sibling of leaf.</p>
+<h3 id="simple-deletion">Simple Deletion
+</h3><p>If the leaf has more than one key <strong>or</strong> the parent of leaf has more than two non-empty children, replace the leaf by a <em>new</em> leaf with key removed.</p>
+<h1 id="coordination">Coordination
+</h1><p>Interleaved execution between concurrent updates in some particular order may cause problems (of cause).</p>
+<p>The Coordination is similar to BST, but here the scheme is extended.</p>
+<p>The following <code>UpdateStep</code> (<code>ReplaceFlag</code>, <code>PruneFlag</code> and <code>Mark</code>) objects is just like lock.</p>
+<h2 id="replaceflag">ReplaceFlag
+</h2><p>For both types of insertion and simple deletion.</p>
+<h2 id="pruneflag">PruneFlag
+</h2><p>For pruning deletion.</p>
+<h2 id="mark">Mark
+</h2><p>Before an internal node is to disappear from the tree, it must ﬁrst be marked. Once a internal node is marked, its child pointer will never be changed.</p>
+<h2 id="clean">Clean
+</h2><p>Initial stat of the <code>pending</code> filed in internal node.</p>
+<h1 id="help-mechanism">Help Mechanism
+</h1><p>If an operation is unexpectedly delayed while holding access to a ﬂagged or marked node, the progress cannot be guaranteed. So helping mechanism is necessary. The method taken here is similar to the one in BST.</p>
+<p>But the helping <strong>should not be abused</strong>. To avoid many <em>duplicate operation</em>, the helping is used in limited cases.</p>
+<h1 id="on-the-whole">On The Whole
+</h1><p>Just for clear the thought.</p>
+<p>The following picture isn&rsquo;t presented in the paper. Because the idea in the paper is similar to BST. So it easy to imitate the original one in BST.</p>
+<p><img src="/images/2015/k-ary_states.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p><code>ReplaceFlag</code> is used in simple insertion, sprouting insertion and simple deletion. So the original notations, <code>ichild ...</code>, <code>dchild ...</code>, etc won&rsquo;t apply.</p>
+<h1 id="differences-between-bst-and-k-ary-search-trees">Differences between BST and k-ary Search Trees
+</h1><h2 id="deletion-1">Deletion
+</h2><p>There two types of deletion in k-ary Search Trees. And a particular interleave of insertion and deletion would result in key lost.</p>
+<p><img src="/images/2015/k-ary_deletion.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>Suppose there are some nodes in k-ary search tree (see above figure) and two threads concurrently perform update.</p>
+<ul>
+<li>Thread ti: insert d at b (the order doesn&rsquo;t mater)</li>
+<li>Thread td: delete b</li>
+</ul>
+<p>The following operation sequence is executed (direction of child isn&rsquo;t mentioned, but it should be fairly easy to see),</p>
+<ol>
+<li>td: <code>PruneFlag</code> gp</li>
+<li>ti: <code>ReplaceFlag</code> p
+from now on, the p won&rsquo;t be marked by td until ti finished.</li>
+<li>ti: Finish insertion and <code>Clean</code> p</li>
+<li>td: Mark p</li>
+<li>td: Change the pointer in gp to s</li>
+</ol>
+<p><strong>Consequence:</strong> Insertion of key, d is lost. :(</p>
+<p>The problem is that pruning deletion changes the child of gp to the child of p without knowing the modification in the another child of p.</p>
+<p>Above problem won&rsquo;t happen in BST&rsquo;s deletion, <em>since the new node (internal node or leaf) is always built from scratch.</em></p>
+<p>So the <code>pending</code> of p must be read before <code>PruneFlag</code> set at gp and checked when performing mark cas. If any insertion occurred, the <code>pending</code> of p will be bound to changed and deletion will perform backtracking cas and restart.</p>
+<p>BTY: In BST and k-ary search tree, the <code>pending</code> of p is already  read by the end of search and the above prerequisites in implementation is <strong>already done</strong>. <em>But it has special purpose and meaning here.</em></p>
+<h1 id="some-doubts">Some Doubts
+</h1><h2 id="cas-and-caset">CAS and CASet
+</h2><p>In k-ary search trees, CASet (compare-and-set) is used to implement CAS.But the prerequisites is the algorithm doesn&rsquo;t suffer from the ABA problem.</p>
+<pre tabindex="0"><code>x.CAS(expect, value)
+  result = read(x)
+  if (result != expect) return result
+  if (x.CASet(expect, value)) return expect
+  return read(x)
+</code></pre><p>The reason why these algorithms doesn&rsquo;t suffer from ABA problem is quite clear for me. But what does the prerequisites (doesn&rsquo;t suffer from the ABA) for?</p>
+<h1 id="references">References
+</h1><ol>
+<li>Non-blocking k-ary Search Trees, Trevor Brown, Joanna Helga</li>
+<li>Non-blocking Binary Search Trees, Faith Ellen, Panagiota Fatourou, Eric Ruppert, Franck van Breugel</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Notes of Read-Log-Update A Lightweight Synchronization Mechanism for Concurrent Programming date: 2015-09-26 13:34:55 description: 今年SOSP的文章，提出了Read-Log-Update，使用了Clock-based logging mechanism和Object-level write-log per thread，解决了RCU不能有多个writer等缺陷。其中的RLU Deferring减少了synchronize调用的次数，提高了cache hit。 categories: - concurrency tags: - rlu - rcu - reading Introduction RCU, this barrier-based mechanism, allows for simple epoch-based reclamation of the old copies, and the mechanism as a whole eliminates many of the atomic read-modify-write instructions, memory barriers, and cache misses that are so expensive on modern multicore systems.\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2015/2015-09-26-notes-of-rlu/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Notes of Read-Log-Update A Lightweight Synchronization Mechanism for Concurrent Programming date: 2015-09-26 13:34:55 description: 今年SOSP的文章，提出了Read-Log-Update，使用了Clock-based logging mechanism和Object-level write-log per thread，解决了RCU不能有多个writer等缺陷。其中的RLU Deferring减少了synchronize调用的次数，提高了cache hit。 categories: - concurrency tags: - rlu - rcu - reading Introduction RCU, this barrier-based mechanism, allows for simple epoch-based reclamation of the old copies, and the mechanism as a whole eliminates many of the atomic read-modify-write instructions, memory barriers, and cache misses that are so expensive on modern multicore systems.\n">
+<meta property='og:url' content='http://localhost:1313/posts/2015/2015-09-26-notes-of-rlu/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Notes of Read-Log-Update A Lightweight Synchronization Mechanism for Concurrent Programming date: 2015-09-26 13:34:55 description: 今年SOSP的文章，提出了Read-Log-Update，使用了Clock-based logging mechanism和Object-level write-log per thread，解决了RCU不能有多个writer等缺陷。其中的RLU Deferring减少了synchronize调用的次数，提高了cache hit。 categories: - concurrency tags: - rlu - rcu - reading Introduction RCU, this barrier-based mechanism, allows for simple epoch-based reclamation of the old copies, and the mechanism as a whole eliminates many of the atomic read-modify-write instructions, memory barriers, and cache misses that are so expensive on modern multicore systems.\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2015/2015-09-26-notes-of-rlu/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    2 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--reading">title: Notes of Read-Log-Update A Lightweight Synchronization Mechanism for Concurrent Programming
+date: 2015-09-26 13:34:55
+description: 今年SOSP的文章，提出了Read-Log-Update，使用了Clock-based logging mechanism和Object-level write-log per thread，解决了RCU不能有多个writer等缺陷。其中的RLU Deferring减少了synchronize调用的次数，提高了cache hit。
+categories:
+- concurrency
+tags:
+- rlu
+- rcu
+- reading
+</h2><h1 id="introduction">Introduction
+</h1><p>RCU, this barrier-based mechanism, allows for simple epoch-based reclamation of the old copies, and the mechanism as a whole eliminates many of the atomic read-modify-write instructions, memory barriers, and cache misses that are so expensive on modern multicore systems.</p>
+<h2 id="about-rlu">About RLU
+</h2><ul>
+<li>Novel extension of RCU framework that support read-only traverals concurrently with multiple updates.</li>
+<li>In a semi-automated way.</li>
+<li>Removes from the programmer the burder of handcrafting the concurrent copy management using only single pointer manipulations.</li>
+<li>Can be API-compatible with RCU.</li>
+</ul>
+<h2 id="about-implementation-of-rlu">About Implementation of RLU
+</h2><ul>
+<li>Clock-based logging mechanism.</li>
+<li>Object-level write-log per thread.</li>
+</ul>
+<h1 id="algorithms">Algorithms
+</h1><h2 id="idea">Idea
+</h2><pre tabindex="0"><code>// For all operations:
+
+   +--------------+
+   |all operations|
+   +------+-------+
+          |
+          |
++---------v-----------+
+|read the global clock|
++---------+-----------+
+          |
+          |
+       +--v--+
+       |start|
+       +-----+
+
+// For writer:
+                              +------+
+              +--+            |writer|
+              |               +---+--+
+              |                   |
+              |                   |
+              |     +-------------v-------------------------------+
+              |     | copy the object into a its own              |
+modification&lt;-+     |thread wirte-log and lock the original object|
+              |     +-------------+-------------------------------+
+              |                   |
+              |                   |
+              |      +------------v-------------+
+              |      |manipulate the object copy|
+              +---+  +--------------+-----------+
+                                    |
+                                    |
+              +---+    +------------v------------------------------+
+              |        |increments the write clock and global clock|
+              |        +------------+------------------------------+
+              |                     |
+              |                     |
+              |      +--------------v----------------+
+              |      |splits operations into two sets|
+              |      +--------------+----------------+
+              |                     |
+      commit&lt;-+                     |
+              |     +---------------v-----------------+
+              |     |wait for old operations to finish|
+              |     +---------------+-----------------+
+              |                     |
+              |                     |
+              |     +---------------v--------------------+
+              |     |   write back the new objects       |
+              |     |from the writer-log into the memory,|
+              |     |  overwriting the old objects,      |
+              |     |      release the locks             |
+              +---+ +------------------------------------+
+</code></pre><p>The writer&rsquo;s modifications are:</p>
+<ul>
+<li>hidden from concurrent reads,</li>
+<li>avoid conflicts with concurrent writes.</li>
+</ul>
+<p>In the following figure, <strong>the order of updating new value</strong>, 23, at write-clock and global-clock is important. Because all new object copies of the write-log become visible at once to all concurrent RLU protected section <strong>after the increment of global clock</strong>.</p>
+<p><img src="/images/2015/rlu_readers_and_writer.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>Many of the lock mentioned is not really calling <code>pthread_mutex_lock()</code> but just performing a update at a specific filed in data.</p>
+<h2 id="synchronizing-write-operations">Synchronizing Write Operations
+</h2><p>Two approaches:</p>
+<ul>
+<li>Execute writers serially.</li>
+<li>Fine-grained locks.</li>
+</ul>
+<h3 id="execute-writers-serially">Execute Writers Serially
+</h3><p>Using a global lock for each writer is simplicity of the code and the concurrency that does exist between read-only and write operations.</p>
+<p>But the drawback is a lack of scalability.</p>
+<h3 id="fine-grained-locks">Fine-grained Locks
+</h3><p>Each object that a writer modifies is logged and locked (as shown in the former figure) by the RLU mechanism.</p>
+<h2 id="fine-grained-locking-using-rlu">Fine-grained Locking Using RLU
+</h2><p>RLU locks can be used as a fine-grained locking mechanism.</p>
+<p>For standard lock, it is necessary to execute post-lock customized verifications to ensure that the state of the object is still the same as it was before locking. This action is unnecessary for RLU locks.</p>
+<h2 id="data-structures">Data Structures
+</h2><p>Global:</p>
+<ul>
+<li>a global clock</li>
+<li>a global array of threads</li>
+</ul>
+<p>Thread:</p>
+<ul>
+<li>two write-logs: new object copies
+<ul>
+<li>header:
+<ul>
+<li>a thread indentifier</li>
+<li>a pointer: point to the actual object</li>
+<li>the object size</li>
+<li>a special pointer value that indicates this is a copy (constant)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>a run counter: the thread is active or not</li>
+<li>a local clock: stealing mechanism</li>
+<li>write clock for each thread: stealing mechanism
+<ul>
+<li>write clock of a thread is initially $\infty$ and write clock is updated first (than global clock), so stealing from a thread is only possible when is updates the write clock during the commit</li>
+</ul>
+</li>
+</ul>
+<p>Object header:</p>
+<ul>
+<li>a pointer: points to the copy of this object in a write-log</li>
+</ul>
+<p><strong>Note:</strong> The actually code is the way of much more complex than previously mentioned. But these code are also nice course of programming in C.</p>
+<h1 id="rlu-deferring">RLU Deferring
+</h1><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="o">+----------------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="n">writer</span> <span class="n">saves</span> <span class="n">the</span> <span class="n">current</span> <span class="n">write</span><span class="o">-</span><span class="n">log</span><span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="n">and</span> <span class="n">generates</span> <span class="n">new</span> <span class="n">log</span> <span class="k">for</span> <span class="n">the</span> <span class="n">next</span><span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="n">writer</span>                            <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------+------------------------+</span>
+</span></span><span class="line"><span class="cl">          <span class="o">|</span>
+</span></span><span class="line"><span class="cl">          <span class="o">|</span> <span class="k">if</span> <span class="n">a</span> <span class="n">writer</span> <span class="n">tries</span> <span class="n">to</span> <span class="n">lock</span> <span class="n">an</span> <span class="n">object</span>
+</span></span><span class="line"><span class="cl">          <span class="o">|</span> <span class="n">that</span> <span class="n">is</span> <span class="n">already</span> <span class="n">locked</span>
+</span></span><span class="line"><span class="cl">          <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+---------</span><span class="n">v</span><span class="o">---------------------------+</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="n">writer</span> <span class="n">sends</span> <span class="n">a</span> <span class="s">&#34;sync request&#34;</span> <span class="n">to</span>     <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="n">the</span> <span class="n">conflicting</span> <span class="kr">thread</span> <span class="n">to</span> <span class="n">force</span> <span class="n">it</span> <span class="n">to</span><span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="n">release</span> <span class="n">it</span> <span class="n">locks</span>                     <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span>                                     <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span><span class="p">(</span><span class="n">global</span><span class="o">-</span><span class="n">clock</span><span class="o">++</span> <span class="o">-&gt;</span> <span class="n">rlu</span> <span class="n">sync</span> <span class="o">-&gt;</span>       <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">|</span> <span class="n">write</span> <span class="n">back</span> <span class="o">-&gt;</span> <span class="n">unlock</span>                <span class="o">|</span>
+</span></span><span class="line"><span class="cl"><span class="o">+-------------------------------------+</span>
+</span></span></code></pre></div><h1 id="references">References
+</h1><ol>
+<li>Read-Log-Update: A Lightweight Synchronization Mechanism for Concurrent Programming, Alexander Matveev, Nir Shavit, Pascal Felber, Patrick Marlier</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

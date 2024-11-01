@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="RWMutex RLock重入导致死锁 RWMutex，即读写锁，可以被多个的reader或一个writer获取使用。\n死锁例子 在使用RWMutex的时候，同一个reader是不应该连续调用Rlock多次的，这样做不但没有意义，还有可能导致死锁，具体代码如下：\n">
+<title>go踩坑合集</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2019/2019-09-20-golang-traps-and-pitfalls/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="go踩坑合集">
+<meta property='og:description' content="RWMutex RLock重入导致死锁 RWMutex，即读写锁，可以被多个的reader或一个writer获取使用。\n死锁例子 在使用RWMutex的时候，同一个reader是不应该连续调用Rlock多次的，这样做不但没有意义，还有可能导致死锁，具体代码如下：\n">
+<meta property='og:url' content='http://localhost:1313/posts/2019/2019-09-20-golang-traps-and-pitfalls/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='golang' /><meta property='article:published_time' content='2019-09-20T17:07:39&#43;00:00'/><meta property='article:modified_time' content='2019-09-20T17:07:39&#43;00:00'/>
+<meta name="twitter:title" content="go踩坑合集">
+<meta name="twitter:description" content="RWMutex RLock重入导致死锁 RWMutex，即读写锁，可以被多个的reader或一个writer获取使用。\n死锁例子 在使用RWMutex的时候，同一个reader是不应该连续调用Rlock多次的，这样做不但没有意义，还有可能导致死锁，具体代码如下：\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/golang/" >
+                Golang
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2019/2019-09-20-golang-traps-and-pitfalls/">go踩坑合集</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Sep 20, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="rwmutex-rlock重入导致死锁">RWMutex RLock重入导致死锁
+</h1><p>RWMutex，即读写锁，可以被多个的reader或一个writer获取使用。</p>
+<h2 id="死锁例子">死锁例子
+</h2><p>在使用RWMutex的时候，同一个reader是不应该连续调用<code>Rlock</code>多次的，这样做不但没有意义，还有可能导致死锁，具体代码如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">l</span> <span class="p">=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">RWMutex</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">c</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">l</span><span class="p">.</span><span class="nf">RLock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">l</span><span class="p">.</span><span class="nf">RUnlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">c</span> <span class="o">&lt;-</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">runtime</span><span class="p">.</span><span class="nf">Gosched</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="nx">l</span><span class="p">.</span><span class="nf">RLock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">l</span><span class="p">.</span><span class="nf">RUnlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="o">&lt;-</span><span class="nx">c</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">l</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">l</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="syncrwmutex分析">sync.RWMutex分析
+</h2><p>下面<a class="link" href="https://github.com/golang/go/blob/master/src/sync/rwmutex.go"  target="_blank" rel="noopener"
+    >RWMutex的实现</a>，我们来看这段代码的具体执行。为了方便理解，把<code>if race.Enabled {...}</code>的相关代码都去除了。</p>
+<ol>
+<li>
+<p><strong>goroutine 1</strong>：<code>l.RLock()</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">RLock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// A writer is pending, wait for it.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>执行<code>l.RLock()</code>后，goroutine 1获得写锁。</p>
+<ul>
+<li>状态：获得读锁</li>
+<li>readerCount = 1，readerWait = 0</li>
+</ul>
+</li>
+<li>
+<p><strong>goroutine 2</strong>：<code>l.Lock()</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// First, resolve competition with other writers.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">rw</span><span class="p">.</span><span class="nx">w</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Announce to readers there is a pending writer.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="o">-</span><span class="nx">rwmutexMaxReaders</span><span class="p">)</span> <span class="o">+</span> <span class="nx">rwmutexMaxReaders</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// Wait for active readers.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerWait</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">writerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>由于goroutine 1已获得写锁，此时goroutine 2等待。</p>
+<ul>
+<li>状态：等待reader释放读锁</li>
+<li>readerCount = 1 - rwmutexMaxReaders，readerWait = 1</li>
+</ul>
+</li>
+<li>
+<p><strong>goroutine 1</strong>：<code>l.RLock()</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">RLock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">if</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// A writer is pending, wait for it.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>goroutine 1发现readerCount为负，认为有writer获得了写锁，接着也进入了等待状态。</p>
+<ul>
+<li>状态：等待</li>
+<li>readerCount = 2 - rwmutexMaxReaders，readerWait = 1</li>
+</ul>
+</li>
+</ol>
+<p>最后goroutine 1和goroutine 2都进入了等待状态。</p>
+<h2 id="总结">总结
+</h2><ol>
+<li>
+<p>readerCount的作用？
+持有读锁的reader数。置为负时，代表了writer正在或者已经获得了读锁，此时其他reader不能再获得写锁。</p>
+</li>
+<li>
+<p>readerWait的作用，以及在<code>Lock()</code>中，为何需要同时判断<code>r != 0</code>和<code>atomic.AddInt32(&amp;rw.readerWait, r) != 0</code>？
+置readerCount为负的时候，获得了写锁，但尚未RULock的reader数。writer需要等待这些reader执行结束。</p>
+<ul>
+<li>若<code>r == 0</code>，则无正在持有读锁的reader，可以直接完成读锁的加锁。</li>
+<li>若<code>r != 0</code>，writer需要等待获得了写锁，但尚未RULock的reader执行结束。如何判断是否需要等待呢，即readerWait不为0的时候。同时reader决定是否能唤醒writer，也需要等到readerWait为0的时候。</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">rw</span> <span class="o">*</span><span class="nx">RWMutex</span><span class="p">)</span> <span class="nf">Lock</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">rw</span><span class="p">.</span><span class="nx">w</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">r</span> <span class="o">:=</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerCount</span><span class="p">,</span> <span class="o">-</span><span class="nx">rwmutexMaxReaders</span><span class="p">)</span> <span class="o">+</span> <span class="nx">rwmutexMaxReaders</span>
+</span></span><span class="line"><span class="cl">	<span class="c1">// 此刻起，其他reader不再能够获得读锁。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="c1">// 此时，尚未释放写锁的reader数为readerWait个，等待他们结束才能完成读锁的加锁。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">atomic</span><span class="p">.</span><span class="nf">AddInt32</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">readerWait</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nf">runtime_SemacquireMutex</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">rw</span><span class="p">.</span><span class="nx">writerSem</span><span class="p">,</span> <span class="kc">false</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div></li>
+</ol>
+<h1 id="syncwaitgroup使用的问题">sync.WaitGroup使用的问题
+</h1><h2 id="例子">例子
+</h2><p>在实现一个需求的时候，需要等待一定数目的go协程执行完毕，但这个数目事先并不好确定。想到了可以用sync.WaitGroup来完成，在使用时候发现，<code>Wait()</code>没有生效，并未等待协程结束，代码大致如下，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="o">&lt;-</span> <span class="nx">ch</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">close</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>执行后程序不会有任何的输出就退出了。</p>
+<h2 id="syncwaitgroup源码分析">sync.WaitGroup源码分析
+</h2><blockquote>
+<p>Typically this means the calls to Add should execute before the statement creating the goroutine or other event to be waited for.</p>
+</blockquote>
+<h2 id="总结-1">总结
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">f</span> <span class="o">:=</span> <span class="kd">func</span><span class="p">(){</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="o">&lt;-</span> <span class="nx">ch</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;hi&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="k">go</span> <span class="nf">f</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}()</span>
+</span></span><span class="line"><span class="cl">	<span class="nb">close</span><span class="p">(</span><span class="nx">ch</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="references">References
+</h2><ol>
+<li><a class="link" href="https://stackoverflow.com/questions/18805416/waiting-on-an-indeterminate-number-of-goroutines"  target="_blank" rel="noopener"
+    >Waiting on an indeterminate number of goroutines</a></li>
+</ol>
+<h1 id="goroutine">goroutine
+</h1><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">process</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">wg</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">,</span> <span class="nx">retCh</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="o">*</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// process
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="c1">// send process result back
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">retCh</span> <span class="o">&lt;-</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">retCh</span> <span class="o">&lt;-</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span>
+</span></span><span class="line"><span class="cl">			<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">retCh</span> <span class="o">&lt;-</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">retCh</span> <span class="o">&lt;-</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">loop</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">wg</span> <span class="o">*</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">,</span> <span class="nx">retCh</span> <span class="kd">chan</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">process</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">wg</span><span class="p">,</span> <span class="nx">retCh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="k">select</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nf">Done</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">				<span class="k">return</span>
+</span></span><span class="line"><span class="cl">			<span class="k">case</span> <span class="nx">ret</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">retCh</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">				<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">ret</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancel</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nf">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">retCh</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="k">go</span> <span class="nf">loop</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">wg</span><span class="p">,</span> <span class="nx">retCh</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">	<span class="nf">cancel</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/golang/">Golang</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-03-17-golang-notes/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Go笔记</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

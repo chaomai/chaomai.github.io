@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: C++顺序容器 date: 2014-02-24 14:53:06 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 首先介绍顺序容器操作基本相同的部分，然后分别是每种容器要注意的地方。\n定义和初始化 C c 默认构造函数 C c1(c2)，C c1 = c2 c1初始化为c2的copy。c1和c2必须是相同的容器类型，且保存相同类型的元素。 C c{a, b, c, ...}，C c = {a, b, c, ...} 列表初始化 C c(b, e) 除array外，还有以下两种，\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2014/2014-02-24-cpp-sequential-container/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: C++顺序容器 date: 2014-02-24 14:53:06 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 首先介绍顺序容器操作基本相同的部分，然后分别是每种容器要注意的地方。\n定义和初始化 C c 默认构造函数 C c1(c2)，C c1 = c2 c1初始化为c2的copy。c1和c2必须是相同的容器类型，且保存相同类型的元素。 C c{a, b, c, ...}，C c = {a, b, c, ...} 列表初始化 C c(b, e) 除array外，还有以下两种，\n">
+<meta property='og:url' content='http://localhost:1313/posts/2014/2014-02-24-cpp-sequential-container/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: C++顺序容器 date: 2014-02-24 14:53:06 categories:\ncpp tags: &lsquo;c++ primer&rsquo; 首先介绍顺序容器操作基本相同的部分，然后分别是每种容器要注意的地方。\n定义和初始化 C c 默认构造函数 C c1(c2)，C c1 = c2 c1初始化为c2的copy。c1和c2必须是相同的容器类型，且保存相同类型的元素。 C c{a, b, c, ...}，C c = {a, b, c, ...} 列表初始化 C c(b, e) 除array外，还有以下两种，\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2014/2014-02-24-cpp-sequential-container/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    6 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>title: C++顺序容器
+date: 2014-02-24 14:53:06
+categories:</p>
+<ul>
+<li>cpp
+tags:</li>
+<li>&lsquo;c++ primer&rsquo;</li>
+</ul>
+<hr>
+<p>首先介绍顺序容器操作基本相同的部分，然后分别是每种容器要注意的地方。</p>
+<h1 id="定义和初始化">定义和初始化
+</h1><ul>
+<li><code>C c</code>
+默认构造函数</li>
+<li><code>C c1(c2)</code>，<code>C c1 = c2</code>
+c1初始化为c2的copy。c1和c2必须是相同的容器类型，且保存相同类型的元素。</li>
+<li><code>C c{a, b, c, ...}</code>，<code>C c = {a, b, c, ...}</code>
+列表初始化</li>
+<li><code>C c(b, e)</code></li>
+</ul>
+<p>除array外，还有以下两种，</p>
+<ul>
+<li><code>C seq(n)</code></li>
+<li><code>C seq(n, t)</code></li>
+</ul>
+<h2 id="c-c1c2和c-cb-e"><code>C c1(c2)</code>和<code>C c(b, e)</code>
+</h2><p><code>C c1(c2)</code>要求两个容器必须是相同的类型，且元素类型也是相同的；但<code>C c(b, e)</code>就只需要元素类型可以<strong>转换</strong>为要初始化的容器的元素类型即可。</p>
+<h1 id="赋值和swap">赋值和swap
+</h1><p>所有容器都支持赋值<code>=</code>，赋值后，左边容器的元素为右边容器元素的copy，且大小与右边容器相同。</p>
+<h2 id="swap">swap
+</h2><ul>
+<li><code>swap</code>会交换两个容器的元素，两个容器必须有<strong>相同的</strong>类型；</li>
+<li>通常来说<code>swap</code>只是交换了容器内部的数据结构，但也有例外，对array进行操作时，会真正交换它们的元素；</li>
+<li><code>swap</code>完成以后，<strong>除string外</strong>，指向容器的迭代器、引用和指针都不会失效。</li>
+</ul>
+<h2 id="assign">assign
+</h2><ul>
+<li><code>seq.assign(b, e)</code></li>
+<li><code>seq.assign(il)</code></li>
+<li><code>seq.assign(n, t)</code></li>
+</ul>
+<p>要注意的有，</p>
+<ul>
+<li>参数非常像初始化的；</li>
+<li><code>assign</code>不适用于关联容器的array；</li>
+<li>可以从一个<strong>不相同但相容的</strong>类型assign。</li>
+</ul>
+<h1 id="大小">大小
+</h1><p>除了forward_list，每个容器都支持<code>size()</code>、<code>empty()</code>和<code>max_size()</code>；forward_list只支持<code>empty()</code>和<code>max_size()</code>。</p>
+<h1 id="运算符">运算符
+</h1><p>每种容器都支持<code>==</code>和<code>!=</code>。</p>
+<p>除了无序关联容器，所有容器都支持<code>&gt;</code>，<code>&gt;=</code>，<code>&lt;</code>和<code>&lt;=</code>。</p>
+<h1 id="操作">操作
+</h1><h2 id="push和insert">push&hellip;和insert
+</h2><p><code>push_back</code>，<code>insert</code>和<code>push_front</code>放入容器的是元素的copy。</p>
+<h2 id="emplace">emplace&hellip;
+</h2><p><code>emplace_front</code>，<code>emplace</code>和<code>emplace_back</code>分别对应<code>push_back</code>，<code>insert</code>和<code>push_front</code>。不支持push&hellip;或insert的容器，也不支持相应的<code>emplace</code>。</p>
+<p>与<code>push_back</code>，<code>push_front</code>和<code>insert</code>放入元素的copy不同，<code>emplace</code>会见参数传递给元素类型的构造函数。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">C2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C2</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">explicit</span> <span class="nf">C2</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">)</span> <span class="o">:</span> <span class="n">a_</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C2</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">,</span> <span class="kt">int</span> <span class="n">b</span><span class="p">)</span> <span class="o">:</span> <span class="n">a_</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">b_</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="k">private</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">a_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">b_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">vector</span><span class="o">&lt;</span><span class="n">C2</span><span class="o">&gt;</span> <span class="n">cs2</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 由于是explicit，不存在从int到C2的隐式转换
+</span></span></span><span class="line"><span class="cl"><span class="c1">// cs2.push_back(1);
+</span></span></span><span class="line"><span class="cl"><span class="c1">// cs2.push_back(); // 错误
+</span></span></span><span class="line"><span class="cl"><span class="c1">// cs2.push_back(1, 2); // 错误
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">cs2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">C2</span><span class="p">());</span>
+</span></span><span class="line"><span class="cl"><span class="n">cs2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">C2</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">cs2</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">C2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 调用了C2的构造函数，对应以三个push_back
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">cs2</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="n">cs2</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">cs2</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+</span></span></code></pre></div><p><code>emplace</code>在容器中直接构造元素，由于参数是传递给元素的构造函数，因此实参的类型必须和构造函数匹配。</p>
+<h2 id="访问元素">访问元素
+</h2><p>可用以下方法访问顺序容器的元素：</p>
+<ul>
+<li><code>c.back()</code></li>
+<li><code>c.front()</code></li>
+<li><code>c[n]</code></li>
+<li><code>c.at(n)</code></li>
+</ul>
+<p>下标操作和at实际上就是进行随机访问，因而只能用于支持随机访问的顺序容器（string、vector、deque和array）。两个随机访问中，只有at能够保证安全的随机访问，下标越界时，会抛出out_of_range异常。</p>
+<h2 id="删除元素">删除元素
+</h2><ul>
+<li><code>c.pop_back()</code></li>
+<li><code>c.pop_front()</code></li>
+<li><code>c.erase(p)</code></li>
+<li><code>c.erase(b, e)</code></li>
+<li><code>c.clear()</code></li>
+</ul>
+<p><code>pop_back</code>和<code>pop_front</code>返回<code>void</code>，<code>erase</code>返回一个迭代器，位置为最后一个被删除元素的下一个。</p>
+<p>如果<code>b</code>和<code>e</code>相等（即使都为<code>c.end()</code>），那么不会删除任何元素。</p>
+<h1 id="容器适配器">容器适配器
+</h1><p>适配器是一种机制，使得某种事物的行为看起来像另外一个事物。容器、迭代器和函数都有适配器。</p>
+<p>每个适配器有两个构造函数，</p>
+<ul>
+<li><code>A a</code></li>
+<li><code>A a(c)</code>，拷贝容器c来初始化a</li>
+</ul>
+<p>顺序容器适配器有，</p>
+<ul>
+<li>stack，默认情况下基于queue实现；</li>
+<li>queue，默认情况下基于queue实现；</li>
+<li>priority_queue，默认情况下基于vector实现；</li>
+</ul>
+<p>一般来说，用于构造适配器的容器是有限制的，</p>
+<ul>
+<li>能添加和删除元素；</li>
+<li>访问尾元素；</li>
+</ul>
+<p>具体到每个适配器，</p>
+<ul>
+<li>stack
+<code>push_back</code>，<code>pop_back</code>，<code>back</code></li>
+<li>queue
+<code>push_back</code>，<code>push_front</code>，<code>back</code>，<code>front</code></li>
+<li>priority_queue
+<code>front</code>，<code>push_back</code>，<code>pop_back</code>，随机访问</li>
+</ul>
+<h1 id="vector">vector
+</h1><h2 id="capacity和size">capacity和size
+</h2><p>vector支持快速随机访问，元素是连续存储的。这意味着添加元素时，需要移动已有的元素，以保证连续的存储。如果没有空间容纳新元素，则需要分配新的内存，并把已有元素从旧的位置移动到新的位置。为了减少内存的分配和释放的代价，分配策略一般为实在是没法存时，才获取新的内存。只要没有操作使得vector的capacity不够，就不会重新分配内存。</p>
+<p>以下几个操作是管理容器大小的，</p>
+<ul>
+<li><code>c.shrink_to_fit()</code>
+请求把capacity减少为size。这里仅仅是一个请求，shrink_to_fit<strong>不保证</strong>退还内存。</li>
+<li><code>c.capacity()</code>
+在不重新分配内存的情况下，最多能存储的元素数目。</li>
+<li><code>c.reserve(n)</code>
+分配至少能容纳n个元素的内存。n如果小于等于当前capacity，那么什么都不发生。</li>
+</ul>
+<p>要注意的是，reserve和resize不同，reserve改变（至少是变大）的是capacity，size并未变化；而resize改变了size的同时，capacity（如果n大于当前的capacity）也有可能改变。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">t23</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v1</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// size: 10 capacity: 10
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v2</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="c1">// size: 10 capacity: 10
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">v1</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span> <span class="c1">// size: 15 capacity: 20
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">v2</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="mi">15</span><span class="p">);</span> <span class="c1">// size: 10 capacity: 15
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><h2 id="迭代器">迭代器
+</h2><p>添加元素的情况下，</p>
+<ul>
+<li>如果添加前<code>capacit = size</code>，那么会导致内存重新分配，从而vector相关的迭代器、引用或指针都会失效；
+如果不发生内存分配，有可能会发生元素移动（插入中间位置），插入位置之后的迭代器、引用或指针都会失效。</li>
+</ul>
+<p>对于删除元素，不会发生内存重新分配，被删除元素前的迭代器、引用或指针都还有效。</p>
+<h1 id="deque">deque
+</h1><h2 id="迭代器-1">迭代器
+</h2><p>添加元素的情况下，
+如果插入到<strong>首尾</strong>之外的位置，都会导致迭代器、引用或指针失效；</p>
+<p>删除元素的情况下，</p>
+<ul>
+<li>如果在<strong>首尾</strong>之外的位置删除，都会导致迭代器、引用或指针失效；</li>
+<li>如果删除了<strong>尾元素</strong>，<strong>尾后迭代器也会失效</strong>，但其他的迭代器、引用或指针不受影响。</li>
+</ul>
+<h1 id="string">string
+</h1><h2 id="操作-1">操作
+</h2><p>string也支持上述提及的大部分操作，但同样有例外，且某些操作有特殊局限，</p>
+<ul>
+<li><code>swap</code>会导致相关的迭代器、引用或指针失效；</li>
+<li>与vector一样，front相关的操作不支持；
+<ul>
+<li>不支持<code>push_front</code>和<code>emplace_front</code>；</li>
+<li>不支持<code>pop_front</code>;</li>
+</ul>
+</li>
+<li><code>insert</code>、<code>erase</code>、<code>assign</code>和<code>replace</code>重载函数，p323和p324；
+<ul>
+<li>额外的<code>insert</code>、<code>erase</code>、<code>assign</code>；</li>
+<li><code>append</code>在末尾插入；</li>
+<li><code>replace</code>，等价于<code>erase</code>+<code>insert</code>。</li>
+</ul>
+</li>
+<li>搜索，p325和p326；
+<ul>
+<li>返回值均为<code>string::size_type()</code>，是一个<code>unsigned</code>类型，如果找不到，这返回<code>string::npos</code>；</li>
+<li><code>s.find(args)</code>，返回第一个匹配args的下标；</li>
+<li><code>s.rfind(args)</code>，返回最后一个匹配args的下标；</li>
+<li><code>s.find_first_of(args)</code>，返回args中任何一个字符<strong>首次出现在args中</strong>的下标；</li>
+<li><code>s.find_last_of(args)</code>；</li>
+<li><code>s.find_first_not_of(args)</code>，返回首个<strong>不在args中</strong>字符的下标；</li>
+<li><code>s.find_last_not_of()</code>。</li>
+</ul>
+</li>
+<li>compare同样有多个重载，p327；</li>
+<li>数值转换，p328；
+<ul>
+<li><code>to_string(val)</code>；</li>
+<li><code>sto...</code>；
+<ul>
+<li>string中的第一个非空白字符必须是数值中可能出现的字符，即+或-，或数字，数字可以是0x或0X开头表示的十六进制数；</li>
+<li>如果是转换为浮点数的，开头可以为.，且包含e或E表示指数；</li>
+<li>如果是转换为整型的，根据不同的基数，可以有字母；</li>
+<li>如果不能转换，则抛出<code>invallid_argument</code>；</li>
+<li>如果得到的数值无法用任何类型表示，则抛出<code>out_of_range</code>。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

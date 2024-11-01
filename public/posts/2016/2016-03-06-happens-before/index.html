@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: Happens-before date: 2016-03-06 21:51:54 categories: - concurrency tags: - happens-before 取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。\nHappens-before关系 假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2016/2016-03-06-happens-before/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: Happens-before date: 2016-03-06 21:51:54 categories: - concurrency tags: - happens-before 取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。\nHappens-before关系 假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2016/2016-03-06-happens-before/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: Happens-before date: 2016-03-06 21:51:54 categories: - concurrency tags: - happens-before 取自preshing博客上的几篇文章（1，2，3）。除了部分翻译外，还有自己的理解。\nHappens-before关系 假设A和B两个操作是由多线程程序执行的，如果A happens-before B，那么A对内存的操作在B被执行前对执行B的线程切实可见。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2016/2016-03-06-happens-before/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    6 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--happens-before">title: Happens-before
+date: 2016-03-06 21:51:54
+categories:
+- concurrency
+tags:
+- happens-before
+</h2><p>取自<a class="link" href="http://preshing.com/"  target="_blank" rel="noopener"
+    >preshing博客</a>上的几篇文章（<a class="link" href="http://preshing.com/20120913/acquire-and-release-semantics/"  target="_blank" rel="noopener"
+    >1</a>，<a class="link" href="http://preshing.com/20130702/the-happens-before-relation/"  target="_blank" rel="noopener"
+    >2</a>，<a class="link" href="http://preshing.com/20130823/the-synchronizes-with-relation/"  target="_blank" rel="noopener"
+    >3</a>）。除了部分翻译外，还有自己的理解。</p>
+<h1 id="happens-before关系">Happens-before关系
+</h1><p>假设A和B两个操作是由多线程程序执行的，如果<strong>A happens-before B</strong>，那么A对内存的操作在<strong>B被执行前</strong>对执行B的线程切实可见。</p>
+<p>关于happens-before要注意的是一下看起来自相矛盾的两点。因为happens-before所描述的是操作之间的关系，这个关系是<strong>独立于时间的</strong>，并不是happening before。</p>
+<h2 id="happens-before并不意味着happening-before">Happens-before并不意味着happening before
+</h2><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">A</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">B</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">A</span> <span class="o">=</span> <span class="n">B</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>              <span class="c1">// (1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">B</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>                  <span class="c1">// (2)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>以上代码中，只看program order的话，(1)是happens-before(2)的。但编译器可能会对上面的代码进行reorder（用clang++ 3.7 -O2没有发生），使得B的store<strong>先于A完成</strong>。</p>
+<p>从happens-before定义来看，(1)对内存的修改必须在(2)执行前切实可见，也就是说A的store必须影响到B的store。但从这个例子来看，A的store并未影响到A，就算没有(1)，(2)的行为也是一样的，这就等价于(1)的操作是<a class="link" href="http://preshing.com/20130702/the-happens-before-relation/"  target="_blank" rel="noopener"
+    >可见的</a>。</p>
+<p>因此(1)和(2)行为并不违背happens-before，happens-before并不意味着happening before。</p>
+<h2 id="happening-before并不意味着happens-before">Happening before并不意味着happens-before
+</h2><p>假设下面对的int的store和load都是原子的，有两个线程分别执行两个函数。就program order而言，(1)和(2)，(3)和(4)之间有happens-before关系。再假设在运行时，(2)在(3)之前完成，(3)读到了1。</p>
+<p>但是并不意味着(2)和(3)之间有happens-before关系。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">isReady</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">answer</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">publishMessage</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">answer</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>                      <span class="c1">// (1)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">isReady</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>                      <span class="c1">// (2)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">consumeMessage</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">isReady</span><span class="p">)</span>                      <span class="c1">// (3) &lt;-- Let&#39;s suppose this line reads 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">printf</span><span class="p">(</span><span class="s">&#34;%d</span><span class="se">\n</span><span class="s">&#34;</span><span class="p">,</span> <span class="n">answer</span><span class="p">);</span>         <span class="c1">// (4)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>happens-before关系仅仅在标准指明的地方有。C++11中并未规定在普通的store和load之间有happens-before关系。进一步看，(1)和(4)之间也没有。因此(1)和(4)是可以被编译器或CPU reordered的。即使(3)读到了1，(4)可能打印0。</p>
+<h1 id="单线程中的happens-before关系">单线程中的happens-before关系
+</h1><p>如果操作A和B是由同一个线程执行的，且就program order而言，A的语句位于B之前，那么A <strong>happens-before</strong> B。</p>
+<p>然而这并不是唯一实现happens-before关系的方法。</p>
+<h1 id="多线程中的happens-before关系">多线程中的happens-before关系
+</h1><p>上面提到了单线程中的happens-before关系是如何产生的，下面来看多线程中的happens-before关系，C++11指出可以通过acquire和release语义，在不同线程的操作中实现happens-before。</p>
+<h2 id="acquire和release语义">Acquire和Release语义
+</h2><p>Acquire语义：Acquire语义是一个属性，这个属性只能应用于从共享内存中的<strong>read操作</strong>，无论这些read是RMW还是普通的load。Acquire语义保证了在program order上位于read-acquire之后的read和write不会被编译器和CPU reordered到read-acquire之前。
+Release语义：Release语义也是一个属性，这个属性只能应用于从共享内存中的<strong>write操作</strong>，无论这些read是RMW还是普通的store。Release语义保证了在program order上位于write-release之前的read和write不会被编译器和CPU reordered到write-release之后。</p>
+<p>Raymond Chen的另一个解释，
+一个带有acquire语义的操作不允许后续的内存操作提前到该操作之前执行，相对的，一个带有release语义的操作不允许前面的内存操作被滞后到该操作之后执行。</p>
+<p>关于Acquire和Release语义，<a class="link" href="http://hedengcheng.com/?p=725"  target="_blank" rel="noopener"
+    >这里</a>还有一个比较好的解释。</p>
+<h3 id="通过显式的cpu-fence指令实现acquire和release语义">通过显式的CPU fence指令实现acquire和release语义
+</h3><p>下面代码中有两个全局变量<code>A</code>和<code>Ready</code>，两个线程分别执行两段代码，<code>Ready</code>作为flag表示<code>A</code>的write是否完成。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">A</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">Ready</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// thread 1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="n">A</span> <span class="o">=</span> <span class="mi">42</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#StoreStore
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="n">Ready</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// thread 2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kt">int</span> <span class="n">r1</span> <span class="o">=</span> <span class="n">Ready</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">#LoadLoad
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="kt">int</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">A</span><span class="p">;</span>
+</span></span></code></pre></div><p>通过两个fence，可以保证当线程2发现<code>r1 == 1</code>时，<code>A</code>的值是1，进而保证<code>r2 == 1</code>。</p>
+<p>规范的来说就是，对<code>Ready</code>的write synchronizes-with对<code>Ready</code>的read。</p>
+<h2 id="synchronizes-with关系">Synchronizes-with关系
+</h2><p>Synchronizes-with用于描述源码级操作的内存影响（describe ways in which the memory effects of source-level operations），即使是非原子操作，也能够保证结果是对其他线程可见。一个较为常见的事情是，无论何时在两个线程间有<strong>synchronizes-with</strong>关系（一般是在不同的线程间）那么在这些操作之间都会有<strong>happens-before</strong>关系。</p>
+<h3 id="一个write-release能够synchronize-with一个read-acquire的">一个Write-Release能够Synchronize-with一个Read-Acquire的
+</h3><p>C++11标准规定了，一个对<strong>原子对象M</strong>执行<strong>release</strong>操作的<strong>原子操作A</strong> <em>synchronize-with</em>一个对<strong>M</strong>执行<strong>acquire</strong>操作的<strong>原子操作B</strong>，且能够得到以A为起始的release sequence操作的所有副作用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Message</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">clock_t</span>     <span class="n">tick</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span><span class="o">*</span>       <span class="n">param</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">Message</span> <span class="n">g_payload</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">g_guard</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">SendTestMessage</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="n">param</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Copy to shared memory using non-atomic stores.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">g_payload</span><span class="p">.</span><span class="n">tick</span>  <span class="o">=</span> <span class="n">clock</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">g_payload</span><span class="p">.</span><span class="n">str</span>   <span class="o">=</span> <span class="s">&#34;TestMessage&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">g_payload</span><span class="p">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Perform an atomic write-release to indicate that the message is ready.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="n">g_guard</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">memory_order_release</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">bool</span> <span class="nf">TryReceiveMessage</span><span class="p">(</span><span class="n">Message</span><span class="o">&amp;</span> <span class="n">result</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Perform an atomic read-acquire to check whether the message is ready.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kt">int</span> <span class="n">ready</span> <span class="o">=</span> <span class="n">g_guard</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">memory_order_acquire</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">ready</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Yes. Copy from shared memory using non-atomic loads.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">result</span><span class="p">.</span><span class="n">tick</span>  <span class="o">=</span> <span class="n">g_payload</span><span class="p">.</span><span class="n">tick</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span><span class="p">.</span><span class="n">str</span>   <span class="o">=</span> <span class="n">g_payload</span><span class="p">.</span><span class="n">str</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span><span class="p">.</span><span class="n">param</span> <span class="o">=</span> <span class="n">g_payload</span><span class="p">.</span><span class="n">param</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// No.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>上述代码中，为了能够把<code>g_payload</code>安全的在线程中传递，使用了acquire和release。当<code>TryReceiveMessage</code>中<code>g_guard</code>的read-acquire执行完后，<strong>如果<code>ready</code>是1</strong>，那么<code>g_payload</code>的三个成员一定被成功写入。</p>
+<p>与前面的标准对照，可以看到，</p>
+<ul>
+<li>原子操作A是<code>SendTestMessage</code>中的write-release；</li>
+<li>原子对象M是<code>g_guard</code>；</li>
+<li>原子操作B是<code>TryReceiveMessage</code>中的read-acquire。</li>
+</ul>
+<p>前面所说的takes its value from any side effect in the release sequence headed by A，这里指read-acquire能够读取到write-release所写的值。<strong>如果读取到了</strong>，那么synchronize-with关系就出现了。此时，两个线程间就有了happens-before关系。有时这也叫做synchronize-with或happens-before“边”。</p>
+<p><img src="/images/2016/happens_before_two-cones.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>标准中还保证了只要有synchronize-with边存在，happens-before关系就能够<strong>扩展到临近的操作</strong>。对应到上例中就是，当其他线程读取<code>g_payload</code>时，保证能够读取到对<code>g_payload</code>写入的值。</p>
+<h3 id="运行时关系">运行时关系
+</h3><p>想要通过静态的分析代码，来寻找代码中的synchronize-with关系是错误的。synchronize-with是<strong>运行时关系</strong>。</p>
+<p><img src="/images/2016/happens_before_no-cones.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<p>如果<code>g_guard</code>读取的过早，线程1还没有写入<code>g_guard</code>，那么就没有synchronize-with关系。</p>
+<h3 id="其他实现synchronize-with的方法">其他实现Synchronize-with的方法
+</h3><p><img src="/images/2016/happens_before_org-chart.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

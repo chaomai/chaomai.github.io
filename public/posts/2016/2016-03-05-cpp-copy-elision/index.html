@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="title: C++ Copy Elision date: 2016-03-05 13:03:30 categories: - cpp tags: - &lsquo;copy elision&rsquo; 在写代码是发现拷贝构造函数有时候没有调用，想起C++ Primer中提到过\nthe compiler can omit calls to the copy constructor.\n后来查到是发生了copy elision。\n">
+<title></title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2016/2016-03-05-cpp-copy-elision/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="">
+<meta property='og:description' content="title: C++ Copy Elision date: 2016-03-05 13:03:30 categories: - cpp tags: - &lsquo;copy elision&rsquo; 在写代码是发现拷贝构造函数有时候没有调用，想起C++ Primer中提到过\nthe compiler can omit calls to the copy constructor.\n后来查到是发生了copy elision。\n">
+<meta property='og:url' content='http://localhost:1313/posts/2016/2016-03-05-cpp-copy-elision/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' />
+<meta name="twitter:title" content="">
+<meta name="twitter:description" content="title: C++ Copy Elision date: 2016-03-05 13:03:30 categories: - cpp tags: - &lsquo;copy elision&rsquo; 在写代码是发现拷贝构造函数有时候没有调用，想起C++ Primer中提到过\nthe compiler can omit calls to the copy constructor.\n后来查到是发生了copy elision。\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2016/2016-03-05-cpp-copy-elision/"></a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="--copy-elision">title: C++ Copy Elision
+date: 2016-03-05 13:03:30
+categories:
+- cpp
+tags:
+- &lsquo;copy elision&rsquo;
+</h2><p>在写代码是发现拷贝构造函数有时候没有调用，想起C++ Primer中提到过</p>
+<blockquote>
+<p>the compiler can omit calls to the copy constructor.</p>
+</blockquote>
+<p>后来查到是发生了copy elision。</p>
+<p>首先有那么一个类定义，其中静态成员c是对象编号。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">C</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">name_</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">++</span><span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;c&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">__func__</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span><span class="p">(</span><span class="k">const</span> <span class="kt">int</span> <span class="n">name</span><span class="p">)</span> <span class="o">:</span> <span class="n">name_</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;c&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">__func__</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="o">:</span> <span class="n">name_</span><span class="p">(</span><span class="n">c</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copy from c&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;, c&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;: &#34;</span> <span class="o">&lt;&lt;</span> <span class="n">__func__</span>
+</span></span><span class="line"><span class="cl">         <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span> <span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">C</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;copy assign from c&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">rhs</span><span class="p">.</span><span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;, c&#34;</span> <span class="o">&lt;&lt;</span> <span class="n">name_</span> <span class="o">&lt;&lt;</span> <span class="s">&#34;: &#34;</span>
+</span></span><span class="line"><span class="cl">         <span class="o">&lt;&lt;</span> <span class="n">__func__</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kt">int</span> <span class="n">name_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">static</span> <span class="kt">int</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="n">C</span><span class="o">::</span><span class="n">c</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">;</span>
+</span></span></code></pre></div><p>然后是有下面的几个函数定义和调用，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="n">C</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">C</span> <span class="n">tmp</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">tmp</span> <span class="o">=</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="n">C</span><span class="p">();</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="nf">c1</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">f</span><span class="p">(</span><span class="n">c1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="n">f</span><span class="p">(</span><span class="n">C</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="n">C</span> <span class="n">c</span> <span class="o">=</span> <span class="n">f</span><span class="p">();</span>
+</span></span></code></pre></div><p>以上三个f的调用分别输出什么？</p>
+<p>下面是结果，</p>
+<pre tabindex="0"><code>c1: C
+copy from c1, c10000: C
+c10001: C
+copy assign from c10000, c10001: operator=
+-----
+c2: C
+c10002: C
+copy assign from c2, c10002: operator=
+-----
+c10003: C
+</code></pre><p>第一个没什么好说的，首先用<code>c1</code>对形参<code>c</code>做拷贝初始化，接着<code>tmp</code>进行默认初始化，然后用拷贝赋值，将<code>c</code>赋值给<code>tmp</code>。</p>
+<p>第二个的结果就有点怪了，为什么<code>C(2)</code>得到的临时对象直接进行了赋值，而不首先初始化形参<code>c</code>？而第三个，为什么返回的临时对象一次拷贝都没发生？</p>
+<p>因为在这两种情况中发生了copy elision（<a class="link" href="http://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization"  target="_blank" rel="noopener"
+    >1</a>，<a class="link" href="http://stackoverflow.com/questions/8451212/passing-temporary-object-as-parameter-by-value-is-copy-constructor-called"  target="_blank" rel="noopener"
+    >2</a>，<a class="link" href="https://en.wikipedia.org/wiki/Copy_elision"  target="_blank" rel="noopener"
+    >3</a>，<a class="link" href="http://cstdlib.com/tech/2014/07/12/nrvo-and-copy-elision/"  target="_blank" rel="noopener"
+    >4</a>）。<strong>Copy elision</strong>是一种优化手段，满足特定条件时会发生，当传入的参数是rvalue的时候，无需进行额外的拷贝，直接使用源对象。<strong>RVO</strong>，全称叫<a class="link" href="https://en.wikipedia.org/wiki/Return_value_optimization"  target="_blank" rel="noopener"
+    >return value optimization</a>，编译器会让调用函数在其栈上分配空间，被调函数返回值处的临时对象会在这块内存上构造，进而避免了return时临时对象的拷贝，是copy elision常见形式。根据返回的对象是否是临时的，有<strong>named return value optimization</strong>和<strong>return value optimization</strong>。</p>
+<p>Copy elision和rvo即使在有可观察的到的side-effects时，也会发生，是<a class="link" href="https://en.wikipedia.org/wiki/As-if_rule"  target="_blank" rel="noopener"
+    >As-if rule</a>的例外中的一种。Dave Abrahams写过pass by value的一系列<a class="link" href="https://web.archive.org/web/20140205194657/http://cpp-next.com/archive/2009/08/want-speed-pass-by-value/"  target="_blank" rel="noopener"
+    >文章</a>。Ayman B. Shoukry在<a class="link" href="https://msdn.microsoft.com/en-us/library/ms364057%28v=vs.80%29.aspx#nrvo_cpp05_topic3"  target="_blank" rel="noopener"
+    >这里</a>讨论了nrvo的局限（multiple return points和conditional initialization）。</p>
+<p>clang++和g++可以用<code>-fno-elide-constructors</code>控制是否开启优化。关闭优化后，输出的结果就和期待的一致了，</p>
+<pre tabindex="0"><code>c1: C
+copy from c1, c10000: C
+c10001: C
+copy assign from c10000, c10001: operator=
+-----
+c2: C
+copy from c2, c10002: C
+c10003: C
+copy assign from c10002, c10003: operator=
+-----
+c10004: C
+copy from c10004, c10005: C
+copy from c10005, c10006: C
+</code></pre><p>stackoverflow的这个<a class="link" href="http://stackoverflow.com/questions/12953127/what-are-copy-elision-and-return-value-optimization"  target="_blank" rel="noopener"
+    >答案</a>，给出了Standard reference和发生copy elision以及return value optimization常见的例子，下面是搬运例子，</p>
+<ul>
+<li>nrvo</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Thing</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">(</span><span class="k">const</span> <span class="n">Thing</span><span class="o">&amp;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">Thing</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span> <span class="n">t</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">t</span><span class="p">;</span> <span class="c1">// optimization
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Thing</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">f</span><span class="p">();</span>
+</span></span></code></pre></div><ul>
+<li>rvo</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Thing</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">(</span><span class="k">const</span> <span class="n">Thing</span><span class="o">&amp;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="n">Thing</span> <span class="nf">f</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">Thing</span><span class="p">();</span> <span class="c1">// optimization
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="n">Thing</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">f</span><span class="p">();</span>
+</span></span></code></pre></div><ul>
+<li>pass a temporary object by value</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">Thing</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"> <span class="k">public</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="o">~</span><span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">(</span><span class="k">const</span> <span class="n">Thing</span><span class="o">&amp;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">Thing</span> <span class="n">t</span><span class="p">);</span> <span class="c1">// optimization
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="n">foo</span><span class="p">(</span><span class="n">Thing</span><span class="p">());</span>
+</span></span></code></pre></div><ul>
+<li>exception is thrown and caught by value</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="k">struct</span> <span class="nc">Thing</span><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span><span class="p">(</span><span class="k">const</span> <span class="n">Thing</span><span class="o">&amp;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">void</span> <span class="nf">foo</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Thing</span> <span class="n">c</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">throw</span> <span class="n">c</span><span class="p">;</span> <span class="c1">// optimization
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">foo</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">catch</span><span class="p">(</span><span class="n">Thing</span> <span class="n">c</span><span class="p">)</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

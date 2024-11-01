@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="ziplist 结构 ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。\nziplist： &lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt; entry： &lt;prevlen&gt; &lt;encoding&gt; &lt;entry-data&gt; ziplist：\nuint32_t zlbytes：ziplist占据的内存大小，包括zlbytes字段。 uint32_t zltail：最后一个entry（非zlend）的offset，记录了尾节点距离起始地址的字节数，相当于尾指针的作用。 uint16_t zllen：entry的数目，如果元素数目大于2^16-2，那么值为2^16-1，只有通过遍历才能得知，有多少个元素。zlen不计入entry数目。 uint8_t zlend：特殊的entry，ziplist的结尾标记，值为0xFF。 每个entry大小是不固定的：\n">
+<title>redis ziplist</title>
+
+<link rel='canonical' href='http://localhost:1313/posts/2019/2019-12-06-redis-ziplist/'>
+
+<link rel="stylesheet" href="/scss/style.min.663803bebe609202d5b39d848f2d7c2dc8b598a2d879efa079fa88893d29c49c.css"><meta property='og:title' content="redis ziplist">
+<meta property='og:description' content="ziplist 结构 ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。\nziplist： &lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt; entry： &lt;prevlen&gt; &lt;encoding&gt; &lt;entry-data&gt; ziplist：\nuint32_t zlbytes：ziplist占据的内存大小，包括zlbytes字段。 uint32_t zltail：最后一个entry（非zlend）的offset，记录了尾节点距离起始地址的字节数，相当于尾指针的作用。 uint16_t zllen：entry的数目，如果元素数目大于2^16-2，那么值为2^16-1，只有通过遍历才能得知，有多少个元素。zlen不计入entry数目。 uint8_t zlend：特殊的entry，ziplist的结尾标记，值为0xFF。 每个entry大小是不固定的：\n">
+<meta property='og:url' content='http://localhost:1313/posts/2019/2019-12-06-redis-ziplist/'>
+<meta property='og:site_name' content='chaomai&#39;s-blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='redis' /><meta property='article:published_time' content='2019-12-06T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2019-12-06T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="redis ziplist">
+<meta name="twitter:description" content="ziplist 结构 ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。\nziplist： &lt;zlbytes&gt; &lt;zltail&gt; &lt;zllen&gt; &lt;entry&gt; &lt;entry&gt; ... &lt;entry&gt; &lt;zlend&gt; entry： &lt;prevlen&gt; &lt;encoding&gt; &lt;entry-data&gt; ziplist：\nuint32_t zlbytes：ziplist占据的内存大小，包括zlbytes字段。 uint32_t zltail：最后一个entry（非zlend）的offset，记录了尾节点距离起始地址的字节数，相当于尾指针的作用。 uint16_t zllen：entry的数目，如果元素数目大于2^16-2，那么值为2^16-1，只有通过遍历才能得知，有多少个元素。zlen不计入entry数目。 uint8_t zlend：特殊的entry，ziplist的结尾标记，值为0xFF。 每个entry大小是不固定的：\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-LD2SMTGQE7"></script>
+      <script>
+        var doNotTrack = false;
+        if ( false ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-LD2SMTGQE7');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">chaomai&#39;s-blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>Posts</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/tags/' >
+                
+                
+                
+                <span>Tags</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/categories/' >
+                
+                
+                
+                <span>Categories</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>About</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/redis/" >
+                Redis
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/2019/2019-12-06-redis-ziplist/">redis ziplist</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Dec 06, 2019</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="ziplist">ziplist
+</h1><h1 id="结构">结构
+</h1><p>ziplist是一个压缩的双向链表，由一个特殊编码的连续内存块构成。如果没有特殊指定，所有字段都是以小端序来存储的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="n">ziplist</span><span class="err">：</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">zlbytes</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">zltail</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">zllen</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">entry</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">entry</span><span class="o">&gt;</span> <span class="p">...</span> <span class="o">&lt;</span><span class="n">entry</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">zlend</span><span class="o">&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">entry</span><span class="err">：</span>
+</span></span><span class="line"><span class="cl"><span class="o">&lt;</span><span class="n">prevlen</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">encoding</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">entry</span><span class="o">-</span><span class="n">data</span><span class="o">&gt;</span>
+</span></span></code></pre></div><p>ziplist：</p>
+<ul>
+<li><code>uint32_t zlbytes</code>：ziplist占据的内存大小，包括<code>zlbytes</code>字段。</li>
+<li><code>uint32_t zltail</code>：最后一个entry（非zlend）的offset，记录了尾节点距离起始地址的字节数，相当于尾指针的作用。</li>
+<li><code>uint16_t zllen</code>：entry的数目，如果元素数目大于<code>2^16-2</code>，那么值为<code>2^16-1</code>，只有通过遍历才能得知，有多少个元素。zlen不计入entry数目。</li>
+<li><code>uint8_t zlend</code>：特殊的entry，ziplist的结尾标记，值为<code>0xFF</code>。</li>
+</ul>
+<p>每个entry大小是不固定的：</p>
+<ul>
+<li>
+<p><code>prevlen</code>：前一个entry的长度，用于从后往前遍历时计算prev entry的起始地址。长度小于254字节和大于等于254字节分别使用两种存储方式。</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>value</th>
+          <th>prevlen</th>
+          <th>size</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>&lt; 254</td>
+          <td><code>0xbb</code></td>
+          <td>1字节</td>
+      </tr>
+      <tr>
+          <td>&gt;=254</td>
+          <td><code>0xFE xx xx xx xx</code></td>
+          <td>5字节</td>
+      </tr>
+  </tbody>
+</table></div>
+<p>当长度大于等于254时，<code>0xFE</code>代表<code>prevlen</code>值的类型，后面的4个字节才是长度。</p>
+<p>这样存储方式刚好可以与<code>zlend</code>的<code>0xFF</code>区分开来，没有一个entry的开头会是<code>0xFF</code>。</p>
+</li>
+<li>
+<p><code>encoding</code>：记录了<code>entry-data</code>数据类型和长度。</p>
+<p>前两个bit代表存储的是字节数组，还是整型。</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>encoding</th>
+          <th>size</th>
+          <th>值的类型</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>00pppppp</code></td>
+          <td>1 byte</td>
+          <td>长度&lt;=63的字节数组</td>
+      </tr>
+      <tr>
+          <td>`01pppppp</td>
+          <td>qqqqqqqq`</td>
+          <td>2 bytes（14 bits使用大端序存储）</td>
+      </tr>
+      <tr>
+          <td>`10000000</td>
+          <td>qqqqqqqq</td>
+          <td>rrrrrrrr</td>
+      </tr>
+      <tr>
+          <td><code>11000000</code></td>
+          <td>1 byte</td>
+          <td>int16_t</td>
+      </tr>
+      <tr>
+          <td><code>11010000</code></td>
+          <td>1 byte</td>
+          <td>int32_t</td>
+      </tr>
+      <tr>
+          <td><code>11100000</code></td>
+          <td>1 byte</td>
+          <td>int64_t</td>
+      </tr>
+      <tr>
+          <td><code>11110000</code></td>
+          <td>1 byte</td>
+          <td>24 bit signed integer</td>
+      </tr>
+      <tr>
+          <td><code>11111110</code></td>
+          <td>1 byte</td>
+          <td>8 bit signed integer</td>
+      </tr>
+      <tr>
+          <td><code>1111xxxx</code></td>
+          <td>1 byte</td>
+          <td>没有<code>content</code>属性，4个bit存储[0, 12]的值</td>
+      </tr>
+      <tr>
+          <td><code>11111111</code></td>
+          <td>1 byte</td>
+          <td>zlend</td>
+      </tr>
+  </tbody>
+</table></div>
+</li>
+<li>
+<p><code>entry-data</code>：节点的值，字节数组或整形。</p>
+</li>
+</ul>
+<h1 id="插入">插入
+</h1><p>ziplist使用了很多宏来实现，主要是进行类型转换和指针运算以便访问相关的字段。</p>
+<p>插入分三个情况，
+<img src="/images/2019/15757879857637.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="-w629"
+	
+	
+></p>
+<p>需要分别准备新entry的<code>prevlen</code>，<code>encoding</code>，分配空间。</p>
+<ol>
+<li>
+<p><code>prevlen</code>
+先看插入位置是否在<code>zlen</code>之前，</p>
+<ul>
+<li>如果不在，<code>p</code>处的<code>prevlen</code>就是新entry的<code>prevlen</code>。</li>
+<li>如果在，此时无法直接得知<code>prevlen</code>，需要看<code>zlend</code>前是否还有元素。若没有，则<code>zipRawEntryLength(ptail)</code>计算<code>tail</code>元素的长度。</li>
+</ul>
+<p><code>p</code>不是<code>zlend</code>的时候，新entry的len会作为<code>p</code>处entry的<code>prevlen</code>，需要确保<code>p</code>处<code>prevlen</code>空间足够。</p>
+<p><img src="/images/2019/15757965712995.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="-w736"
+	
+	
+></p>
+</li>
+<li>
+<p><code>encoding</code>
+对于<code>encoding</code>，先会尝试编码为整型<code>zipTryEncoding(s,slen,&amp;value,&amp;encoding)</code>，</p>
+<ul>
+<li>如果可以编码为整型，那么<code>zipIntSize(encoding)</code>得到entry-data的大小。</li>
+<li>如果无法合法的编码为整型，那么根据<code>slen</code>编码为字节数组<code>zipStoreEntryEncoding(NULL,encoding,slen)</code>，entry-data的大小为<code>slen</code>。</li>
+</ul>
+</li>
+<li>
+<p>分配空间，
+计算出各字段所需的空间后，<code>memmove()</code>来完成空间的调整。要注意对源地址的处理，<code>p-nextdiff</code>。</p>
+<ul>
+<li>
+<p>如果<code>nextdiff == 0</code>，说明<code>p</code>处entry的<code>prevlen</code>，可以保存新entry的大小。</p>
+</li>
+<li>
+<p>如果<code>nextdiff == 4</code>，那么说明空间不够，此时<code>p</code>处entry的<code>prevlen</code>原大小为1 byte，从<code>p</code>往前数4 bytes，加起来的5 bytes作为新<code>prevlen</code>的存储，因此从<code>p - 4</code>处开始<code>memmove()</code>。</p>
+<p><img src="/images/2019/15757965415426.jpg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="-w614"
+	
+	
+></p>
+</li>
+<li>
+<p>如果<code>nextdiff == -4</code>，说明空间多出4 bytes，从<code>p + 4</code>的位置开始<code>memmove()</code>。</p>
+</li>
+</ul>
+</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="nf">__ziplistInsert</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">zl</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">p</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">slen</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">size_t</span> <span class="n">curlen</span> <span class="o">=</span> <span class="nf">intrev32ifbe</span><span class="p">(</span><span class="nf">ZIPLIST_BYTES</span><span class="p">(</span><span class="n">zl</span><span class="p">)),</span> <span class="n">reqlen</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">prevlensize</span><span class="p">,</span> <span class="n">prevlen</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">size_t</span> <span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">nextdiff</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">encoding</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">long</span> <span class="kt">long</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">123456789</span><span class="p">;</span> <span class="cm">/* initialized to avoid warning. Using a value
+</span></span></span><span class="line"><span class="cl"><span class="cm">                                    that is easy to see if for some reason
+</span></span></span><span class="line"><span class="cl"><span class="cm">                                    we use it uninitialized. */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">zlentry</span> <span class="n">tail</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Find out prevlen for the entry that is inserted.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * entry开头的1 byte是不是0xFF
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 如果插入位置是在zlend处，需要判断zlend前是否有entry，
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 如果没有，那么新prevlen为0，
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * 如果有，那么需要计算zl+zltail处entry的大小，将其设置为新entry的prevlen
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ZIP_END</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">ZIP_DECODE_PREVLEN</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">prevlensize</span><span class="p">,</span> <span class="n">prevlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kt">unsigned</span> <span class="kt">char</span> <span class="o">*</span><span class="n">ptail</span> <span class="o">=</span> <span class="nf">ZIPLIST_ENTRY_TAIL</span><span class="p">(</span><span class="n">zl</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">ptail</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ZIP_END</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">prevlen</span> <span class="o">=</span> <span class="nf">zipRawEntryLength</span><span class="p">(</span><span class="n">ptail</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* See if the entry can be encoded */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nf">zipTryEncoding</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">slen</span><span class="p">,</span><span class="o">&amp;</span><span class="n">value</span><span class="p">,</span><span class="o">&amp;</span><span class="n">encoding</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/* &#39;encoding&#39; is set to the appropriate integer encoding */</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reqlen</span> <span class="o">=</span> <span class="nf">zipIntSize</span><span class="p">(</span><span class="n">encoding</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/* &#39;encoding&#39; is untouched, however zipStoreEntryEncoding will use the
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * string length to figure out how to encode it. */</span>
+</span></span><span class="line"><span class="cl">        <span class="n">reqlen</span> <span class="o">=</span> <span class="n">slen</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* We need space for both the length of the previous entry and
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * the length of the payload. */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">reqlen</span> <span class="o">+=</span> <span class="nf">zipStorePrevEntryLength</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">prevlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">reqlen</span> <span class="o">+=</span> <span class="nf">zipStoreEntryEncoding</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="n">encoding</span><span class="p">,</span><span class="n">slen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* When the insert position is not equal to the tail, we need to
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * make sure that the next entry can hold this entry&#39;s length in
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * its prevlen field. */</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">int</span> <span class="n">forcelarge</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">nextdiff</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ZIP_END</span><span class="p">)</span> <span class="o">?</span> <span class="nf">zipPrevLenByteDiff</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">reqlen</span><span class="p">)</span> <span class="o">:</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">nextdiff</span> <span class="o">==</span> <span class="o">-</span><span class="mi">4</span> <span class="o">&amp;&amp;</span> <span class="n">reqlen</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">nextdiff</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">forcelarge</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Store offset because a realloc may change the address of zl. */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">offset</span> <span class="o">=</span> <span class="n">p</span><span class="o">-</span><span class="n">zl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">zl</span> <span class="o">=</span> <span class="nf">ziplistResize</span><span class="p">(</span><span class="n">zl</span><span class="p">,</span><span class="n">curlen</span><span class="o">+</span><span class="n">reqlen</span><span class="o">+</span><span class="n">nextdiff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">=</span> <span class="n">zl</span><span class="o">+</span><span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Apply memory move when necessary and update tail offset. */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ZIP_END</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/* Subtract one because of the ZIP_END bytes */</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">memmove</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">reqlen</span><span class="p">,</span><span class="n">p</span><span class="o">-</span><span class="n">nextdiff</span><span class="p">,</span><span class="n">curlen</span><span class="o">-</span><span class="n">offset</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">nextdiff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="cm">/* Encode this entry&#39;s raw length in the next entry. */</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">forcelarge</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">zipStorePrevEntryLengthLarge</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">reqlen</span><span class="p">,</span><span class="n">reqlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">else</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">zipStorePrevEntryLength</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">reqlen</span><span class="p">,</span><span class="n">reqlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="cm">/* Update offset for tail */</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">ZIPLIST_TAIL_OFFSET</span><span class="p">(</span><span class="n">zl</span><span class="p">)</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">intrev32ifbe</span><span class="p">(</span><span class="nf">intrev32ifbe</span><span class="p">(</span><span class="nf">ZIPLIST_TAIL_OFFSET</span><span class="p">(</span><span class="n">zl</span><span class="p">))</span><span class="o">+</span><span class="n">reqlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="cm">/* When the tail contains more than one entry, we need to take
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * &#34;nextdiff&#34; in account as well. Otherwise, a change in the
+</span></span></span><span class="line"><span class="cl"><span class="cm">         * size of prevlen doesn&#39;t have an effect on the *tail* offset. */</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">zipEntry</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">reqlen</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tail</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">reqlen</span><span class="o">+</span><span class="n">tail</span><span class="p">.</span><span class="n">headersize</span><span class="o">+</span><span class="n">tail</span><span class="p">.</span><span class="n">len</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ZIP_END</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nf">ZIPLIST_TAIL_OFFSET</span><span class="p">(</span><span class="n">zl</span><span class="p">)</span> <span class="o">=</span>
+</span></span><span class="line"><span class="cl">                <span class="nf">intrev32ifbe</span><span class="p">(</span><span class="nf">intrev32ifbe</span><span class="p">(</span><span class="nf">ZIPLIST_TAIL_OFFSET</span><span class="p">(</span><span class="n">zl</span><span class="p">))</span><span class="o">+</span><span class="n">nextdiff</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="cm">/* This element will be the new tail. */</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">ZIPLIST_TAIL_OFFSET</span><span class="p">(</span><span class="n">zl</span><span class="p">)</span> <span class="o">=</span> <span class="nf">intrev32ifbe</span><span class="p">(</span><span class="n">p</span><span class="o">-</span><span class="n">zl</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* When nextdiff != 0, the raw length of the next entry has changed, so
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * we need to cascade the update throughout the ziplist */</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="n">nextdiff</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">offset</span> <span class="o">=</span> <span class="n">p</span><span class="o">-</span><span class="n">zl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">zl</span> <span class="o">=</span> <span class="nf">__ziplistCascadeUpdate</span><span class="p">(</span><span class="n">zl</span><span class="p">,</span><span class="n">p</span><span class="o">+</span><span class="n">reqlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">p</span> <span class="o">=</span> <span class="n">zl</span><span class="o">+</span><span class="n">offset</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="cm">/* Write the entry */</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">+=</span> <span class="nf">zipStorePrevEntryLength</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">prevlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="n">p</span> <span class="o">+=</span> <span class="nf">zipStoreEntryEncoding</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">encoding</span><span class="p">,</span><span class="n">slen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nf">ZIP_IS_STR</span><span class="p">(</span><span class="n">encoding</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">memcpy</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">slen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nf">zipSaveInteger</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">value</span><span class="p">,</span><span class="n">encoding</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">ZIPLIST_INCR_LENGTH</span><span class="p">(</span><span class="n">zl</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">zl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="连锁更新">连锁更新
+</h2><p>插入或删除时，可能导致后面entry存储的<code>prevlen</code>发生变化。理论上，扩张和缩小都会有，但redis有意忽略了缩小的情况，避免连续的插入导致频繁的扩容和缩小。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="k">if</span> <span class="p">(</span><span class="n">next</span><span class="p">.</span><span class="n">prevrawlensize</span> <span class="o">&gt;</span> <span class="n">rawlensize</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/* This would result in shrinking, which we want to avoid.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * So, set &#34;rawlen&#34; in the available bytes. */</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">zipStorePrevEntryLengthLarge</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">rawlen</span><span class="p">,</span><span class="n">rawlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nf">zipStorePrevEntryLength</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">rawlen</span><span class="p">,</span><span class="n">rawlen</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/* Stop here, as the raw length of &#34;next&#34; has not changed. */</span>
+</span></span><span class="line"><span class="cl"><span class="k">break</span><span class="p">;</span>
+</span></span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/redis/">Redis</a>
+        
+    </section>
+
+
+    
+    <section class="article-copyright">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <path d="M14.5 9a3.5 4 0 1 0 0 6" />
+</svg>
+
+
+
+        <span>Licensed under CC BY-NC-SA 4.0</span>
+    </section>
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-12-05-redis-intset/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis intset</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-12-04-redis-skiplist/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis skiplist</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-12-03-redis-dict/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis dict</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-12-02-redis-list/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis list</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/posts/2019/2019-11-26-redis-sds/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">redis sds</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2014 - 
+        
+        2024 chaomai&#39;s-blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.29.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.f481f727a43ae9e9f27f39f3ad6c88d3a16196791eac5755e4430c3e9a95c60d.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
