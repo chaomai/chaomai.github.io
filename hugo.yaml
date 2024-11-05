@@ -97,10 +97,6 @@ menu:
       params:
         icon: notes
         newtab: true
-    - name: Photography
-      params:
-        icon: photo
-        newtab: true
 
   social:
     - identifier: github
