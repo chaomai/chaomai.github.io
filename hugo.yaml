@@ -91,7 +91,16 @@ params:
       enabled: true
 
 menu:
-  main: []
+  main:
+    - name: 'Naive Notes'
+      url: https://naivethought.pages.dev/
+      params:
+        icon: notes
+        newtab: true
+    - name: Photography
+      params:
+        icon: photo
+        newtab: true
 
   social:
     - identifier: github
@@ -103,7 +112,7 @@ menu:
       name: Email
       url: mailto:bG9uZXltYWlAZ21haWwuY29t
       params:
-        icon: messages
+        icon: mailbox
     - identifier: rss
       name: Rss
       url: atom.xml
