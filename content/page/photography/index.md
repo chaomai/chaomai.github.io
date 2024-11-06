@@ -15,7 +15,7 @@ My journey in photography is probably similar to most people’s. I started with
 
 But I still love photography, keep learning, and enjoy capturing beautiful moments. The emotional value of upgrading my gear is also something I appreciate.
 
-# Gallery
+# Portfolio
 
 # Cameras
 
