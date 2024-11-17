@@ -186,3 +186,6 @@ tags:
 	- 指针时速表时不时的存在不归零的情况。
 	- 水温到5格时风扇才会启动，虽然没什么问题，但是6格是高温报警，水温焦虑。
 	- 减震真的很一般，低速的情况下还行，一旦快一点减震和没有一样。前减软且行程短，速度快的时候过大坑容易触底；后减硬，过大小坑体验都较差。
+
+This message is used to verify that this feed (feedId:62850903870906381) belongs to me (userId:63001520300199936). Join me in enjoying the next generation information browser https://follow.is.
+

@@ -15,21 +15,23 @@ My journey in photography is probably similar to most people’s. I started with
 
 But I still love photography, keep learning, and enjoy capturing beautiful moments. The emotional value of upgrading my gear is also something I appreciate.
 
+<img src="/images/2024/11/A6700569.jpg" width="350px" />
+
 # Portfolio
 
 # Cameras
 
-* Sony α6300
-    * Sony E 16-55mm f/2.8 G Lens
-* Sony α7 III
-    * Sony FE 28-70mm F3.5-5.6 OSS Lens
-    * Sigma 35mm f/1.4 DG HSM Art lens
-    * Sigma 24mm f/1.4 DG HSM Art Lens
-* Fujifilm X-T30 II
-    * Fujifilm XF 18-55mm f/2.8-4 R LM OIS Lens
+* ~~Sony α6300~~
+    * ~~Sony E 16-55mm f/2.8 G Lens~~
+* ~~Sony α7 III~~
+    * ~~Sony FE 28-70mm F3.5-5.6 OSS Lens~~
+    * ~~Sigma 35mm f/1.4 DG HSM Art lens~~
+    * ~~Sigma 24mm f/1.4 DG HSM Art Lens~~
+* ~~Fujifilm X-T30 II~~
+    * ~~Fujifilm XF 18-55mm f/2.8-4 R LM OIS Lens~~
     * Tamron 17-70mm f/2.8 Di III-A VC RXD Lens
 * Sony α6700
     * Sigma 18-50mm f/2.8 DC DN Contemporary Lens
     * Viltrox AF 27mm F1.2 Pro APS-C Lens
     * TTArtisan 35mm f/1.4 Lens APS-C Format Lens
-
+* ...

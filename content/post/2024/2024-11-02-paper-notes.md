@@ -26,11 +26,13 @@ tags:
 
 ## [SIGIR](https://sigir-2024.github.io/program_papers.html)
 
-# 2023
+# 2009
+
+## VLDB
+
+[Indexing Boolean expressions](https://www.vldb.org/pvldb/vol2/vldb09-83.pdf)
 
 # Misc
 
 [Position auctions](https://people.ischool.berkeley.edu/~hal/Papers/2006/position.pdf)
-
-This message is used to verify that this feed (feedId:62850903870906381) belongs to me (userId:63001520300199936). Join me in enjoying the next generation information browser https://follow.is.
 
