@@ -13,10 +13,10 @@ menu:
 ---
 
 # About me
-I'm interested in C++, golang, concurrent programming, distributed system. I'm curious about "how it works" and want to know the nature of things and connections between them. Swimming, photography and video game are my favorite activities in my spare time.
+I am interested in C++, Golang, Rust, concurrent programming, and distributed systems. I am curious about how things work and am eager to understand their nature and the connections between them. In my spare time, I enjoy swimming, photography, and playing video games. Additionally, I am a big fan of road trips and love driving on long journeys.
 
 # About this site
-A repository for the things I've learnt, built, and wasted time on.
+This is a repository of my life: a place for the things I've experienced, learned, built, and wasted time on.
 
 # Motto
 
