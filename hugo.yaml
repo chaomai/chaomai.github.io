@@ -51,7 +51,7 @@ params:
       src: default_avatar.jpg
 
   article:
-    math: false
+    math: true
     toc: true
     readingTime: true
     license:
@@ -92,7 +92,7 @@ params:
 
 menu:
   main:
-    - name: 'Naive Notes'
+    - name: "Naive Notes"
       url: https://naivethought.pages.dev/
       params:
         icon: notes

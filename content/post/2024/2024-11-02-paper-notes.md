@@ -31,8 +31,8 @@ tags:
 ## VLDB
 
 [Indexing Boolean expressions](https://www.vldb.org/pvldb/vol2/vldb09-83.pdf)
+[📕Note](/2024/2024-12-09-boolean-expression-indexing)
 
 # Misc
 
 [Position auctions](https://people.ischool.berkeley.edu/~hal/Papers/2006/position.pdf)
-
