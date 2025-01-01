@@ -8,3 +8,7 @@ menu:
 
 comments: false
 ---
+
+# Related posts
+
+# Portfolio
