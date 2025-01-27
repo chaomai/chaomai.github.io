@@ -9,7 +9,7 @@ tags:
 
 [📕Paper Notes](/2024/2024-11-02-paper-notes)
 
-# 索引构建
+## 索引构建
 
 1. 将 DNF BE 切分为 conjunctions。每个 conjunctions 是包含$\in$或者$\notin$的 predicates。
 2. 将 conjunctions 根据 size K（$\in$的数量）进行分割，每组叫做 K-index。
@@ -50,14 +50,14 @@ entry 的总数正比于$|\mathcal{C}| \times P_{\text{avg}}$，$|\mathcal{C}|$�
 |     | $(\text{state}, \text{CA}), 2.0$ | $(3, \notin, 0), (4, \in, 1.5)$               |
 |     | $(\text{gender}, \text{M}), 1.0$ | $(3, \in, 0.5), (4, \in, 0.9)$                |
 
-# DNF 算法
+## DNF 算法
 
 这两个观察能有助于理解，
 
 1. 对于一个 $K$-index（$K \leq t$），一个包含 $K$ 项的 conjunction $c$ 匹配 $S$ 的条件是，必须恰好存在 $K$ 个 posting list，其中每个 list 对应 $S$ 中的一个 key $(A, v)$，并且 $c$ 的 ID 在这些列表中具有 $\in$ 。
 2. 对于 $S$ 中的任何 $(A, v)$ key，均不应存在 $c$ 以 $\notin$ 出现在 posting list 中的情况。
 
-## 示例
+### 示例
 
 给定一个 Assignment $S : \{\text{age} = 3, \text{state} = \text{CA}, \text{gender} = \text{M}\}$，在匹配 Figure 2 的倒排以后，结果如 Figure 3 所示。
 
@@ -109,7 +109,7 @@ entry 的总数正比于$|\mathcal{C}| \times P_{\text{avg}}$，$|\mathcal{C}|$�
 
 找到 conjunction 4 满足条件。
 
-## algorithm
+### algorithm
 
 **Input:** inverted list $idx$ and assignment $S$
 **Output:** set of IDs $O$ matching $S$
@@ -152,6 +152,6 @@ entry 的总数正比于$|\mathcal{C}| \times P_{\text{avg}}$，$|\mathcal{C}|$�
 
 其中 For $L = K...(PLists.\text{size()}-1)$ do，这里比较奇怪，按示例中的 Figure 5 -> Figure 6 的过程，应该是遍历所有 posting list，skip 当前 conjunction id 为 reject id 的，但按原文中的算法执行，则只是 skip 第K个之后的posting list。这样执行后，会导致死循环。
 
-# References
+## References
 
 [Indexing Boolean expressions](https://www.vldb.org/pvldb/vol2/vldb09-83.pdf)
