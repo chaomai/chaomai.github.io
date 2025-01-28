@@ -30,7 +30,8 @@ tags:
 
 ### [KDD](https://kdd.org/kdd2023/index.html)
 
-[Bid Optimization for Offsite Display Ad Campaigns on eCommerce](https://arxiv.org/abs/2306.10476) [📕Note](/2025/2025-01-27-Bid-Optimization-for-Offsite-Display-Ad-Campaigns-on-eCommerce)
+[Bid Optimization for Offsite Display Ad Campaigns on eCommerce](https://arxiv.org/abs/2306.10476)
+[📕Note](/2025/2025-01-27-Bid-Optimization-for-Offsite-Display-Ad-Campaigns-on-eCommerce)
 
 ## 2009
 
