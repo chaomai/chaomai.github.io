@@ -153,7 +153,7 @@ ignoreErrors = ["error-remote-getjson", "error-missing-instagram-accesstoken"]
     [params.header.title]
       # URL of the LOGO
       # LOGO 的 URL
-      logo = "/images/default_avatar.jpg"
+      # logo = "/images/default_avatar.jpg"
       # title name
       # 标题名称
       name = "chaomai's Odyssey"
