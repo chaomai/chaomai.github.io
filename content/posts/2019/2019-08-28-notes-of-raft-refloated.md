@@ -26,7 +26,7 @@ tags:
 * 每次测试server都有不一样长度的log，使得有的candidate不能成为leader。
 * 为了制造易于出现split vote的环境，在每次终止leader前，都同步地广播heartbeat，目的是重置election timeout。
 
-![-w302](images/2019/15674125053563.jpg)
+![-w302](/images/2019/15674125053563.jpg)
 
 两个测试表明了：
 1. election time中加入少量的随机，能够明显的减少选举新leader的时间，减少split vote的出现。
@@ -38,7 +38,7 @@ tags:
 2. Binary Exponential Backoff
 3. Combined
 
-![-w293](images/2019/15674141041720.jpg)
+![-w293](/images/2019/15674141041720.jpg)
 
 ## Different Follower and Candidate Timers
 raft原论文建议$\textit{candidate timeout} = \textit{follower timeout} ∼ U(T, 2T), T=150ms$，但在高竞争的情况下，例如：$U(150ms, 151ms)$，将两个时间设置在不同的范围，可以大大减少选举leader的时间。

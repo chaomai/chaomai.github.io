@@ -32,7 +32,7 @@ def Queue(self, maxsize=0):
 # Queue
 `Queue`可以看做在`SimpleQueue`的基础上，增加了生产者端的发送buffer、支持设置队列大小，以及`get()`和`put()`的无阻塞调用。
 
-![python queues](images/2019/python%20queues.jpg)
+![python queues](/images/2019/python%20queues.jpg)
 
 ## 初始化
 `__init__()`初始化了这么几个比较重要的变量，

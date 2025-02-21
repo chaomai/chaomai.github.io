@@ -12,7 +12,7 @@ tags:
 
 notion 是个方便高效的工具，用起来很顺手，但是最近频繁的 Notion Incident 邮件报警看得我着实心烦，很担心哪天要用的时候服务挂了干着急。所以决定寻找 notion 的替代。
 
-![img](images/2021/03/Snipaste_2021-03-13_22-03-37.png)
+![img](/images/2021/03/Snipaste_2021-03-13_22-03-37.png)
 
 # 目标
 
@@ -41,7 +41,7 @@ notion 是个方便高效的工具，用起来很顺手，但是最近频繁的 
 5.  添加图片确实不方便，但通过 org-download 也基本能实现拖拽添加。
 6.  能**华丽呼哨**的定制，~感觉这个才是从 notion 换到 emacs 的动力~。
 
-![img](images/2021/03/Snipaste_2021-03-13_21-36-25.png)
+![img](/images/2021/03/Snipaste_2021-03-13_21-36-25.png)
 
 # 我的 org-mode workflow
 

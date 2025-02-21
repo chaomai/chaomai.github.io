@@ -23,7 +23,7 @@ p.join()
 
 以这段代码为例，看看进程的执行过程。
 
-![python process](images/2019/python%20process.jpg)
+![python process](/images/2019/python%20process.jpg)
 
 ## import
 `import multiprocessing`，导入multiprocessing的时候，做了一些初始化的工作。
