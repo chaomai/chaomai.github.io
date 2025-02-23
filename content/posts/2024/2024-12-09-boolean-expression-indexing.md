@@ -2,8 +2,9 @@
 title: Boolean Expression Index
 date: 2024-12-09 11:23:00
 categories:
-    - computational-advertising
+    - paper-notes
 tags:
+    - computational-advertising
     - boolean-expression-indexing
 ---
 

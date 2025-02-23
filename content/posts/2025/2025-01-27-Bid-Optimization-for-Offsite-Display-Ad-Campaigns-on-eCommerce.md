@@ -2,8 +2,9 @@
 title: Bid Optimization for Offsite Display Ad Campaigns on eCommerce笔记
 date: 2025-01-27 23:57:52
 categories:
-    - computational-advertising
+    - paper-notes
 tags:
+    - computational-advertising
     - roas
     - dsp
 ---
