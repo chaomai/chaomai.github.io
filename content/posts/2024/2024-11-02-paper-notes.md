@@ -33,6 +33,13 @@ tags:
 [Bid Optimization for Offsite Display Ad Campaigns on eCommerce](https://arxiv.org/abs/2306.10476)
 [📕Note](/2025/2025-01-27-Bid-Optimization-for-Offsite-Display-Ad-Campaigns-on-eCommerce)
 
+# 2014
+
+## [KDD](https://www.kdd.org/kdd2014/index.html)
+
+[Budget Pacing for Targeted Online Advertisements at LinkedIn](http://www0.cs.ucl.ac.uk/staff/w.zhang/rtb-papers/linkedin-pacing.pdf)
+[📕Note](/2025/2025-02-24-Budget-Pacing-for-Targeted-Online-Advertisements-at-LinkedIn)
+
 # 2009
 
 ## VLDB
