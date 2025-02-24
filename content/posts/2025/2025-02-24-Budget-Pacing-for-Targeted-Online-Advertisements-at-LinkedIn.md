@@ -1,5 +1,5 @@
 ---
-title: Bid Optimization for Offsite Display Ad Campaigns on eCommerce笔记
+title: Budget Pacing for Targeted Online Advertisements at LinkedIn linkedin-pacing笔记
 date: 2025-02-24 13:23:57
 categories:
     - paper-notes
@@ -26,6 +26,7 @@ tags:
 为了实现计划消耗速度和曝光曲线保持一致，
 
 $$a_{i,t}=\frac{f_{i,t}}{f_{i,T}}d_i$$
+
 对于时间窗内的每次竞价，按$p_{i,t}$（pass through rate，PTR）判断是否参竞，这个值在每个时间窗口起始时更新，$0 \le r_t \le 1$时一个调节系数。
 
 $$
@@ -37,12 +38,12 @@ campaign $i$的预算曲线$a_{i,t}$在每日开始时已经确定，消耗曲�
 另一篇 paper 可以通过 bid modification 实现 pacing，
 
 $$
-b^*_i = b_i \psi(s_{i,t} / d_i) \text{ where, } \psi(x) = 1 - e^{x-1}
+b^*_i = b_i \psi(\frac{s_{i,t}}{d_i}) \text{ where, } \psi(x) = 1 - e^{x-1}
 $$
 
 前面已经讨论过为什么使用 probabilistic throttling 而非 bid modification。这里随着$s_{i,t}$的增加，$b^*_i$减少至 0，起到 pacing 的作用。但是实际受限于 min mrp 的限制，且导致出价调控和预算平滑耦合。
 
-这里如果使用$p^*_{i,t} = \psi(s_{i,t}/d_{i})$作为 PTR，论文实验结果是消耗提升了，但并未显著延长 campaign 的投放时长。
+这里如果使用$p^*_{i,t} = \psi(\frac{s_{i,t}}{d_i})$作为 PTR，论文实验结果是消耗提升了，但并未显著延长 campaign 的投放时长。
 
 # 实现细节
 
@@ -76,4 +77,4 @@ imp 曝光预测的准确性对该算法的有效性至关重要。论文讲述�
 
 ## Fast finish
 
-由于每个imp的曝光量是使用模型预估出来的，可能存在统计错误。进而导致预算无法消耗完。解决方案是将每天最后两个小时的imp设置为0，让算法尽可能在22h内华完预算。
+由于每个 imp 的曝光量是使用模型预估出来的，可能存在统计错误。进而导致预算无法消耗完。解决方案是将每天最后两个小时的 imp 设置为 0，让算法尽可能在 22h 内华完预算。
