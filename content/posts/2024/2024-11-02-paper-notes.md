@@ -12,30 +12,30 @@ tags:
 
 # 2024
 
-## [KDD](https://kdd2024.kdd.org/)
+## KDD
 
 [Auctions with LLM Summaries](https://arxiv.org/abs/2404.08126)
 
-## [ADKDD](https://www.adkdd.org/papers/2024)
+## ADKDD
 
 [Cost-Control in Display Advertising: Theory vs Practice](https://www.adkdd.org/papers/cost-control-in-display-advertising%3A-theory-vs-practice/2024)
 
-## [CIKM](https://cikm2024.org/accepted-papers/)
+## CIKM
 
 [Joint Auction in the Online Advertising Market](https://arxiv.org/abs/2408.09885)
 
-## [SIGIR](https://sigir-2024.github.io/program_papers.html)
+## SIGIR
 
 # 2023
 
-## [KDD](https://kdd.org/kdd2023/index.html)
+## KDD
 
 [Bid Optimization for Offsite Display Ad Campaigns on eCommerce](https://arxiv.org/abs/2306.10476)
 [📕Note](/2025/2025-01-27-Bid-Optimization-for-Offsite-Display-Ad-Campaigns-on-eCommerce)
 
 # 2014
 
-## [KDD](https://www.kdd.org/kdd2014/index.html)
+## KDD
 
 [Budget Pacing for Targeted Online Advertisements at LinkedIn](http://www0.cs.ucl.ac.uk/staff/w.zhang/rtb-papers/linkedin-pacing.pdf)
 [📕Note](/2025/2025-02-24-Budget-Pacing-for-Targeted-Online-Advertisements-at-LinkedIn)
