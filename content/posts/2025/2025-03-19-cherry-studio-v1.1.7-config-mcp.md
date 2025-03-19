@@ -9,7 +9,7 @@ tags:
 
 # Problem
 
-安装 cherry-studio v1.1.7，在 MCP Server 的设置界面能看到。由于本地已有`uv`和`bun`因此不想在此处再次安装。
+安装 cherry-studio v1.1.7，在 MCP Server 的设置界面能看到如下提示。由于本地已有`uv`和`bun`，因此不想在此处再次安装。
 
 ![](/images/2025/0abc4d171f93723038a1781cf228a51e_MD5.jpeg)
 
